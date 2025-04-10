@@ -1,0 +1,214 @@
+순서에 따라 실행되어야 하는 명령들이 실행되도록 하는 것
+반복문 조건문 함수 객체 신중히 도입
+한계 도움되는 검색어
+document, DOM, window 객체, ajax, cookie, offline web application, webRTC (화상채팅), speech (음성인식), webGL (3차원 그래픽, 게임), webGL 
+
+
+
+■ WEB2-JavaScript
+
+12/38 ~~
+
+15강. 비교연산자와 블리언
+
+[1. 핵심] 
+1) 비교연산자 === (comparison operator)
+  cf)==만 써도 되나 ===을 쓰는 것은 더 강력한 비교를 위함.
+2) 블리언 (boolean) : 비교연산자를 통해 만들어지는 새로운 데이터 타입.
+타입으로는 true와 false만 존재.
+3) 조건문 ; 비교연산자와 블리언, 조건문은 서로 관련성이 깊음.
+
+[2. 코드]
+1)
+ <script>
+  document.write(1===1)
+ </script>
+
+-> true 출력
+-> document.write(1===1)은 웹페이지 안에 (1===1)이라는 정보는 출력하는 것.
+출력하면 true라는 값이 뜬다.
+1===1란? 연산자의 좌우항이 같은가를 묻는 연산자로,
+비교연산자이면서 이항연산자이다.
+좌우항을 비교해 데이터를 만든다. 관계에 따라 true 혹은 false 중 하나의 값이 나온다. 2가지 값을 묶어 boolean이라는 데이터 타입이라 부른다.
+
+2)
+ <script>
+  document.write(1===2)
+ </script>
+
+
+-> false 출력
+
+3)
+    <h3>1&lt;2</h3>
+    <script>
+      document.write(1<2);
+    </script>
+
+-> true출력됨.
+부등호 (>, <)를 사용하게 되면 html의 코드로 인식하기 때문에
+&lt 혹은 &gt로 표현한다.
+cf) lt는 less than의 준말. 1&lt;2는 1은 2보다 작다.라는 뜻.
+
+4)
+    <h3>1&gt;1</h3>
+    <script>
+      document.write(1>1);
+    </script>
+
+-> false 출력됨.
+1>1은 거짓. 1은 1보다 크다 (x)
+&mt가 아닌 &gt에 유의.
+greater than
+
+
+cf. <script> 코드를 사용하는 이유: html 문서에 자바스크립트 코드를 적용 및 삽입하기 위함이다.
+(내부 혹은 외부 자바스크립트 코드로 적용할 수 있다. script 코드는 내부 자바스크립트 코드로 적용하는 방법이다.) http://www.tcpschool.com/javascript/js_intro_apply
+
+cf. 우리가 여태 살펴본 데이터 타입
+1) number 숫자들. 무한히 많음.
+2) string 문자열. 무한.
+3) boolean 블리언. ; 단 2개의 데이터로 이뤄진 데이터 타입. 
+이 블리언을 통해 인류는 단순 반복에서 해방될 수 있었음.
+
+
+16강. 조건문의 형식.
+
+[목표]: 조건문의 형식을 알아본다. 
+if문법의 형식과 출력을 살펴본다.
+블리언 값이 어떻게 쓰이는지 살펴본다.
+(cf.conditional statements 조건문)
+
+[코드]
+
+1)
+    <h2>Program</h2>
+    <script>
+      document.write("1<br>")
+      document.write("2<br>")
+      document.write("3<br>")
+      document.write("4<br>")
+    </script>
+
+-> 스크립트 코드로 
+1
+2
+3
+4
+를 차례로 줄바꿈하여 출력.
+
+2)
+    <h2>IF-true</h2>
+    <script>
+      document.write("1<br>")
+      if(true){
+        document.write("2<br>")
+      } else{
+        document.write("3<br>")
+      }
+      document.write("4<br>")
+    </script>
+
+-> if 문법을 사용하여 if{}안의 값이 (true)이므로 {}안의 코드를 출력하고
+else의 코드는 출력하지 않는다.
+1
+2
+4
+
+3)
+    <h2>IF-false</h2>
+    <script>
+      document.write("1<br>")
+      if(false){
+        document.write("2<br>")
+      } else{
+        document.write("3<br>")
+      }
+      document.write("4<br>")
+    </script>
+
+-> if값이 false이므로 else값을 출력
+1
+3
+4
+
+[정리]
+if()에는 블리언 타입이 온다. 블리언 값이 무엇이냐에 따라 출력값이 달라진다.
+if(true)면 if값이 출력되고 else값은 무시.
+if(false)면 if값 무시되고 else값만 출력.
+
+하지만 오늘 배운 조건문은 조건문이 아님.
+if값 안의 값을 조건으로 달아준 것이 아니라 true, false로 지정을 해서 적었기 때문.
+이건 쓸모없는 코드이며 조건에 대해 실행하지 않았기에..
+사실 if( )안에 들어오는 값에 조건을 달아줘야 하는 것.
+오늘 배운 것은 조건문의 형식임에 의의가 있다.
+
+
+17~
+이번 강의에서 막히신분들이 많을거라는 생각을 해봅니다.
+<input id="night_day" type="button" value="night" onclick="
+        if(){
+            document.querySelector('body').style.backgroundColor='black';
+            document.querySelector('body').style.color='white';
+        } else {
+            document.querySelector('body').style.backgroundColor='white';
+            document.querySelector('body').style.color='black'; 
+        }
+        ">
+이 부분에서 많이 막히셨을거 같은데  " <- 이것과  ' <- 요것을  잘 구분하셔서 사용하시면 적용하시면 해결 가능성이 훨씬 높아질거라고 생각합니다.
+" 는 마무리가 되었다는것 역시 포함하기 때문에 끝을 내버려서 다음 else 구문을 인식하지 않을 가능성이 커진다고 저는 판단했습니다.
+혹 if 구분에 마지막 white 가 "white" 로 되어있다면, 'white' 로 바꿔보세요 
+포기하지 마시고 끝까지 같이 해나가요!
+
+
+
+
+
+
+<div>
+<span> inline
+
+
+HTML 요소 변경
+document.getElementById('XXX').YYY = "ZZZ?"
+selector
+googling
+YYY innerHTML style.color  style.fontsize style.display
+ZZZ "안녕?"   	"red" 	"30px"          block
+
+UI
+1. 미리 디자인해놓고 숨김
+2. 버튼누르거나 하면 보여줌
+
+
+~~.js
+jQuery CDN
+jQuery → React
+Library
+
+
+■ 생활코딩
+CSS
+           <style>
+Selector    a {
+                 color:green;
+                 text-decoration: none;        Declaration
+                 }  Property Value
+            </style>
+
+
+class : .
+id : # - 1개만 존재, 중복 X
+우선순위 id > class > tag
+
+css box model
+padding margin
+
+<div> 
+<span> inline
+
+https://caniuse.com/
+
+반응형 디자인 화면의 크기에 따라서 웹페이지 요소 
+
+

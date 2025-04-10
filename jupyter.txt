@@ -1,0 +1,2 @@
+gitignore로 checkpoints 없애기
+https://velog.io/@khnn/%EA%B9%83%ED%97%99-.ipynbcheckpoints-%EC%97%86%EC%95%A0%EA%B8%B0

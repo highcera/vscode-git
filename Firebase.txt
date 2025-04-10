@@ -1,0 +1,4 @@
+node.js 최신판 설치
+vscode → npm install -g firebase-tools@9.12.1 -> 설치 불가
+firebase db 사용 불가
+

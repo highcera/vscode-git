@@ -1,0 +1,6 @@
+flask
+
+D:\F 드라이브\교재\파이썬-flask_소스
+
+SQLite3로 가볍게 배우는 데이터베이스
+https://wikidocs.net/book/1530#google_vignette

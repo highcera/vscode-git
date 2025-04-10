@@ -1,0 +1,971 @@
+
+■  파이썬 GUI 기초
+https://blog.naver.com/PostView.naver?blogId=sagala_soske&logNo=221730664526
+
+
+
+■ 파이썬(Python) 문자열을 나눌 수 있는 split 함수
+    https://mainia.tistory.com/5624
+
+문자열은 문자, 단어 등으로 구성된 문자들의 집합입니다. 
+문자열을 변수에 저장하면 문자열 객체가 됩니다.
+문자열 객체는 str 클래스의 객체입니다.
+그래서 str 클래스 내부 함수를 모두 사용할 수 있습니다.
+많은 내부 함수 중에서 문자열을 특정 구분자로 나누고 싶을 때 split() 함수를 사용합니다.
+
+▼ split 문법은 다음과 같습니다. 문자열을 나눌 때 구분자는 seq 파라미터로 입력합니다. maxsplit 는 나누고 싶은 개수를 정할 때 사용합니다. 예제를 통해서 사용 방법을 알아 보겠습니다.
+str.split(seq=none, maxsplit=-1)
+
+▼ maxsplit 분리할 문자 개수를 지정할 때 사용합니다. 만약 1을 입력하면 maxsplit + 1 더해 져서 2개로 분리가 됩니다. 
+maxsplit 으로 값을 입력하지 않으면 기본값 -1 이 들어갑니다. 
+분리하는 순서는 앞에서 차례대로 입니다. 
+예제에서는 maxsplit=2 를 입력했습니다. 분리되는 개수는 3개가 됩니다. 나머지 하나는 분리되지 않은 채 남습니다.
+>>> '1,2,3,4'.split(',', maxsplit=2)
+['1', '2', '3,4']
+
+▼ maxsplit 에 아무것도 입력하지 않으면 seq 값 만으로 4개 모두를 분리합니다.
+>>> '1,2,3,4'.split(',')
+['1', '2', '3', '4']
+
+▼ 분리 문자 사이에 공백은 어떻게 처리할 까요? 파라미터 seq 는 분리 기준 문자로 공백까지 포함해서 분리합니다. 
+예제처럼 분리기준인 “,” 를 기점으로 중간과 마지막 공백도 분리했습니다.
+>>> '1,2,,3,'.split(',')
+['1', '2', '', '3', '']
+
+▼ 만약 아무것도 입력하지 않으면 어떻게 될까요? 알아서 분리할 문자를 찾아 작업을 수행합니다. 
+하지만 두 번째 예제처럼 패턴이 일정하지 않으면 제대로 된 결과값을 얻을 수 없습니다.
+>>> '1,2,3'.split(',')
+['1', '2', '3']
+
+>>> '1,2,,3,'.split()
+['1,2,,3,']
+
+▼ 다음은 분리한 문자를 저장하는 독특한 방식을 알려 드리겠습니다. 보통 split() 함수를 실행해서 변수에 저장하면 배열이 됩니다.
+>>> arr = 'a,b,c'.split(',')
+>>> arr[0]
+'a'
+>>> arr[1]
+'b'
+>>> arr[2]
+'c'
+
+▼ 이번에는 하나의 변수가 아닌 분리되는 개수만큼 변수를 만들어 지정해 보세요. 각각의 변수에는 분리된 값들이 자동으로 들어갑니다.
+>>> x, y, z = 'a,b,c'.split(',')
+>>> x
+'a'
+>>> y
+'b'
+>>> z
+'c'
+
+
+# 출처: https://data-make.tistory.com/176
+
+from pandas import ExcelWriter
+
+def save_xls(list_dfs, xls_path):
+    writer = ExcelWriter(xls_path) 
+    for n, df in enumerate(list_dfs):    
+        df.to_excel(writer,'sheet%s' % n)
+        writer.save()
+category_list = [data1, data2, data3]
+save_xls(category_list, '/Users/aaron/Desktop/result.xlsx')
+
+
+import pandas as pd
+import tkinter as tk
+import os
+
+os.chdir('C:/Users/Administrator/Documents/쉽고 빠르게 배우는 파이썬 GUI 프로그래밍_실습예제/11장-12장-13장-데이터분석도구팬더스-DataFrame-시각화등')
+
+
+def   read_data():
+    global data, df, pd
+    df=pd.read_csv( "tips.csv")
+    df=df.apply(pd.to_numeric, errors='ignore')
+
+def display_title(wnd, d_frame):
+    title=list(d_frame.columns)
+    e=tk.Entry(wnd, text=' ', width=10, bg='gray', fg='white')
+    for  i   in   range(len(title)):
+         e = tk.Entry(wnd, width=10, bg='gray', fg='white')
+         e.insert(0, title[i])
+         e.grid(row=0,column=i+1) 
+
+
+def display_pandas(wnd, d_frame):
+    rows, cols = d_frame.shape
+     
+    for r in range(rows):
+         e = tk.Entry(wnd, bg='gray',fg='white', width=10)
+         e.insert(0, d_frame.index[r])
+         e.grid(row=r+1,column= 0)
+
+         for c in range(cols):
+             e = tk.Entry(wnd, width=10)
+             e.insert(0, d_frame.iloc[r,c])
+             e.grid(row=r+1, column=c+1)
+
+win = tk.Tk()
+
+read_data()
+win.title("처리결과")
+display_title(win,df)
+display_pandas(win, df)
+
+win2= tk.Tk()
+win2.title('기초통계 요약')
+df2=df.describe()
+display_title(win2, df2)
+display_pandas(win2, df2)
+
+win3= tk.Tk()
+win3.title('소숫점 자릿수 조정')
+df3=df2.round(2)
+display_title(win3, df3)
+display_pandas(win3, df3)
+
+df4=df.copy()
+df4['비율'] = df['tip'] / df['total_bill'] *100
+df4 = df4.round({'비율':2})
+print(df4)
+print(df4.describe())
+
+win5= tk.Tk()
+win5.title('팁 6$ 이상 고객')
+df5=df[df.tip>=6]
+display_title(win5, df5)
+display_pandas(win5, df5)
+
+
+
+win.mainloop()
+
+
+버튼으로 Tkinter Entry 위젯의 텍스트를 설정하는 방법
+ 
+창립일자: April-04, 2020 | 갱신일자: June-25, 2020
+
+  
+Tkinter delete 및 insert 방법으로 Entry 의 내용을 설정
+Tkinter Entry 위젯의 컨텐츠를 설정하는 Tkinter StringVar 메소드
+버튼을 클릭하여 Tkinter Entry 위젯의 텍스트를 설정하거나 변경하는 두 가지 방법이 있습니다.
+
+Tkinter delete 및 insert 메소드
+Tkinter StringVar 메소드
+Tkinter delete 및 insert 방법으로 Entry 의 내용을 설정
+
+
+Tkinter Entry 위젯에는 Entry 의 컨텐츠를 설정하기위한 전용 set 메소드가 없습니다. 컨텐츠를 완전히 변경해야하는 경우 먼저 기존 컨텐츠를 삭제 한 다음 새 컨텐츠를 삽입해야합니다.
+
+
+
+delete 및 insert 메소드를 사용하여 Entry 에 텍스트를 설정하는 완전한 작업 코드
+import tkinter as tk
+root = tk.Tk()
+root.geometry("400x50")
+
+def setTextInput(text):
+    textExample.delete(0,"end")
+    textExample.insert(0, text)
+
+textExample = tk.Entry(root)
+textExample.pack()
+
+btnSet = tk.Button(root, height=1, width=10, text="Set", 
+                    command=lambda:setTextInput("new content"))
+btnSet.pack()
+
+root.mainloop()
+Tkinter Tkinter Entry_delete 의 내용 설정 및 삽입 방법
+
+textExample.delete(0,"end")
+Entry 의 delete 메소드는 Entry 에서 지정된 문자 범위를 삭제합니다.
+
+
+0 은 첫 번째 문자이고"end"는 Entry 위젯에서 컨텐츠의 마지막 문자입니다. 따라서 delete(0, "end")는 Text 상자 안의 모든 내용을 삭제합니다.
+
+textExample.insert(0, text)
+insert 메소드는 텍스트를 지정된 위치에 삽입합니다. 위의 코드에서 시작 부분에 ‘텍스트’를 삽입합니다.
+
+Tkinter Entry 위젯의 컨텐츠를 설정하는 Tkinter StringVar 메소드
+Tkinter Entry 위젯의 컨텐츠가 StringVar 오브젝트와 연관된 경우,StringVar 값이 업데이트 될 때마다 Tkinter Entry 위젯의 컨텐츠를 자동으로 변경할 수 있습니다.
+
+StringVar 객체를 사용하여 Entry 에 텍스트를 설정하는 완전한 작업 코드
+import tkinter as tk
+root = tk.Tk()
+root.geometry("400x50")
+
+def setTextInput(text):
+    textEntry.set(text)
+
+textEntry = tk.StringVar()
+
+textExample = tk.Entry(root,
+                      textvariable = textEntry)
+textExample.pack()
+
+btnSet = tk.Button(root,
+                   height=1,
+                   width=10,
+                   text="Set",
+                   command=lambda:setTextInput("new content"))
+btnSet.pack()
+
+root.mainloop()
+textEntry = tk.StringVar()
+
+textExample = tk.Entry(root,
+                      textvariable = textEntry)
+textEntry 는 StringVar 객체이며 텍스트 내용 또는 다른 말로 Entry 위젯의 textvariable 옵션과 연관되어 있습니다.
+
+textEntry.set(text)
+textEntry 가 새로운 값 text 를 갖도록 갱신되면,textvariable 과 연관된 위젯이 자동으로 갱신됩니다.
+
+
+#방법 1
+import matplotlib
+import matplotlib.font_manager as fm
+
+fm.get_fontconfig_fonts()
+font_location = 'C:/Windows/Fonts/NanumMyeongjo.ttf' # For Windows
+font_name = fm.FontProperties(fname=font_location).get_name()
+matplotlib.rc('font', family=font_name)
+
+
+#방법 2
+import matplotlib.pyplot as plt
+
+plt.rc('font', family='NanumMyeongjoOTF') # For MacOS
+print(plt.rcParams['font.family'])
+
+plt.rc('font', family='NanumMyeongjo') # For Windows
+print(plt.rcParams['font.family'])
+
+
+
+C:\Users\Administrator\AppData\Local\Microsoft\Windows\Fonts
+NanumBarunGothic.ttf
+
+import matplotlib.pyplot as plt
+import matplotlib.font_manager as fm
+
+font_location = 'C:/Users/Administrator/AppData/Local/Microsoft/Windows/Fonts/NanumBarunGothic.ttf'
+font_name = fm.FontProperties(fname=font_location).get_name()
+
+plt.rc('font', family=font_name)
+
+Spyder 
+주석 일괄 반영 Ctrl + 1
+
+■ 파이썬 GUI Programming & widget
+import tkinter
+
+win = tkinter.Tk()
+win.title('윈도우 생성하기')
+
+lbl=tkinter.Label(win, text= " 안녕 파이썬~")
+lbl.pack()
+
+lbl2=tkinter.Label(win, text="hello world~", bg='red', fg='white')
+lbl2.pack(fill='x')
+
+win.mainloop()
+
+import tkinter
+win = tkinter.Tk()
+ent1 = tkinter.Entry(win,
+                      relief='ridge',
+                      borderwidth=3,
+                      highlightcolor="red",
+                      highlightthickness=3,
+                      highlightbackground='yellow',
+                      takefocus=True)
+
+ent1.pack()
+
+ent2 = tkinter.Entry(win,
+                      relief='ridge',
+                      borderwidth=3,
+                      highlightcolor="red",
+                      highlightthickness=3,
+                      highlightbackground='yellow',
+                      takefocus=True)
+ent2.pack()
+win.mainloop()
+
+
+■ Excel 화일 읽기
+import pandas as pd
+bike_data = pd.read_csv('data/bike_usage_0.csv', encoding = 'ANSI') ,sep='\t'
+
+# dataset1 이라는 변수에 해당 파일을 저장합니다.
+dataset1 = pd.read_csv('/Users/gbpark/Downloads/rootkey.csv', index_col = 0) # 옵션: 인덱스 칼럼 제외
+dataset1 # 변수에 파일이 잘 저장이 되었는지 확인합니다.
+
+# (2) xlsx 형식의 파일을 불러오는 경우
+dataset2 = pd.read_excel('/Users/gbpark/Downloads/rootkey.xlsx', index_col = 0) # 옵션: 인덱스 칼럼 제외
+dataset2 # 변수에 파일이 잘 저장이 되었는지 확인합니다.
+
+dataset3 = pd.read_csv('/Users/gbpark/Downloads/rootkey.csv', sheet_name = 'sheet1', index_col = 0) # 옵션: 인덱스 칼럼 제외
+dataset3 # 변수에 파일이 잘 저장되었는지 확인합니다.
+
+import xlwings as xw
+book = xw.Book(file_name)
+df = book.sheets(1).used_range.options(pd.DataFrame).value
+self.df = pd.DataFrame(df.iloc[1:, :21].dropna(axis = 0, how = 'all').values, columns = df.iloc[0, :21].values)
+
+
+■ xlwings
+
+
+
+import os
+os.listdir()
+os.chdir("P:\개인자료")
+
+import xlwings as xw
+def automate_excel(file_name):
+    bk = xw.Book(file_name)
+    sh = bk.sheets(1)
+    df = sh['A1:E7'].options(pd.DataFrame).value
+    return df
+
+df_auto = automate_excel('주식_종목_리스트2.xlsx')
+df_auto
+
+
+
+■ dc-bias library 분석
+
+▶ 실행 문제 있던 것들
+self.cboPow.textActivated.connect(self.filter_fir)
+→ self.cboPow.activated[str](self.filter_fir)
+   #    self.cboDiel.textActivated.connect(self.filter_sec)
+   #    self.cboFreq.textActivated.connect(self.filter_thr)
+
+ # self.lblaging.clear()
+ # self.lbltime.clear()
+
+
+import pandas as pd
+bk2 = xw.Book('Dc-bias_library_V2.xlsx')
+
+df = bk2.sheets(1).used_range.options(pd.DataFrame).value
+
+
+df2 = pd.DataFrame(df.iloc[1:, :21].dropna(axis = 0, how = 'all').values, columns = df.iloc[0, :21].values)
+
+mat = list(set(df2["조성"]))
+mat = [x for x in mat if pd.isnull(x) == False]
+mat.sort()
+
+lib = pd.DataFrame(df2, columns = ["조성","유전율", "vol_lev", "DC-Bias 측정", '전압 (Vdc)', 'sheet 두께', 'DF', '주파수(kHz)', 'AC(V)', '전압유지시간', 'Aging 시간'])
+lib["유전율"] = [int(x) if x != '사이즈 없음' else x for x in lib['유전율']]
+
+
+===============================================================================
+■ 처음하는 데이타분석, Python으로 시작하기
+
+bike_usage_0.csv (4.6MB)
+txt population_by_Gu.txt (540B)
+csv stations.csv (46.3KB)
+csv weather.csv (357.3KB)
+
+Anaconda 설치 > Jupeter note
+anoconda.com > Download > Python 3.7
+OS 버전 : 32/64
+
+파아썬 기초
+1. 변수
+숫자, _외 특수문자 시작 불가
+시스템예약어, 연산자 사용불가
+대소문자 구분
+
+2. 함수
+
+3. 데이터 타입
+숫자 : 정수, 실수 유연성
+String
+
+List : [ , , ]   
+ a=[1, 2, 3]
+ b=['a', 'b', 'c']
+ c=[1,a,'c']
+
+Tuple : ( , , ), 괄호 X도 인식
+ a = (1,2,3)
+ d = 'a', 'b', 'c' 문자열
+ c = (a,b,c) 변수 
+
+List, Tuple 유사점
+순서를 가짐, 내부요소의 순서를 이용해서 내용을 꺼내볼 수 있음 - index 0~
+List 내부항목 삭제, 추가, 변경 가능, Tuple 불가
+
+Set : { , , } 순서개념 X, 내부 요소 중복 X
+
+연산자
+부등호먼저... >=, <=
+!=
+
+현재 작업 디렉토리 확인
+import os
+os.getcwd()
+'C:\\Users\\Administrator\\Untitled Folder'
+
+Pandas 패키지
+엑셀 like  테이블구조 DataFrame 타입 편리함, 다양한 기능 → 데이터 분석에 널리 사용
+데이터프레임 특정 컬럼 추출 대괄호 or . : bike_data['Distance'] or bike_data.Distance
+특정 컬럼 값 조건으로 추출 : bike_data[bike_data.Momentum == '\\N']
+
+pandas import 필요
+
+import pandas as pd
+bike_data = pd.read_csv('data/bike_usage_0.csv', encoding = 'ANSI')
+(default : UTF-8)
+
+population = pd.read_csv('data\population_by_Gu.txt') /로 붙어나옴
+population = pd.read_csv('data\population_by_Gu.txt',sep='\t') tab
+
+weather = pd.read_csv('data\weather.csv')
+
+bike_data
+bike_data.describe() : 수치형 data column 기본 통계치 제공
+
+bike_data.isnull()
+bike_data.isnull().sum()
+type(bike_data) → pandas.core.frame.DataFrame
+
+bike_data.columns
+bike_data.head 첫 5줄 (인덱스 0, 1, ....)
+↔ bike_data.tail
+bike_data.info()
+bike_data.shape
+
+bike_data.Distance ↔ bike_data['Distance']
+bike_data.Distance.sum() ↔ bike_data['Distance'].sum()
+ 
+특정 frame
+. 사용 - bike_data.Distance → w/ Index 앞뒤 다섯 줄
+[] 사용 - bike_data['Distance'] 
+
+bike_data['Membership_type'].unique()
+bike_data['Membership_type'].value_counts()
+bike_data['Membership_type'].value_counts(normalize = True)
+
+methode
+count, describe, min, max, sum, mean, var, std, skew, kurt, cumsum
+
+
+□ 결측값 (데이타 X), 이상값 (특정범위 벗어나는 극단값) 제거
+
+이상치 처리
+bike_data[bike_data.Gender.isnull()]
+bike_data.loc[bike_data.Gender.isnull(), 'Gender'] = 'U'
+
+처리 확인
+bike_data[bike_data.Gender.isnull()]
+bike_data.Gender.value_counts()
+
+이상치 확인
+bike_data.info() → Momentum : object 
+bike_data.Momentum.isnull().sum() → 0
+bike_data.Momentum.min() → '0'
+bike_data.Momentum.max() 
+bike_data[bike_data.Momentum =='\\N'] → '\\N' 제거 후 타입 변경 필요
+
+이상치 처리
+import numpy as np
+bike_data.loc[bike_data.Momentum == '\\N', 'Momentum'] = np.nan
+
+bike_data[bike_data.Momentum == '\\N']
+bike_data.dropna()
+bike_data.dropna(inplace = True) 실제 제거
+
+----------------------------------------------------------------------------------------------------
+dropna syntax
+
+DataFrame.dropna(axis=0/1, how='any'/'all', subset=[col1, col2, ...], inplace=True/False)
+dropna에 들어갈 수 있는 parameter들은 더 많지만 일단 대표적인 것들만 보겠습니다.
+
+axis = 0/1 or 'index'/'columns'
+0 or 'index' -> NaN 값이 포함된 row를 drop (default 값입니다.)
+1 or 'columns' -> NaN 값이 포함된 column을 drop
+
+how = 'any'/'all'
+any -> row 또는 column에 NaN값이 1개만 있어도 drop (default 값입니다.)
+all -> row 또는 column에 있는 모든 값이 NaN이어야 drop
+
+inplace = True/False
+True -> dropna가 적용된 DataFrame 자체에 dropna를 적용
+False -> dropna가 적용된 DataFrame는 그대로 두고 dropna를 적용한 DataFrame을 return
+
+subset = [col1, col2, ...]
+subset을 명시하지 않으면 DataFrame 전체(모든 column & 모든 row)에 대해 dropna를 진행
+subset을 명시하면 subset에 적힌 column값에 대해서만 dropna를 진행
+------------------------------------------------------------------------------------------------------
+
+bike_data[['Momentum', 'Carbon_amount']].dtypes
+bike_data[['Momentum', 'Carbon_amount']]= bike_data[['Momentum', 'Carbon_amount']].astype(float)
+bike_data[['Momentum', 'Carbon_amount']].dtypes
+bike_data.info() object → foat64 변경
+
+이상값 (특정범위 벗어나는 극단값) 제거 필요
+
+Tukey
+1사분위 이하, 3사분위 이상 제거
+
+import numpy as np
+
+def outliers_iqr(data):
+    q1, q3 = np.percentile(data,[25,75])
+    iqr = q3 -q1
+    lower_bound = q1 - (iqr*1.5)
+    upper_bound = q3 + (iqr*1.5)
+    return np.where((data>upper_bound) | (data<lower_bound))
+
+outliers = outliers_iqr(bike_data.Distance)
+
+bike_data.iloc[outliers]
+
+iloc : 행 위치 숫자 표시 데이터 일부 추출 indexer
+outliers : 정수 담은 array iloc 인덱서 사용 적당
+
+□ 결측값 처리
+1. 결측값 소 → 해당데이터 삭제
+2. 추정 가능한 값으로 채움
+3. 추정 근거가 없거나 전체 데이터가 많지 않을 경우 → 평균값으로 채움
+
+□ 데이터 전처리
+데이터 정제, 통합, 축소, 변환 
+Case-by-case
+
+□ 데이터 결합
+데이터 저장, 연관데이터 결합
+빅데이터 시대
+
+DataFrame 결합 방법 
+jointype 
+output 테이블에 값을 채우는 방법
+key : 결합기준 정의
+bike_data
+merge()
+Join Type_How 인자
+inner(default) 교집합, outer 합집합, left,  right
+
+bike_data2 = pd.merge(bike_data, stations, left_on = 'Station_no_out', right_on = 'ID')
+pd.merge(df1, df2, how='right', on = 'a')
+
+□ 데이터의 시각화
+통계수치 산출 → 그래프보다 데이타를 정확히 설명하지 못함
+
+시각화패키지 
+matplotlib, 
+
+▶ Pie Chart
+import matplotlib.pyplot as plt
+import numpy as np
+
+labels = bike_data2.Gender.unique()
+sizes = bike_data2.Gender.value_counts()
+colors = ['yellowgreen','lightskyblue','lightcoral','blue','coral']
+plt.pie(sizes, labels = labels, colors = colors, autopct = '%1.1f%%', startangle = 90)
+plt.show()
+
+▶ Histogram
+plt.hist(bike_data2.Distance, color = 'blue')
+plt.show()
+
+plt.hist(bike_data2.Distance, color = 'blue', bins = 1000)
+plt.show()
+
+▶ Boxplot
+plt.boxplot(bike_data2.Distance)
+plt.show()
+
+under_5000 = bike_data2[bike_data2.Distance < 5000]
+plt.boxplot(under_5000.Distance)
+plt.show()
+
+under_5000 = bike_data2[bike_data2.Distance < 5000]
+plt.boxplot([under_5000.Distance[under_5000.Gender=='F'], under_5000.Distance[under_5000.Gender =='M']])
+plt.xticks([1,2],['Female','Male'])
+plt.show()
+
+▶ 시계열?
+plt.plot(bike_data['Distance'].groupby(bike_data['Date_out']).sum())
+plt.show()
+
+▶ Bar chart
+plt.bar(labels, height=sizes, color = 'blue')
+plt.show()
+
+bike_data2['Gender'].value_counts().plot(kind = 'bar')
+plt.show()
+
+□ Data 소문자 → 대문자 처리, Distance == 0 처리
+bike_data2[bike_data2.Gender == 'f']
+bike_data2.loc[bike_data2.Gender == 'f', 'Gender'] = 'F'
+
+bike_data2[bike_data2.Gender == 'm']
+bike_data2.loc[bike_data2.Gender == 'm', 'Gender'] = 'M'
+
+bike_data2[bike_data2.Distance == 0]
+1005 rows × 23 columns
+bike_data2.loc[bike_data2.Distance == 0, 'Duration'].max()
+214
+bike_data2 = bike_data2[bike_data2.Distance != 0]
+bike_data2[bike_data2.Distance == 0]
+0 rows × 23 columns
+
+
+
+→ 여기부터...
+□ pivot
+bike_pivot = pd.pivot_table(bike_data2, index='Age_Group', columns='Membership_type', values='Distance', aggfunc=np.sum)
+bike_pivot
+
+pd.melt(bike_pivot, id_vars='Age_Group', value_vars = ['단체권', '일일권', '일일권(비회원)', '정기권'], var_name='Membership_type', value_name='Total_Dist')
+KeyError
+
+
+정규분포
+중심극한정리 : 원래 데이터 세트가 정규분포를 따르지 않아도 됨
+대수의 법칙
+
+Histogram
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+random_sample = np.random.normal(loc=10, scale=2, size=1000)
+plt.hist(random_sample, bins=100)
+plt.show()
+
+Q-Q plot
+
+import numpy as np
+import pylab
+import scipy.stats as stats
+
+norm_sample = np.random.normal(loc=20, scale=5, size=100)
+stats.probplot(norm_sample, dist='norm', plot=pylab)
+pylab.show()
+
+import matplotlib.pyplot as plt
+import numpy as np
+import random
+
+avg_values = []
+for i in range(1,11): #101, 1001, 10001, ....
+    random_sample = random.sample(range(1, 1000), 100)
+    x = np.mean(random_sample)
+    avg_values.append(x)
+    
+plt.hist(avg_values, bins = 100)
+plt.show
+    
+
+- 가설검정
+Levene 등분산 검정
+
+y_gu = bike_data2[bike_data2.Gu == '영등포구']
+m_gu = bike_data2[bike_data2.Gu == '마포구']
+
+from scipy import stats
+stats.levene(y_gu.Distance, m_gu.Distance)
+
+LeveneResult(statistic=0.758025643859691, pvalue=0.38396742567744446)
+pvale > 0.05 등분산
+
+np.mean(y_gu.Distance) vs. np.mean(m_gu.Distance)
+
+t-test
+귀무가설 : 두 지역의 이동거리 평균 같음 ↔ 대립가설 (작다, 크다, 같지 않다)
+stats.ttest_ind(y_gu.Distance, m_gu.Distance, equal_var = True)
+Ttest_indResult(statistic=-4.002195758414915, pvalue=6.298774059911862e-05)
+귀무가설 기각 (유의 수준과 P-value 간의 비교, 유의수준 0.05, 엄격 : 0.01, 0.001도 가능 감당할 수 있는 리스크 α와 p-value 비교)
+
+▷ 두개의 평균값 비교
+일표본 t-검정 (One sample t-test) : 표본 평균이 모집단 평균과 같은지 검정
+이표본 t-검정 (Two sample t-test) : 두 표본의 평균이 같은지 검정
+대응표본 t-검정 (Paired t-test) :  대응하는 두 표본의 평균 차이가 특정 값과 같은지 검정 (Before-After)
+
+▷ 여러개의 평균값 비교
+분산분석 (평균 포함)
+1. 등분산분석 (Batlett's Test) : 귀무가설 분산이 모두 같다. → 귀무가설 기각 : 모든 그룹의 분산이 같은 것은 아니다
+from scipy import stats
+stats.bartleet(y_gu.Distance, m_gu.Distance, )
+
+등분산 X : 1. 비모수적 분석 방법, 2. 데이터 보완점 검토 (데이터 불충분)
+
+2. 분산 분석 (One-way ANOVA) : 모든 그룹의 평균이 같다 ↔ 어떤 그룹의 평균은 같지 않다
+stats.f_oneway(y_gu.Distance, m_gu.Distance, s_gu.Distance, d_gu.Distance, e_gu.Distance)
+
+import matplotlib.pyplot as plt
+plot_data = [y_gu.Distance, m_gu.Distance, s_gu.Distance, d_gu.Distance, e_gu.Distance]
+plt.boxplot(plot_data)
+or
+plt.boxplot(plot_data, showfliers = False)
+plt.show()
+
+3. 사후 분석 (Tukey HSD) : 평균이 다른 그룹 
+statsmodels
+
+from statsmodels.stats.multicomp import pairwise_tukeyhsd
+
+hsd = pairwise_tukeyhsd(bike_data2.Distance, bike_data2.Gu)
+hsd.summary()
+
+□ 카이제곱 (독립성) 검정
+수치형 데이터가 아닌 경우 : 대표값 평균 구할 수 X → 비율
+정규분포의 분산에 대한 확률 분포
+
+▶ 두개의 범주형 데이터 : 성별이 폰 타입 선호도에 차이가 없다.
+
+연령대에 따라서 멤버십 타입 선호가 다른가?
+입력값 요약표 : 피벗 or crosstab
+
+from scipy.stats import chi2_contingency
+
+crosstab = pd.crosstab(bike_data2.Age_Group, bike_data2.Membership_type)
+chi2_contingency(crosstab)
+
+result = chi2_contingency(crosstab)
+print('Chi2 Statistic : {}, p-value : {}'.format(result[0], result[1]))
+
+귀무가설 : Age_Group과 Membership_type은 독립적이다.
+대립가설 : Age_Group과 Membership_type은 연관성이 있다.
+
+□ 
+
+산점도, 상관분석, scipy.stats pearsonr, pandas corr
+stats.pearsonr(by_gu.Distance, by_gu.Population)
+(-0.35477444022652943, 0.557950425295368) 상관계수, P-value P-value > 0.05 상관계수가 없다 (귀무가설)
+
+by_gu = pd.merge(dist_by_gu, population, on = 'Gu')[['Gu', 'Distance', 'Population']]
+by_gu.corr() P-value X
+Pandas corr() 사용 : 여러 변수 상관계수 표로 나타냄
+
+bike_data2.Gu.value_counts()
+
+y_gu = bike_data2[bike_data2.Gu == '영등포구']
+m_gu = bike_data2[bike_data2.Gu == '마포구']
+
+2개 구
+from scipy import stats
+stats.levene(y_gu.Distance, m_gu.Distance)
+from scipy import stats
+
+stats.levene(y_gu.Distance, m_gu.Distance) / np.mean(m_gu.Distance)
+stats.ttest_ind(y_gu.Distance, m_gu.Distance, equal_var = True)
+
+여러 구
+from scipy import stats
+stats.bartlett(y_gu.Distance, m_gu.Distance, s_gu.Distance, d_gu.Distance, e_gu.Distance)
+
+stats.f_oneway(y_gu.Distance, m_gu.Distance, s_gu.Distance, d_gu.Distance, e_gu.Distance)
+plot_data = [y_gu.Distance, m_gu.Distance, s_gu.Distance, d_gu.Distance, e_gu.Distance]
+plt.boxplot(plot_data, showfliers = False)
+plt.show()
+
+from statsmodels.stats.multicomp import pairwise_tukeyhsd
+
+hsd = pairwise_tukeyhsd(bike_data2.Distance, bike_data2.Gu)
+hsd.summary()
+
+from scipy.stats import chi2_contingency
+
+crosstab = pd.crosstab(bike_data2.Age_Group, bike_data2.Membership_type)
+chi2_contingency(crosstab)
+result = chi2_contingency(crosstab)
+print('Chi2 Statistic : {}, p-value : {}'.format(result[0], result[1]))
+===========================================================
+
+import pandas as pd
+bike_data = pd.read_csv('data/bike_usage_0.csv', encoding = 'ANSI')
+
+# 공백 제거
+import numpy as np
+bike_data.loc[bike_data.Momentum == '\\N', 'Momentum'] = np.nan
+bike_data.dropna(inplace = True)
+
+# 수치형 변경
+bike_data[['Momentum', 'Carbon_amount']]= bike_data[['Momentum', 'Carbon_amount']].astype(float)
+
+import numpy as np
+
+def outliers_iqr(data):
+    q1, q3 = np.percentile(data,[25,75])
+    iqr = q3 -q1
+    lower_bound = q1 - (iqr*1.5)
+    upper_bound = q3 + (iqr*1.5)
+    return np.where((data>upper_bound) | (data<lower_bound))
+
+# outlier 제거
+outliers = outliers_iqr(bike_data.Distance)
+
+stations = pd.read_csv('data/stations.csv')
+
+# database 병합
+bike_data2 = pd.merge(bike_data, stations, left_on = 'Station_no_out', right_on = 'ID')
+
+# 이상치 처리
+bike_data2.loc[bike_data2.Gender == 'f', 'Gender'] = 'F'
+bike_data2.loc[bike_data2.Gender == 'm', 'Gender'] = 'M'
+bike_data2 = bike_data2[bike_data2.Distance != 0]
+weather = pd.read_csv('data\weather.csv')
+
+# 회귀분석 -전처리
+new_weather = pd.pivot_table(weather, index = ['date', 'time'], values = ['temp','cum_precipitation', 'humidity', 'insolation', 'sunshine', 'wind', 'wind_direction', 'sea_lvl_pressure', 'pressure'], aggfunc = np.mean)
+new_weather = new_weather.reset_index()
+
+new_bike = pd.pivot_table(bike_data2, index = ['Date_out', 'Time_out'], values = ['Distance'], aggfunc = len)
+new_bike = new_bike.reset_index()
+
+new_bike.rename(columns = {'Distance':'Count'}, inplace = True)
+new_bike.columns
+
+bike_weather = pd.merge(new_bike, new_weather, left_on = ['Date_out', 'Time_out'], right_on = ['date', 'time'])
+bike_weather
+
+#회귀분석 -실행
+from scipy import stats
+stats.linregress(bike_weather.temp, bike_weather.Count)
+
+slop, intercept, r_value, p_value, std_err = stats.Iinregress(bike_weather.temp, bike_weather.Count)
+print("R-squared : %f" %r_value**2)
+
+import statsmodels.api as sm
+x0 = bike_weather.temp
+x1 = sm.add_constant(x0)
+y = bike_weather.Count
+model = sm.OLS(y, x1)
+result = model.fit()
+print(result.summary())
+
+
+=====================================================
+
+회귀분석
+귀무가설 : 회귀관계가 없다. 기울기가 0이다.
+(기각 : 회귀관계가 없다고 볼 수 없다. ?)
+통계적으로 유의하게 회귀식이 존재한다
+
+One_hot_encoding
+범주형 data → 수치형 변수 변환
+Dummy 변수 N=0, Y=1
+
+from scipy import stats
+stats.linregress(bike_weather.temp, bike_weather.Count)
+
+slop, intercept, r_value, p_value, std_err = stats.Iinregress(bike_weather.temp, bike_weather.Count)
+print("R-squared : %f" %r_value**2) 
+
+import statsmodels.api as sm
+x0 = bike_weather.temp
+x1 = sm.add_constant(x0)
+y = bike_weather.Count
+model = sm.OLS(y, x1)
+result = model.fit()
+print(result.summary())
+
+  
+R^2, F값에 대한 p-value, 독립변수의 t값에 대한 p-value 
+R-squared:                       0.186
+Prob (F-statistic):           0.000214
+ P>|t| temp                    0.000
+회귀식의 존재 자체와 그 가치를 제일 먼저 말하고 있는 지표
+
+머신러닝과 회귀분석
+Train → Prediction → Evaluation
+
+Split 함수에서의 독립변수의 변동
+Drop Last
+
+
+범주형 데이터 머신러닝
+
+new_weather = pd.pivot_table(weather, index = ['date', 'time'], values = ['temp','cum_precipitation', 'humidity', 'insolation', 'sunshine', 'wind', 'wind_direction', 'sea_lvl_pressure', 'pressure'], aggfunc = np.mean)
+new_weather = new_weather.reset_index()
+new_bike = pd.pivot_table(bike_data2, index = ['Date_out', 'Time_out'], values = ['Distance'], aggfunc = len)
+new_bike =  new_bike.reset_index()
+
+
+from sklearn.model_selection import train_test_split
+
+x = bike_weather[['cum_precipitation', 'humidity', 'temp', 'wind']]
+y = bike_weather.Count
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state = 123)
+
+import statsmodels.api as sm
+
+x1 = sm.add_constant(x_train)
+model = sm. OLS(y_train, x1)
+result = model.fit()
+print(result.summary())
+
+x1 = sm.add_constant(x_test)
+pred = result.predict(x1)
+pred
+
+from sklearn import metrics
+
+print('MAE :', metrics.mean_absolute_error(y_test, pred))
+print('MSE :', metrics.mean_squared_error(y_test, pred))
+print('RMSE :', np.sqrt(metrics.mean_squared_error(y_test, pred)))
+print('MAPE :', np.mean(np.abs((y_test-pred) / y_test)) *100)
+
+Pseudo R-squ.:                  0.5946
+유의성이 확인되지 않은 독립변수
+
+from sklearn.linear_model import LogisticRegression
+
+log_reg = LogisticRegression()
+log_reg.fit(x_train, y_train)
+print('Train set 정확도 : %.2f' %log_reg.score(x_train, y_train))
+print('Test set 정확도 : %.2f' %log_reg.score(x_test, y_test))
+
+LLR p-value:   
+             precision    recall  f1-score   support
+
+           0       0.95      1.00      0.98        20
+           1       0.00      0.00      0.00         1
+
+    accuracy                           0.95        21
+   macro avg       0.48      0.50      0.49        21
+weighted avg       0.91      0.95      0.93        21
+
+로지스틱 회귀분석
+선형관계를 로그 및 역함수 변환을 통하여 분류 변화한다.
+Train 함수 로지스틱 회귀분석 모델 만듦
+p-value 값 통계적 우의성 확인
+Predict 함수 로지스틱 회귀분석 모델의 예측값 계산
+Evaluate 함수 예측결과의 정확도 계산
+accuracy, precision, recall, f1-score
+
+의사결정 나무
+https://www.graphviz.org/download/
+사내 연결 불가
+
+anaconda power shell
+conda install pydot
+conda install pydotplut
+conda install graphviz
+path
+C:\Program Files (x86)\Graphviz2.38\bin
+
+군집분석
+■ K-Means 클러스터링
+데이터에 종속변수가 없는 비지도학습으로 유사한 것끼리 군집을 형성하는 기법
+유사성 측정의 기존이 되는 Feature를 정하는 것과 몇 개의 그룹으로 나눌 것인지 K값을 정해주는 것이 중요
+결과가 항상 만족스러운 것은 아니며 K값 변경으로 분석 목적에 맞는 결과를 도출
+K값을 주면 무조건 K개의 클러스터를 만들어 줌
+군집화할 대상이 많거나 feature가 많을 경우 유용
+
+MinMaxScaler : humidity 최대값 1, 최소값 0, 나머지 값들 0, 1 사이의 상대적인 위치 값으로 맵핑하여 변환하는 방법
+모든 수치 데이터에 적용 → 절대값 경중의 문제를 극복
+
+구별, 일별, 시간대별 대여 횟수 집계
+
+사용법 중심 통계, 머신러닝 가장 기본적인 내용을 파이썬으로 학습
