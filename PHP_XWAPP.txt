@@ -1,0 +1,1127 @@
+Sub DeleteNames()
+    Dim n As Name
+    Dim lngCount As Long
+    On Error Resume Next
+    lngCount = ActiveWorkbook.Names.Count
+    For Each n In ActiveWorkbook.Names
+        n.Visible = True
+        n.Delete
+    Next n
+    MsgBox "총 " & lngCount & "개의 [이름] 중, " & lngCount - ActiveWorkbook.Names.Count & "개의 [이름] 삭제 완료."
+End Sub
+====================================================================================================
+
+25/3/20   C:/XAMPP 설치
+
+MySQL Workbench
+Local instance MySQL80
+root
+localhost:3306
+1234
+
+------------------------------------------      
+ 
+출처: https://wakaranaiyo.tistory.com/278 [WakaraNai:티스토리]
+
+[Web/PHP]
+
+■ PHP 설치 - XAMPP  2021. 10. 6. 17:39
+  
+WAMP
+Apache + MySQL + PHP 를 Window에서 쓸 수 있도록 만든 프로그램
+ 
+XAMPP
+bitnami에서 좀 더 다양한 기능을 제공해주고 있어서 선택
+생활코딩에서는 bitnami를 기반으로 설명함
+ 
+설치
+https://www.apachefriends.org/index.html
+
+혹시 몰라서 체크 박스에 있는 것은 다 설치해두었는데, 
+생각해보니 그만큼 쓸 것 같지 않았다.
+무튼 apache, mysql, mariaDB, php 정도면 충분한 것 같다
+ 
+php 환경설정
+C:\xampp\php 경로에서 php.ini 파일을 메모장으로 열기
+Ctrl+F로 아래 사진처럼 설정 값 바꿔주기
+  display_errors=On
+켜둬야 에러가 떠서 디버깅할 수 있다
+
+[opcache]
+; Determines if Zend OPCache is enabled
+;opcache.enable=0
+cache 저장에 시간 소요하지 말고 결과를 즉시 보려고
+
+ 
+php 실행하기
+1. C:\xampp\htdocs 에 test.php 파일 작성하기
+2. XAMPP Control Panel에서 Apache 켜기
+3. 'localhost/test.php'를 주소칸에 입력
+ 
++) test.php
+결과화면
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+</head>
+
+<body style="width:300px">
+  <table border cols=3>
+    <?php
+      $array = array(
+        array('A-101','Downtown',500),
+        array('A-102','Perryidge', 400),
+        array('A-201', 'Brighton', 900)
+      );
+
+      for ( $i=0; $i<3; $i=$i+1)    {
+        echo "
+            <tr>  <!-- one row-->
+              <td>".$array[$i][0]."</td>
+              <td>" .$array[$i][1]."</td>
+              <td>" .$array[$i][2]."</td>
+            </tr>
+          ";
+      }
+    ?>
+  </table>
+  <center> The <i> account </i> relation</center>
+
+  <form action="BankQuery" method="get">
+    Select account or loan and enter number <br>
+    <select name = "type">
+      <option value = "account" selected> Account </option>
+      <option value = "loan"> Loan </option>
+    </select>
+    <input type="text" size="5" name="number">
+    <input type="submit" value="submit">
+  </form>
+</body>
+
+</html>
+ 
+ 
+실행 예제 2
+경로: C:\xampp\htdocs 
+ 
+sendname.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title> Input Form</title>
+</head>
+
+<body>
+  <form action="receivename.php" method="post">
+    Name <input type="text" name="name"><br>
+    <input type="submit" value="send"><br>
+  </form>
+</body>
+</html> 
+ 
+receivename.php
+<!DOCTYPE html>
+<html lang="en">
+<head>
+</head>
+<body>
+  Hello, 
+  <?php
+    print($_POST['name']) //super global variable post
+  ?> 
+</body>
+</html>
+
+
+---------------------------------------------------------------------------
+[Web/PHP]
+■ PHP + MySQL            2021. 10. 9. 21:49
+
+1. XAMPP에서 Apache 먼저 킨 후 MySQL 켜기
+2. MySQL의 Admin 버튼 눌러서 phpMyadmin 접속  (port 3306 W32Print 사용 중 → 3307 변경)
+    https://complainrevolutionist.tistory.com/152
+   mySQL installer MySQL Server → Reconfigure → port 수정 (XAMPP Control Panel MySQL Config my.ini > Cntl+f port=3306 검색 > 포트 번호 변경 *)
+   admin 에러 발생
+    config.inc.php
+    $cfg['Servers'][$i]['controluser'] = 'root';
+    $cfg['Servers'][$i]['controlpass'] = '1234';
+    또 에러 발생
+    $cfg['Servers'][$i]['password'] = '1234';
+
+3. 테스트용 데이터베이스 이름 확인하기 
+ 
+테이블 생성
+- htdocs 폴더에 table.php 생성
+아래 예시는 testTable 테이블 생성
+<?php
+// 1. Connect MySQL
+// IP, user, password, DB
+  $mysqli = mysqli_connect("localhost", "root", "", "test");
+  
+  if (mysqli_connect_errno()) {
+    printf("Connect failed: %s\n", mysqli_connect_error());
+    exit();
+  }
+  else {
+  
+  // 2. Create SQL query
+    $sql = "CREATE TABLE testTable (id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, testColumn VARCHAR(75))";
+
+ // 3. Run the query
+    $result = mysqli_query($mysqli, $sql);
+    if ($result === TRUE) {
+      echo "Table testTable successfully created";
+    } else {
+      printf("Could not create table: %s\n", mysqli_connect_error());
+    }
+    
+  //4. Close connection
+    mysqli_close($mysqli);
+  }
+?>
+
+ 
+데이터 추가
+- htdocs에 insert_form.html 생성
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title> Record Insertion Form </title>
+</head>
+
+<body>
+  <form action="insert.php" method="post">
+    <p>Text to Add:<br>
+      <input type="text" name="testColumn" size="30">
+    </p>
+    <p> <input type="submit" name="submit" value="Insert Record"></p>
+  </form>
+</body>
+</html>
+
+
+ 
+- htdocs에 insert.php 생성
+<?php
+// 1. Connect MySQL
+// IP, user, password, DB
+  $mysqli = mysqli_connect("localhost", "root", "", "test");
+  
+  if (mysqli_connect_errno()) {
+    printf("Connect failed: %s\n", mysqli_connect_error());
+    exit();
+  }
+  else {
+  
+  // 2. Create SQL query
+  // . : Concatenation operator
+    $sql = "INSERT into testTable (testColumn) values (' ".$_POST["testColumn"]." ')";
+
+ // 3. Run the query
+    $result = mysqli_query($mysqli, $sql);
+    if ($result === TRUE) {
+      echo "A record has been inserted";
+    } else {
+      printf("Could not insert record: %s\n", mysqli_connect_error());
+    }
+    
+  //4. Close connection
+    mysqli_close($mysqli);
+  }
+?>
+  
+ 
+데이터 총 개수 출력
+- htdocs에 count.php 생성
+<?php
+// 1. Connect MySQL
+// IP, user, password, DB
+  $mysqli = mysqli_connect("localhost", "root", "", "test");
+  
+  if (mysqli_connect_errno()) {
+    printf("Connect failed: %s\n", mysqli_connect_error());
+    exit();
+  }
+  else {
+  
+  // 2. Create SQL query
+  // . : Concatenation operator
+    $sql = "SELECT * FROM testTable";
+
+ // 3. Run the query
+    $result = mysqli_query($mysqli, $sql);
+    if ($result) {
+      $num_of_rows = mysqli_num_rows($result);
+      printf("Result set has %d rows.\n", $num_of_rows);
+    } else {
+      printf("Could not retrieve record: %s\n", mysqli_connect_error());
+    }
+    
+    // result에 들어있는 테이블을 청소
+    mysqli_free_result($result); 
+  //4. Close connection
+    mysqli_close($mysqli);
+  }
+?>
+
+
+ 
+ 
+데이터 내용 출력
+- htdocs에 fetch.php 생성
+ 
+
+특정 컬럼에 접근하고자 할 때 
+
+MYSQLI_ASSOC : association 옵션 - 컬럼 이름으로 접근할 수 있도록 지원
+MYSQLI_NUM : 컬럼 index 숫자로 접근할 수 있도록 지원
+MYSQLI_BOTH: 둘 다 가능
+
+
+
+<?php
+  $mysqli = mysqli_connect("localhost", "root", "", "test");
+  
+  if (mysqli_connect_errno()) {
+    printf("Connect failed: %s\n", mysqli_connect_error());
+    exit();
+  }
+  else {
+    $sql = "SELECT * FROM testTable";
+
+    $result = mysqli_query($mysqli, $sql);
+    if ($result) {
+     
+      // mysqli association
+      // trying to get record from table
+      // row 수 만큼 출력 반복 : $new_array = 1 row
+      while ( $newArray = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
+        $id = $newArray['id'];
+        $testColumn = $newArray['testColumn'];
+        echo "The ID is ".$id." and the text is ".$testColumn."<br>";
+      }
+
+    } else {
+      printf("Could not retrieve record: %s\n", mysqli_connect_error());
+    }
+    
+    // result에 들어있는 테이블을 청소
+    mysqli_free_result($result); 
+    mysqli_close($mysqli);
+  }
+?>
+
+
+[Web/PHP]
+■ 환경설정 - Apache, PHP    2021. 10. 9. 21:58
+
+Apache - httpd.conf
+httpd.conf에 php 정보를 넣어서 php를 작동시킬 수 있도록 함
+(XAMPP로 했다면 할 필요 없음)
+ 
+PHP - php.ini
+- php 파일을 htdocs 외에 다른 곳에서 열고 싶다면
+doc_root= 옆에 경로 적기
+ 
+- include_path=C:\xampp\php\PEAR 앞에 ; 이 붙어있다면 삭제하기
+ 
+- extension_dir = 에
+C:\xampp\php\ext 를 적어두기
+확장 라이브러리  경로 지정
+ 
+MySQL 끈 뒤 Apache 끄고 켜기
+
+
+
+Web/PHP
+■ 파일 읽고 쓰기 - 간단한 데이터를 다룰 때   2021. 10. 9. 22:35
+
+DB까지 접근할 필요 없는 간단한 설정값들은 파일에 저장해놓고 쓰기 편하다.
+
+Connect the target file with a 'file handle'
+$fp = fopen("memo1.txt", "r");
+Read / Write
+Close
+ 
+텍스트 파일 읽기
+abc.txt
+abcdefg hijklmnop qrstuv wxyz
+ 
+readfile.txt
+<!DOCTYPE html>
+<html lang="en">
+<head>
+</head>
+<body>
+  <?php
+    $fp = @fopen("abc.txt", "r") or die("Error!\n");
+    while (!feof($fp)) {
+      echo fgets($fp)."<BR>\n";
+    }
+    fclose($fp);
+  ?>
+  
+</body>
+</html>
+
+
+출처: https://wakaranaiyo.tistory.com/282 [WakaraNai:티스토리]
+
+
+Web/PHP
+          SQLite
+          
+            WakaraNai
+            2021. 10. 9. 23:11
+          
+        
+      
+    
+
+    
+    
+      
+                    
+        
+  
+    728x90
+    
+    
+  
+
+
+  
+    반응형
+    
+    
+    (adsbygoogle = window.adsbygoogle || []).push({});
+  
+
+        
+
+            An RDBMs (Relational Database)
+
+PHP5 이후부터 지원
+MySQL보다 2배 빠르고 가벼움
+대부분의 RDBM은 서버인데 반해, SQLite는 응용 프로그램에 넣어 사용하여  내장된 엔진이 있다
+
+중소 규모에 적합
+C 기반이라 임베디드로도 쓰기 좋다
+
+
+왜냐하면 DB 사용자라는 개념이 존재하지 않기에, 권한 별 접근 X 
+하나의 DB는 하나의 파일로 구성되었기에 백업하거나 옮길 때 쉬움
+
+ 
+ 
+DB 생성과 연결, 테이블 생성
+<!DOCTYPE html>
+<html lang="en">
+<head>
+</head>
+<body>
+  <?php
+    if ($db = sqlite_open("db_ehon")) { // DB 생성 및 연결
+    // 테이블 생성
+      $query = "CREATE TABLE tbl_ehon (id INTEGER, title VARCHAR(10), price INTEGER)";
+      $result = sqlite_query($db, $query);
+      echo "Creating [db_ehon] is finished";
+    }
+    else {
+      die("Fail to connect to DB");
+    }
+    sqlite_close($db);
+  ?>
+  
+</body>
+</html>
+ 
+ 
+데이터 추가
+<!DOCTYPE html>
+<html lang="en">
+<head>
+</head>
+<body>
+  <?php
+    if ($db = sqlite_open("db_ehon")) {
+      $query = "INSERT INTO tbl_ehon (id, title, price) VALUES (1, "조각상", 5000)";
+      $result = sqlite_query($db, $query);
+
+      $query = "INSERT INTO tbl_ehon (id, title, price) VALUES (2, "그대여", 13000)";
+      $result = sqlite_query($db, $query);
+
+      echo "Insert the record in [db_ehon]";
+    }
+    else {
+      die("Fail to insert record");
+    }
+    sqlite_close($db);
+  ?>
+  
+</body>
+</html>
+ 
+ 
+데이터 출력
+<!DOCTYPE html>
+<html lang="en">
+<head>
+</head>
+<body>
+  <?php
+    if ($db = sqlite_open("db_ehon")) {
+      $query = "SELECT * FROM tbl_ehon";
+      $result = sqlite_query($db, $query);
+
+      // Get each column data of record
+      while ($info = sqlite_fetch_array($result)) {
+        print "id = {$info['if']}, ";
+        print "title = {$info['title']}, ";
+        print "price = {$info['price']}, ";
+        print "<BR>\n";
+      }
+    }
+    else {
+      die("Fail to retrieve record");
+    }
+    sqlite_close($db);
+  ?>
+  
+</body>
+</html>
+출처: https://wakaranaiyo.tistory.com/283 [WakaraNai:티스토리]
+
+
+
+
+Web/PHP
+          [PHP] File Upload
+          
+            WakaraNai
+            2021. 11. 6. 02:21
+          
+        
+      
+    
+
+    
+    
+      
+                    
+        
+  
+    728x90
+    
+    
+  
+
+
+  
+    반응형
+    
+    
+    (adsbygoogle = window.adsbygoogle || []).push({});
+  
+
+        
+
+            <?php 
+
+  // 한글 깨짐 방지
+  header("Content-Type: text/html; charset=euc-kr");
+  
+  if ($_FILES["file"]["error"] > 0){
+    echo "ERROR : ".$_FILES["file"]["error"]."<br/>";
+  } else {
+    $filename = "./file/".$_FILES["file"]["name"];
+      
+      
+    // 이미 올린 파일인지 확인
+    if (file_exists($filename)) {
+      echo "Same name file is already in";
+    }
+    else { 
+    // 올라온 파일의 정보 확인
+      echo "Upload: " . $_FILES["file"]["name"] . "<br />";
+      echo "Type: " . $_FILES["file"]["type"] . "<br />";
+      echo "Size: " . ($_FILES["file"]["size"] / 1024) . " Kb<br />";
+      echo "Stored in: " . $_FILES["file"]["tmp_name"]."<br><br>";
+
+      // 확장자 검사 - only csv
+      $fileType = preg_replace('/^.*\.([^.]+)$/D', '$1', $filename);
+      echo $fileType."<br>";
+      switch ($fileType){
+        case 'csv':
+       // case 'xlsx':  
+          move_uploaded_file($_FILES['file']['tmp_name'], $filename);
+          break;
+        default:
+          echo "Wrong file format";
+          echo "It muse be 'csv'";
+          exit();
+      }
+
+    }
+  }
+  
+  ?>
+출처: https://wakaranaiyo.tistory.com/315 [WakaraNai:티스토리]
+
+
+Web/PHP
+          [PHP] 로그인/로그아웃/회원가입
+          
+            WakaraNai
+            2021. 11. 6. 02:29
+          
+        
+      
+    
+
+    
+    
+      
+                    
+        
+  
+    728x90
+    
+    
+  
+
+
+  
+    반응형
+    
+    
+    (adsbygoogle = window.adsbygoogle || []).push({});
+  
+
+        
+
+            Database
+
+
+ 
+index.html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+</head>
+
+<body>
+  <form action="./bakery/back/login.php" method="post">
+    <label for="id"> ID </label>
+    <input type="text" name="id" /> <br>
+    <label for="pw"> Password </label>
+    <input type="text" name="pw" /> <br>
+
+    <input type="submit" value="Sign In" name="submit">
+  </form>
+
+  <br> <br> <br>
+
+  <form action="./bakery/back/signup.php" method="post">
+    <label for="id"> ID </label>
+    <input type="text" name="id" /> <br>
+    <label for="pw"> Password </label>
+    <input type="text" name="pw" /> <br>
+    <label for="pwcheck"> same Password </label>
+    <input type="text" name="pwcheck" /> <br>
+    <label for="name"> Bakery Name </label>
+    <input type="text" name="name" /><br>
+    <label for="email"> Email </label>
+    <input type="text" name="email" /> <br>
+
+    <input type="submit" value="Sign Up" name="submit">
+  </form>
+
+  <br> <br> <br>
+
+</body>
+
+</html>
+ 
+login.php
+<?php
+session_start();
+$id = $_POST['id'];
+$pw = $_POST['pw'];
+
+$mysqli = mysqli_connect("localhost", "root", "비밀번호", "DB이름");
+
+  
+if (mysqli_connect_errno()) {
+  printf("Connect failed: %s\n", mysqli_connect_error());
+  exit();
+}
+
+$sql_check = "SELECT * FROM user WHERE user_id='$id'";
+$result = mysqli_query($mysqli, $sql_check);
+
+if (mysqli_num_rows($result) === 1) {
+    $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
+    if ($row['pwd']==$pw) {
+      $_SESSION['user_id'] = $id;
+      if (isset($_SESSION['user_id'])) {
+        echo "Success Login";
+        sleep(2);
+        header('Location: ./front/main.php');
+
+      } else{
+        echo "Fail to Session Save";
+      }
+    }else { 
+      echo "wrong id or pw";
+    }
+} else {
+  echo "wrong id or pw";
+}
+
+mysqli_close($mysqli);
+?>
+ 
+main.php
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+</head>
+
+<body>
+
+  <?php
+session_start();
+if (!isset($_SESSION['user_id'])){
+  header('Location: index.html');
+}
+?>
+
+
+  <form action="./php/logout.php" method="post">
+    <input type="submit" value="Logout" name="submit">
+  </form>
+
+</body>
+
+</html>
+ 
+logout.php
+<?php
+session_start();
+if (session_destroy()){
+  header('Location: index.html');
+}
+?>
+ 
+ 
+signup.php
+<?php
+$id = $_POST['id'];
+$pw = $_POST['pw'];
+$pwcheck = $_POST['pwcheck'];
+$name = $_POST['name'];
+$email = $_POST['email'];
+
+if ($pw != $pwcheck){
+  echo "비밀번호와 확인 문자열이 서로 다릅니다.";
+  echo "<a href=signUp.html>back page</a>";
+  exit();
+}
+
+if ($id==NULL || $pw == NULL || $name== NULL || $email== NULL){
+  echo "빈 칸을 모두 채워주세요";
+  exit();
+}
+
+
+
+
+// 회원 정보를 db에 저장하기
+$mysqli = mysqli_connect("localhost", "root", "비밀번호", "DB이름");
+
+  
+if (mysqli_connect_errno()) {
+  printf("Connect failed: %s\n", mysqli_connect_error());
+  exit();
+}
+
+$sql_check = "SELECT * FROM user WHERE user_id='$id'";
+$result = mysqli_query($mysqli, $sql_check);
+
+if (mysqli_num_rows($result) === 1) {
+    echo "중복된 아이디입니다";
+    exit();
+} 
+
+
+// transaction
+mysqli_query($mysqli, "START TRANSACTION");
+
+$last_id = -1;
+$sql_signup = "INSERT INTO user (user_id, user_name, pwd, email) VALUES ('$id','$name','$pw','$email')";
+$result_signup = mysqli_query($mysqli, $sql_signup);
+if ($result_signup) {
+  $last_id = mysqli_insert_id($mysqli);
+}
+
+$sql_payment = "INSERT INTO payment (id, pay) VALUES ($last_id,0)";
+$result_payment = mysqli_query($mysqli, $sql_payment);
+$sql_count = "INSERT INTO count (id, count) VALUES ($last_id,0)";
+$result_count = mysqli_query($mysqli, $sql_count);
+
+
+// user, payment, count 테이블에 모두 삽입되었는지 확인하기
+if ($result_signup and $result_payment and $result_count){
+  echo "sign up success";
+  header('Location: ../../index.html');
+  mysqli_query($mysqli, "COMMIT");
+} else {
+  mysqli_query($mysqli, "ROLLBACK");
+  echo "fail";
+}
+
+mysqli_close($mysqli);
+?>
+출처: https://wakaranaiyo.tistory.com/316 [WakaraNai:티스토리]
+
+
+
+
+
+
+출처: https://wakaranaiyo.tistory.com/353 [WakaraNai:티스토리]
+Web/PHP
+PHP mysqli : Transaction , bindParam      2021. 12. 10. 00:12
+    
+
+            Transaction 
+단계 : start  ➡️. RW operations ➡️ commit or abort
+ 
+ACID property
+
+Atomicity : All or nothing
+Consistency : Only valid data will be written to the database (referntial intergirty)
+Isolation : Transcations (occurring at the same time) do not impact each other
+Durability : Transcations committed to the database will not be lost
+
+ 
+Concurrency Control
+Concurrency Control을 통해 서로 다른 transaction의 read/write를 공존할 수 있다
+
+Locking and timestamp-based concurrency control 가능
+
+Oracle's Locking
+
+Row-level locking, table locks
+Automatic deadlock detection and rollback
+
+
+
+
+Oracle's multiversion concurrency control은 다른 회사들 것과 다름
+
+statement나 transaction을 시작할 때, timestamp 역할을 하는 SCN(system change number)를 할당
+query 과정에서 query보다 높은 SCN을 가진 data block이 발견되면, query를 초과하지 않는 가장 높은 SCN을 가진 데이터 블록의 이전 버전을 사용해야 함
+
+
+
+Recovery
+
+Redo : 실행이 완료되지 않은 transcation을 재시도
+Undo : 실행이 완료되지 않은 transcation을 삭제
+
+<Oracle Basic Structures for Recovery>
+
+control file에 백업 정보를 포함하여 DB 작동에 필요한 다양한 metadata 포함
+database buffer의 transcation 수정에 관한 log records를 redo
+Rollback segment에 그 데이터의 이전 버전 정보를 포함
+
+<Recovery Procedure>
+
+ 백업에 redo log를 적용하여 roll foward (redo log에 commit되지 않은 데이터가 포함되어 불일치 상태)
+ rollback segment를 사용하여 uncommitted transcation을 roll back (consistent state)
+
+<Managed standby databases>
+high availablity를 보장하기 위해
+standby database는 별도의 시스템에 설치된 일반 데이터베이스의 복사본으로.
+ 
+
+
+$mysqli->begin_transaction();
+$stmt = $mysqli->$prepare('??query??');
+$stmt->bind_param('datatype for each ?', 변수들...);
+$stmt->execute();
+$mysqli->commit();  or $mysqli->rollback();
+with  ( mysqli_sql_exception $e )
+
+
+begin_transaction
+Object Oriented style
+<?php
+/* Tell mysqli to throw an exception if an error occurs */
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+
+$mysqli = mysqli_connect("localhost", "my_user", "my_password", "world");
+
+/* check connection */
+if (mysqli_connect_errno()) {
+    printf("Connect failed: %s\n", mysqli_connect_error());
+    exit();
+}
+
+/* The table engine has to support transactions */
+$mysqli->query("CREATE TABLE IF NOT EXISTS language (
+    Code text NOT NULL,
+    Speakers int(11) NOT NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+
+/* Start transaction */
+$mysqli->begin_transaction();
+
+try {
+    /* Insert some values */
+    $mysqli->query("INSERT INTO language(Code, Speakers) VALUES ('DE', 42000123)");
+
+    /* Try to insert invalid values */
+    $language_code = 'FR';
+    $native_speakers = 'Unknown';
+    $stmt = $mysqli->prepare('INSERT INTO language(Code, Speakers) VALUES (?,?)');
+    $stmt->bind_param('ss', $language_code, $native_speakers);
+    $stmt->execute();
+
+    /* If code reaches this point without errors then commit the data in the database */
+    $mysqli->commit();
+} catch (mysqli_sql_exception $exception) {
+    $mysqli->rollback();
+
+    throw $exception;
+}
+ 
+ 
+Procedural style
+<?php
+
+/* Tell mysqli to throw an exception if an error occurs */
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+
+$mysqli = mysqli_connect("localhost", "my_user", "my_password", "world");
+
+
+/* check connection */
+if (mysqli_connect_errno()) {
+    printf("Connect failed: %s\n", mysqli_connect_error());
+    exit();
+}
+
+/* The table engine has to support transactions */
+mysqli_query($mysqli, "CREATE TABLE IF NOT EXISTS language (
+    Code text NOT NULL,
+    Speakers int(11) NOT NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+
+/* Start transaction */
+mysqli_begin_transaction($mysqli);
+
+try {
+    /* Insert some values */
+    mysqli_query($mysqli, "INSERT INTO language(Code, Speakers) VALUES ('DE', 42000123)");
+
+    /* Try to insert invalid values */
+    $language_code = 'FR';
+    $native_speakers = 'Unknown';
+    $stmt = mysqli_prepare($mysqli, 'INSERT INTO language(Code, Speakers) VALUES (?,?)');
+    mysqli_stmt_bind_param($stmt, 'ss', $language_code, $native_speakers);
+    mysqli_stmt_execute($stmt);
+
+    /* If code reaches this point without errors then commit the data in the database */
+    mysqli_commit($mysqli);
+} catch (mysqli_sql_exception $exception) {
+    mysqli_rollback($mysqli);
+
+    throw $exception;
+}
+ 
+ 
+
+bind_param
+Object Oriented Style
+<?php
+
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+$mysqli = new mysqli('localhost', 'my_user', 'my_password', 'world');
+
+$stmt = $mysqli->prepare("INSERT INTO CountryLanguage VALUES (?, ?, ?, ?)");
+$stmt->bind_param('sssd', $code, $language, $official, $percent);
+
+$code = 'DEU';
+$language = 'Bavarian';
+$official = "F";
+$percent = 11.2;
+
+$stmt->execute();
+
+printf("%d row inserted.\n", $stmt->affected_rows);
+
+/* Clean up table CountryLanguage */
+$mysqli->query("DELETE FROM CountryLanguage WHERE Language='Bavarian'");
+printf("%d row deleted.\n", $mysqli->affected_rows);
+
+?>
+ 
+ 
+Procedural style
+<?php
+
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+$link = mysqli_connect('localhost', 'my_user', 'my_password', 'world');
+
+$stmt = mysqli_prepare($link, "INSERT INTO CountryLanguage VALUES (?, ?, ?, ?)");
+mysqli_stmt_bind_param($stmt, 'sssd', $code, $language, $official, $percent);
+
+$code = 'DEU';
+$language = 'Bavarian';
+$official = "F";
+$percent = 11.2;
+
+mysqli_stmt_execute($stmt);
+
+printf("%d row inserted.\n", mysqli_stmt_affected_rows($stmt));
+
+/* Clean up table CountryLanguage */
+mysqli_query($link, "DELETE FROM CountryLanguage WHERE Language='Bavarian'");
+printf("%d row deleted.\n", mysqli_affected_rows($link));
+?>
+
+      
+출처: https://wakaranaiyo.tistory.com/283 [WakaraNai:티스토리]
+Web/PHP
+■ SQLite   2021. 10. 9. 23:11
+ 
+An RDBMs (Relational Database)
+ PHP5 이후부터 지원
+ MySQL보다 2배 빠르고 가벼움
+ 대부분의 RDBM은 서버인데 반해, SQLite는 응용 프로그램에 넣어 사용하여  내장된 엔진이 있다
+
+   중소 규모에 적합
+   C 기반이라 임베디드로도 쓰기 좋다
+ 왜냐하면 DB 사용자라는 개념이 존재하지 않기에, 권한 별 접근 X 
+ 하나의 DB는 하나의 파일로 구성되었기에 백업하거나 옮길 때 쉬움
+ 
+DB 생성과 연결, 테이블 생성
+<!DOCTYPE html>
+<html lang="en">
+<head>
+</head>
+<body>
+  <?php
+    if ($db = sqlite_open("db_ehon")) { // DB 생성 및 연결
+    // 테이블 생성
+      $query = "CREATE TABLE tbl_ehon (id INTEGER, title VARCHAR(10), price INTEGER)";
+      $result = sqlite_query($db, $query);
+      echo "Creating [db_ehon] is finished";
+    }
+    else {
+      die("Fail to connect to DB");
+    }
+    sqlite_close($db);
+  ?>
+  
+</body>
+</html>
+ 
+ 
+데이터 추가
+<!DOCTYPE html>
+<html lang="en">
+<head>
+</head>
+<body>
+  <?php
+    if ($db = sqlite_open("db_ehon")) {
+      $query = "INSERT INTO tbl_ehon (id, title, price) VALUES (1, "조각상", 5000)";
+      $result = sqlite_query($db, $query);
+
+      $query = "INSERT INTO tbl_ehon (id, title, price) VALUES (2, "그대여", 13000)";
+      $result = sqlite_query($db, $query);
+
+      echo "Insert the record in [db_ehon]";
+    }
+    else {
+      die("Fail to insert record");
+    }
+    sqlite_close($db);
+  ?>
+  
+</body>
+</html>
+ 
+ 
+데이터 출력
+<!DOCTYPE html>
+<html lang="en">
+<head>
+</head>
+<body>
+  <?php
+    if ($db = sqlite_open("db_ehon")) {
+      $query = "SELECT * FROM tbl_ehon";
+      $result = sqlite_query($db, $query);
+
+      // Get each column data of record
+      while ($info = sqlite_fetch_array($result)) {
+        print "id = {$info['if']}, ";
+        print "title = {$info['title']}, ";
+        print "price = {$info['price']}, ";
+        print "<BR>\n";
+      }
+    }
+    else {
+      die("Fail to retrieve record");
+    }
+    sqlite_close($db);
+  ?>
+  
+</body>
+</html>
+
+
+====================================================================================================
+오라클 cmd 접속 물어보셨던분
+Aws처럼 cd ~ 로 키파일 있는곳 쓰고 엔터친다음
+ssh -i "키파일명" ubuntu@인스턴스 퍼블릭ip  쓰고 엔터치면 접속되요
+
+리눅스os를 조금 아신다면
+벌터도 괜찮습니다. 
+저는 여러개 봇을 구동시키는데
+딱히 봇이 멈추거나 하지는 않았어요
+
+# JSON 파일 경로 설정
+if os.name == 'nt':  # Windows 환경
+    file_path = 'D:/autobot/test_us.json'
+else:  # Linux 환경
+    file_path = '/home/ubuntu/autobot/test_us.json'
+
+카페24는 한달에 한번 정기점검 기간이 있습니다.
+리눅스쪽은 확실히 모르겠지만 윈도우쪽은 매달 한번씩 서버 다운이 발생합니다.(정기점검)
+
+오라클 우분투 24.0 에서 pyupbit 설치가 안되요 ㅠ.ㅠ
+
+# 경로의 디렉토리가 없는 경우 생성
+os.makedirs(os.path.dirname(file_path), exist_ok=True)
+
+#  JSON 파일로 저장 (예시... 원래 코드 상의 내용을 그래도 사용) 
+try:
+    with open(file_path, 'w') as json_file:
+        json.dump(Results, json_file, indent=4)
+    print(f"JSON 파일이 저장되었습니다: {file_path}")
+except Exception as e:
+    print(f"JSON 저장 중 오류 발생: {e}")
+[blueship] [오후 5:35] pc하고 리눅스 서버를 오가면서 테스트할때 코드의 filepath 부분과 파일 오픈하는 부분을 이렇게 고쳐놓으면 편해요.
+[목멱] [오후 5:58] 삭제된 메시지입니다.

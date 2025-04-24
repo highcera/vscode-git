@@ -1,0 +1,649 @@
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+Part 1. 1~7강
+
+Spring Boot
+
+Part1, Part2 과정을 통해서 스프링 부트 프레임워크 입문자가 반드시 알아야 할 필수적인 프레임워크 사용법과
+ CRUD 데이터베이스 연동 웹애플리케이션을 만드는 것을 목표
+
+* 선수학습
+스프링 부트 프레임워크 학습을 위한 사전에 먼저 공부해야 하는 과목들
+Java : 기초문법, 후반부의 OOP 관련 인터페이스, 추상 클래스, 다형성, Collection 프레임워크 기본
+SP/Servlet : 필수는 아님
+Database : 학습에 필요한 것 정도
+
+* 각 파트와 섹션소개
+전체 과정의 파트는 크게 Part1, Part2 두 개의 파트로 구성.
+Part1 
+   Section1, Section2, Section3 → 프레임워크 필수 개념 및 기본 사용법
+   Section4, Section5             → DB 연동 관련 용어 이해 및 개념 탑재
+Part2
+   위 과정에서 이어지는 심화 과정.
+
+
+■ 3차시
+* 스프링부트 학습을 위한 필요한 프로그램
+→ Java JDK 
+→ 이클립스??? < intelli J   
+→ STS ( Spring Tool Suite 4 )
+
+* STS가 뭔가요?
+스프링부트 전용 개발 툴 (처음 권장)
+IntelliJ와 같은 좋은 툴도 있다. 스프링부트 전용 개발 툴 사용 - 설치도 쉽고, 이후 설정도 매우 간소화되고 편리
+특히, 의존성 관리가 매우 편리하고 거의 설정을 하는게 없을 정도
+기존 스프링 프레임워크의 복잡한 설정을 경험해본적이 있다면 스프링부트는 신세계를 보는 느낌이다.
+톰캣과 같은 서버도 다 내장되어 있으므로 따로 설치할 필요가 없다.
+
+* STS 다운로드 및 설치
+이클립스에서는 따로 스프링부트 플러그인을 지원하지 않으므로 아래에서 STS를 다운 설치한다.
+각 OS별로 다운받을 수 있으므로 자신의 OS 환경에 맞는 STS를 다운한다. 
+https://spring.io/tools
+> Projects > Spring Tools 4  
+Spring Tools 4 for Eclips    windows x86_64  4.X
+다운한 압축파일 jar 파일
+
+cmd > java  (설치가 되어 있어야 함) 
+java -jar 다운받은 jar 화일명  (앞 몇글자 + TAB)
+→ sts-4.22.0.RELEASE 폴더 생성
+→ SpringToolSuite4 실행
+
+* STS 실행
+압축을 해제한 폴더안에서 SpringToolSuite4.exe 파일을 더블클릭하여 실행
+
+* 드문데 실행과정에서 에러가 나는 경우가 있을 수 있다.
+그런 경우는 SpringToolSuite4.ini 파일의 수정이 필요할 수도 있다.
+Ini 파일에서 자바 경로와 버전, Xms 등을 수정해보고 다시 해봐야 할 수도 있다.
+
+* Workspace 설정 후 Launch 버튼 클릭
+앞으로 작업하게 될 작업공간으로써 STS가 본인 계정 하위에 디폴트로 위치를 잡아서 놓는다고 보면 된다. 
+당연히 변경도 가능하므로 원하는 위치의 디렉토리를 잡아서 사용하면 된다.
+
+* STS 실행화면
+
+* STS 기본설정 - Show heap status ( window > preferences )
+말 그대로 heap 상태를 STS 하단바에 보여준다. 
+STS가 무겁게 느껴질 때 하단의 이 상태바를 확인하여 우측의 휴지통 아이콘을 클릭해 메모리를 정리해줄 수 있다.
+SpringToolSuite4.ini 파일의 수정을 통하여 메모리가 작다고 느껴지면 수정할 수도 있다.
+
+* STS 기본설정 – UTF-8 변경 ( window > preferences )
+Window > General > Content Types
+
+보통의 경우 UTF-8로 설정되어 있다. 그러나 설정이 필요한 부분을 클릭하여 전체적으로 UTF-8 설정으로 안되어 있는 것들은 바꿔준다.
+설정이 필요한 부분들은 동영상을 참고한다.
+아무튼 이곳에서 설정을 바꿔준다는 것을 기억.
+
+* STS 기본설정 – 패키지 프리젠테이션 변경
+패키지 보는 형식 변경 : 기본 flat 형식 (패키지 폴더가 아래로 쭈욱 나열된 형태)
+Hierarchical (계층형) : 패키지 폴더가 많아지면 flat 형식이 불편할 수 있어 계층형으로 변경
+
+* STS 기본설정 – 우측 하단 탭 변경 (Window > Show View > Other )
+우측 하단의 탭바를 변경할 수 있다.
+없는 항목을 추가할 수도 있고 삭제할 수도 있다.
+예를들어, Console 창을 없애도 다시 여기서 Console 창을 선택해서 보이게 할 수 있다.
+
+맨 밑에 Other를 선택해서 없는 항목을 초이스하여 추가할 수도 있다.
+
+* STS 기본설정 – Perspective 변경 ( Window > Perspective > Customize Perspective )
+STS 좌측 비어있는 부분에서 마우스 우측 버튼 클릭하여 New 클릭하면 나오는 메뉴들의 구성.
+필요한 것을 추가시킬 수 있다.
+예를들어, (Interface, Class 외에) HTML, CSS 파일 등 추가 가능
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+Part 1. 8~11강
+
+* 스프링부트 프로젝트 생성
+스프링부트 프로젝트 생성 학습
+다양한 방법으로 프로젝트를 생성할 수 있음 따라서, 다양한 생성법 알고 있는게 중요
+→ 1. start.spring.io 사이트를 통해서 프로젝트를 생성 → firstdemo.zip 파일로 프로젝트 파일이 압축되어져서 생성 → STS 툴에서 생성
+→ 2. STS 툴에서 생성
+
+* Start.spring.io 접속하여 스프링부트 프로젝트 생성
+
+Project : V Maven P / Gradle P
+Language : V Java / Kotlin / Groovy
+Spring Boot : default 설정
+Project Meatdata : default 설정 (Artifact 변경 시 name 같이 변경)
+Dependencies : Spring Web, H2 Database, Sprin Data JPA
+→ Generate - zip 화일 생성 
+패키지명 지정
+예) com.example.firstdemo (홈페이지 역순 형식)
+
+Dependencies(의존성) 체크하기 > 프로젝트 생성 및 다운로드
+
+* 생성된 프로젝트 다운로드 및 압축해제
+
+기본 다운로드 경로는 “내pc > 다운로드” 폴더
+Zip 파일을 work (astudy) 폴더로 이동시킨 후 압축을 풀고 STS 툴에서 불러들임
+압축을 풀 때 주의사항은 가급적 “여기에 압축풀기”로 압축을 푼다. (폴더 중첩 문제)
+
+-----------------------------------------------------------------------------------------------------
+* STS 툴에서 스프링부트 프로젝트 열기(Open)
+
+* 프로젝트 열기
+  File → Import Projects from File System or Achieve
+* 프로젝트 셋팅중 → 약간의 시간이 걸림 → boot 표시가 나와야 함.
+* 프로젝트 셋팅중 → boot 표시가 나왔지만 하단 Problems 탭쪽에 경고 1개 발생
+* 프로젝트 셋팅중 → 경고 1개 발생 → Java Build Path 수정 (JRE System Library [JavaSE-1.8])
+
+* 프로젝트 구성 둘러보기
+프로젝트 구성 둘러보기 – 하위 디렉토리 구조
+
+* 스프링부트 메인 실행
+실행시키는 방법은 여러가지가 있다.
+화살표 > Run As > Sping Boot App
+
+* 스프링부트 메인 실행시 방화벽 차단 보안 경고
+엑세스 허용
+
+스프링부트 메인 실행시 포트 충돌 에러 발생
+"Web server fail to start. Port 8080 was already in use."
+처음 실행시 자주 접하는 에러 유형중 하나
+여러 프로그래밍 언어를 하나의 PC에서 구동하거나 하는 경우에 그럴 수 있고 그외에도 여러 이유로 포트 충돌 에러는 날 수 있다.
+포트를 변경하여 다시 재실행해주면 된다.
+
+* 스프링부트 메인 실행시 포트 충돌 에러 수정 → 포트 변경
+
+src/main/resources > application.properties
+// server.port = 8080
+server.port = 8024
+
+* 스프링부트 메인 실행 후 브라우저로 접속
+Whitelavel Error Page
+
+* HTML 파일 생성
+src/main/resources > static > hello.htm 작성 (생성) 
+
+Hello, World 출력
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+Part 1. 12~28강
+
+Spring Boot
+
+* 스프링부트 Controller 역할과 이해
+이번 강의에서는 스프링부트 Controller 역할과 개념 그리고 실습에 대해서 학습합니다.
+스프링부트에서 컨트롤러의 이해는 처음 사용자가 가장 먼저 이해해야 하는 부분입니다.
+진입점의 역할을 하는 컨트롤러의 역할과 개념에 대해서 학습하고 실습을 통해서도 정리해봅니다.
+→ start.spring.io 사이트를 통해서 프로젝트를 생성한 직전 강좌의 firstdemo 프로젝트로 진행.
+→ 직전 강좌들 학습 필수.
+
+* STS 개발 툴에서 글자 폰트 및 사이즈 조정
+<앞부분 정리 확인>
+
+* http://localhost:8080 로 접속하면 왜 에러가 날까?
+Whitelabel Error Page
+진입점이 없어서 에러 발생.
+따라서 진입점을 만들어주면 에러가 나지 않는다.
+진입점은 index.html 파일과 같이 직접 인덱스 파일을 만들어주는 것도 가능하고, 컨트롤러를 통해서 진입점을 찾아들어갈 수 있도록 만드는 것도 가능.
+
+src/main/resources > index.html 파일을 만들어보자.
+그런 후 브라우저로 실행.
+
+* 스프링부트 서버 restart
+왼쪽 아래 창 > local > firstdemo[:8080] 오른쪽 마우스 
+
+* http://localhost:8080로 접속하면 왜 에러가 날까?
+
+여전히 루트로 접속하면 에러가 발생한다.
+뭔가 스프링부트가 진입점을 찾지 못한다는 느낌이 든다. 
+
+그렇다.
+스프링부트는 기본적으로 static 폴더안에서 index.html 이 있는지 없는지를 찾기 때문에 index.html 파일을 static 폴더안으로 옮긴 후 다시 실행해보자.
+
+이때 서버 restart도 다시 해줘야 한다는 것을 명심.
+
+루트로 접속이 잘 된다.
+/index.html 파일명을 명시하지 않아도 잘 접속이 된다.
+물론 명시해도 잘 된다.
+
+이걸 통해서 스프링부트에 web 의존성을 프로젝트 생성시 추가하고 localhost:8080로 접속하면 스프링부트 프레임워크가 
+루트 폴더로써 resources 폴더에 있는 static 폴더를 찾아가고 그 안에서 index.html 파일을 찾아서 읽는다라는 것을 알 수 있다.
+$ src/main/resources/static/ → index.html
+
+* index.html 파일을 static 폴더가 아닌 templates 폴더에서 하고 싶다면?
+
+static
+templates / index.html
+
+Static 폴더에 만든 index.html 파일을 삭제하고, 
+Telplates 폴더에다가 index.html 파일을 만들어 놓는다.
+그런 후 브라우저에서 루트로 접속해본다.
+Whitelabel Error Page
+
+index.html 파일을 static 폴더가 아닌 templates 폴더에서 하고 싶다면?
+접속이 안됨을 알 수 있다.
+/templates/index.html 로 접속해도 에러가 발생한다.
+
+왜 그럴까???
+기본적으로 스프링부트는 접속시 찾아가는 정적 자원의 위치를 가지고 있다. 그게 static 폴더이다.
+
+Templates 폴더에 들어있는 html 파일을 찾아갈 수 있도록 해줄려면 Thymeleaf 의존성을 추가해주면 된다. 
+아울러 템플릿 엔진 의존성 추가를 하지 않고도 하는 방법은 있으나 Thymeleaf 템플릿 엔진을 추후 쓴다면 좋은 방법이다
+
+mvnrepository.com/serch?q=Thymeleaf
+https://mvnrepository.com/search?q=thymeleaf
+Spring Boot Starter Thymeleaf
+
+* Thymeleaf 의존성 추가
+pom.xml
+
+<dependencies>
+    <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-thymeleaf -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        버전 정보 제외
+    </dependency>
+</dependencies>
+
+기본적으로 버전을 같이 포함하고 있는데 스프링부트 프레임워크에서는 <parent> 정보를 통해서 버전을 관리하고 있으므로 버전 정보는 제외한다. 
+서버를 restart 시키고 브라우저에서 접속해본다.
+
+index.html (src/main/resources/templates)  접속이 잘 되는 것을 알 수 있다.
+
+
+
+16차시 스프링부트 Controller 역할과 이해(5) - Controller 역할
+templates/thymeleaf/home.html 페이지 접속 방법  Localhost:8080/home/ 사용자 요청에 응답을 처리해주는 역할 controller
+
+* Thymeleaf 의존성 추가 후 주요 속성 알아보기
+
+src > main > reousrces > [static] 폴더에는 정적 리소스들을..
+src > main > reousrces > [templates] 폴더에는 템플릿 파일들을..
+
+Thymeleaf 확장자는 .html을 쓰고 templates 폴더에는 관련된 파일만 동작한다.
+
+# 친구는 templates 폴더가 루트 폴더로 인식되는데 난 안되요???
+# thymeleaf 경로 설정
+templates 폴더 하위 폴더 사용 시 application.properties 에서 변경
+spring.thymeleaf.prefix=classpath:/templates/thymeleaf/ 
+spring.thymeleaf.suffix=.html 
+
+# thymeleaf 템플릿에 대한 캐시를 남기지 않음. cache=false 설정하고 개발하다가 운영시는 true로 변경.
+spring.thymeleaf.cache=false 
+
+# 템플릿 위치 존재 확인 - templates 디렉토리에 파일이 있는지 없는지 체크, 없으면 에러를 발생. 
+spring.thymeleaf.check-template-location=true (에러 발생 - /templates/thymeleaf/에 index.html 없어서 발생. 화일만이라도 만들어 두면 됨)
+
+Thymeleaf 를 사용하다가 만약 meta, link 태그 등의 닫기 태그가 없어 파싱 관련 예외 오류가 발생하는 경우가 생긴다면?
+보통의 경우 html 작성시 저런 태그는 닫아주지 않아도 된다.
+그런데 Thymeleaf 예전 버전의 프로젝트나 기타의 이유로 Thymeleaf의 엄격한 체크로 이런 현상이 나타나면
+
+1. application.properties 파일에서 아래와 같이 해보고 테스트를 해본다.
+spring.thymeleaf.mode=LEGACYHTML5
+spring.thymeleaf.mode=html
+ 
+2. nekohtml 의존성 추가
+net.sourceforge.nekohtml:nekohtml   (동영상 확인 필요)
+
+<실습>
+application.properties 설정
+
+
+MVC 패턴
+
+* Model, View, Controller의 약자로 소프트웨어 디자인 패턴중 하나
+기존의 전통적인 방식인 모델1 방식과 최근의 모델2 방식이 있으나 최근의 대부분 프로젝트는 모델2로 웹 개발이 진행되므로 
+MVC 라고 하면 모델2 방식으로 이해하면 됨. 
+
+→ UI와 비즈니스 로직 부분을 분리할 수 있어서 협업시 유연하고 업무 분장 및 개발 분리를 편하게 처리할 수 있음
+→ 각각의 업무 로직을 분리할 수 있으므로 추후 업데이트나 유지보수 등에서도 편리.
+→ 뷰 페이지단과 데이터 처리 부분이 분리됨으로써 재사용이 용이.
+
+* Model → ???
+* View  → UI 즉, 사용자 인터페이스로써 사용자가 접속해서 실제적으로 보고 이용하는 웹페이지 화면단.
+* Controller 
+→ 뷰페이지와 모델을 이어주는 중간 다리 역할. 
+→ 사용자의 요청이 들어오면 그에 맞는 적절한 뷰페이지를 연결하여 결과를 리턴.
+→ 단순 요청 뿐만 아니라 데이터 전달 및 비즈니스 로직을 호출하여 그 결괏값을 전달하는 역할.
+
+
+정적 vs 동적
+
+* 보통의 HTML 파일은 정적 파일이며, Template Engine 파일은 동적 파일이다. 
+동적이라는 것은 말 그대로 변화무쌍하게 컨텐츠의 내용이 바뀔 수 있다라는 뜻이다. 
+이러기 위해서는 내부에서 이러한 컨텐츠의 변화되는 부분을 반영할 수 있도록 해줘야 하는데 이때 템플릿 엔진의 문법이 사용된다.
+
+→ Thymeleaf, Mustache, JSP 등은 뷰페이지 단을 표현하는 언어(?)라고 생각하면 된다. 
+→ 각각의 템플릿 엔진별 고유 문법을 배우고 익히는 과정이 필요.
+→ 특히 웹 개발의 특성상 템플릿 문법을 배우는 것 이외에도 레이아웃을 구성하는 문법과 사용법을 배우는게 중요하다.
+
+<span th:text=“${ username }”></span>
+
+
+파라미터 값
+
+* th:text 태그안의 값을 셋팅한다는 것인데 태그안에 값은 왜 넣어두죠?
+<h1 th:text=“${username}”>게스트</h1>
+
+* 요청시 파라미터 값을 넘겨서 데이터를 전달하는건 어떻게 받나요? 
+앞서 시간에는 model에 [ name : value ] 값을 넣어서 직접 데이터를 전달했지만 이번 시간에는 사용자의 요청시 여러 파라미터 값을 같이 넘겼을 때 
+전달 받는 방법에 대해서 학습한다.
+
+→ Spring Boot 를 사용해 단일 Parameter 값을 전달 받는 방법	 
+→ 여러 개의 Parameter 값을 전달 받는 방법
+
+
+Get vs Post
+
+* Get 방식과 Post 방식의 차이와 스프링부트에서 각 방식의 처리
+기본적으로 사용자가 서버에 어떤 요청을 넣을 때는 크게 Get 방식과 Post 방식이 있다. 그 외 다른 요청 방식들도 있다. 
+웹 개발이 처음이든 아니든 이러한 개념에 대해서는 당연히 잘 알고 있어야하며 무엇보다 스프링부트 프레임워크에서는 
+이러한 방식들의 요청에 대해서 어떻게 처리하는지를 알고 있어야 하겠다.
+
+→ 기본개념
+Get과 Post는 HTTP 프로토콜을 통해서 서버에 어떤 값을 전달할 때 사용하는 방식의 종류
+쉽게 말해서 어떻게 전달하느냐의 차이다.
+
+→ 구분은?
+URL에 파라미터 값으로 데이터를 전달하면 Get 방식이고, Post 방식은 URL에 파라미터 정보가 보이지 않는다.
+그 이유는 데이터가 Request Body에 포함되서 전달되기 때문에 파라미터가 노출되지 않는다.
+
+* Get 방식과 Post 방식의 특징과 장단점
+각 방식은 장단점이 있는데 기본적인 특징과 장단점에 대해서는 잘 기억하자. 
+
+기본적으로 Get 방식은 ‘조회’ 이용시 많이 사용되고, Post 방식은 ‘입력(생성)’, ‘수정’, ‘삭제’시 많이 사용된다.	
+- 검색의 결과 주소나 링크로써 사용되어지는 경우라면 Get 방식이 많다라고 생각하면 됨.
+URL에 파라미터 정보가 노출되고 당연히 전달되는 데이터 값들도 노출되기 때문에 보안적인 측면에서는 높지 않다.
+- Post 방식은 값을 숨겨서 전달할 수 있음. SSL 사용시 높은 보안 수준을 적용할 수 있음.
+URL에는 정보를 담을 수 있는 한계가 있다. 그런 경우 Post 방식을 사용하면 된다.
+Get 방식은 캐시가 남아있고, 브라우저의 히스토리에 파라미터 정보가 저장되어서 좋지 않을 수 있다.
+- Post 방식의 경우 캐시가 남아있지 않고, 히스토리에 정보가 남지 않음.
+- 그러나 캐시 덕분에 속도적인 측면에서는 Post 방식보다 좋음.
+Post 방식은 바이너리 데이터도 전달이 가능하기 때문에 파일 업로드 등을 처리하기 위해서 Post 방식 사용.
+
+* 정리
+기본적으로 ‘조회’ 등을 처리할 때는 Get 방식을 많이 사용하고, ‘입력’, ‘생성’, ‘수정’, ‘삭제’ 등은 Post 방식으로 많이 사용한다고 생각하면 된다. 
+절대적인 것은 아니나 보통 이렇게 많이 쓴다라고 생각하면 된다. 
+
+* 스프링부트 프레임워크에서의 처리 방식
+→ @GetMapping(“/user”)
+우리가 앞서 공부해왔던 방식이며, 스프링부트에서는 Get 방식의 요청에 대해서 @GetMapping()으로 처리한다.
+→ 그럼 Post 방식의 요청 처리는??? 생각해보자~
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+Part 1. 29~42강
+Spring Boot 객체 전달
+
+* 스프링부트 프레임워크에서 객체를 전달하는 방법은?
+→ 기본적으로 웹 개발에서 클라이언트와 서버가 값을 주고 받는 것은 가장 기본적인 작업이자 가장 중요한 작업. 
+→ 초보자에게 있어서 가장 큰 문제는 이러한 방법에는 여러 가지 형태의 방법이 존재.
+
+예를 들면 값을 전송 시, 
+→ Form 형태만 해도 Post, Get 방식이 있고, Ajax 형태로 넘기는 방식도 있고, 링크 형태로 넘긴다든지.. 
+→ JSON 형식으로 넘긴다든지.. 등등 
+→ 받을 때도 일일이 파라미터 값을 받아서 처리하거나 통째로 받아서 처리한다든지.. 등등 여러 형태가 존재. 
+→ 이때, 전달되는 파라미터 값이 많다면 객체(DTO)를 만들어서 한 번에 받는 것이 좋다. 
+→ 기본적인 Form 형태의 값을 Post 방식으로 전달하여 스프링부트 프레임워크에서 받는 것을 잘 연습.
+
+* 작업에 필요한 파일들
+SampleController3.java / UserDTO.java / SampleController3Form.html / SampleController3View.html
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+Part 2. 43~52강
+
+Spring Boot DB 연동
+
+* 스프링부트 DB연동은 어렵다?
+자바 기반의 웹 개발 경험이 없는 초보자에게는 굉장히 넘기 힘든 벽중의 하나가 데이터베이스 연동이다. 
+그나마 기존의 스프링 프레임워크에 비해서 스프링부트는 연동이 좀 낫다고 하지만 여전히 어려운 것은 사실이다. 
+어렵다고 느끼는 이유에 대해서 몇 가지를 적어보았다.
+
+→ 이것저것 설정하는게 무척 복잡하다.
+    - DB 설치하고 Application 프로그램에서 연결정보 잘 맞춰주면 되는거 아니었나?
+→ 제반 기술 용어들이 너무 어렵고, 그 기술 용어들에 대한 개념이해가 너무 헤갈리고 어렵다.
+    - 이곳저곳 기술용어에 대한 설명을 읽어보고 또 강의도 보고 책도 보고 했지만 여전히 난해하고 어렵다.
+→ 최신의 DB연동 기술하고 기존(과거, SI 프로젝트 등) 기술이 너무 혼재되어 있어 이것저것 다 공부해야 되서 어렵다.
+    - SI 쪽에서는 기존의 전통적인 기술을 많이 쓰고, 자체 개발 회사에서는 최신 기술을 많이 쓴다.
+
+
+DB 연동 기술용어와 개념
+
+* 무조건 먼저 알아야 할 기술용어와 개념들 
+자바 기반의 웹 개발 경험이 없는 초보자들은 우선 기술용어들이 대부분 처음 듣는 것들이라 여기서 오는 공포(?)나 어려움은 상당히 크다. 
+먼저 각각의 기술용어와 개념들에 대해서 머릿속에 정리해두자. 그러면 좀 더 쉽게 느껴진다. 
+
+→ Connection
+→ DBCP
+→ DataSource
+→ HikariCP
+→ SqlSessionFactory
+→ SqlSessionTemplate
+
+
+Connection
+
+* Connection이란 무엇이고, 기존 JDBC 프로그램 연동의 문제점은 무엇인가?
+ 
+ → 사용자 요청이 들어오고 그것이 DB를 연결해서 작업 처리를 해야할 때 이러한 것을 담당하는 것이 Connection 객체.
+ → 즉, 사용자 요청이 있을 때 마다 DB서버에 연결하기 위해서는 해당 드라이버를 로드하고 Connection 객체를 얻어야 한다.
+
+ 문제가 있나?
+ → 사용자가 많아지면 매번 이러한 식의 연결 관리는 시스템의 성능과 안전성에 지대한 영향을 끼친다.
+ → 왜냐하면, 매번 요청이 있을 때 마다 드라이버를 로드하고, 매번 DB와 커넥션을 연결하고 다시 닫는 과정이 필요하다.
+ → 즉, 너무 불필요하고 소모적인 부분에 자원의 소모가 심하다.
+
+ 이러한 문제를 해결해보자! 라는 시작에서 지금의 스프링부트 DB 연동 기술은 발전해왔다.
+
+
+JDBC 연동과정
+
+* DriverManager를 통한 DB 연동 과정
+ → 각 DB 벤더사의 JDBC 드라이버 로드(Load)
+ → Connection 객체 생성
+ → Statement 객체 생성
+ → 데이터베이스에 필요한 쿼리(Query)문 실행
+ → 쿼리 결과를 ResultSet(일명 rs) 객체에 담아서 사용(쿼리 실행 결과를 가지고 있는 객체)
+ → Result 객체 Close ( rs.close() )
+ → Statement 객체 Close ( stmt.close() )
+ → Connection 객체 Close ( conn.close() )
+
+ Connection 객체(DB 연결 객체), Statement, PreparedStatment 객체(SQL 작성/실행) 
+
+
+DBCP(1)
+
+* CP란 무엇이고, 왜 등장했나?
+
+ → Connection Pool 의 약자.
+ → 커넥션 풀은 Connection 객체를 매번 요청이 있을 때 마다 새롭게 생성하는 것이 아니라 미리 서버에 생성시켜 놓는 것.
+ → 즉, 미리 생성해놓고, 요청이 있거나 필요할 때 미리 생성시켜 준비해놓은 Connection을 가져다 사용.
+ → 기존 JDBC 프로그래밍의 문제점들을 개선한 기술.
+
+ Pool : 수영장, 웅덩이(못), 공동 이용 자금(물자)
+ → DBMS 내부의 Pool 속에 미리 생성한 Connection을 가져다가 사용하고, 사용이 끝나면 Connection을 Pool에 반환.
+ → DB와 미리 connection(연결)을 해놓은 객체들을 pool에 저장해두었다가, 사용자 요청이 오면 꺼내서 내어준다.
+ → 작업이 다 끝나면 다시 반납받아서 pool에 저장해놓고 다른 사용자 요청시 다시 꺼내서 내어준다.
+
+
+DBCP(2)
+
+* 사용자 요청시 DB에 연결해서 쿼리를 날리고 결과를 보여주고 끝내고 싶다면?
+
+ → 먼저 Connection Pool에 가서 대기하고 있는 Connection 객체가 있다면 받아온다.
+ → 없으면 다른 사용자 요청에 따라 나간 Connection 객체가 회수될 때 까지 기다렸다가 받아온다.
+ → 받았으면 DB 연결된거니깐 쿼리 날리고 결과 보여주고 할 것 다 하면 끝.
+ → 작업 다 끝났으면 빌린 Connection 객체를 다시 Connection Pool에 반납한다.
+
+ 뭐가 좋나?
+ → DB 접근 시 매번 불필요한 작업( Connection 객체 생성, 종료 )들이 사라지므로 이것만으로도 성능향상을 기대.
+ → 유저수에 따라 커넥션을 조절할 수도 있음.
+ → 그러나 Connection도 객체이기 때문에 커지면 메모리 자원을 많이 쓰게되므로 적절히 조절해가면서 사용해야 함.
+
+============================================>
+
+===========================
+DataSource(1)
+
+DataSource란 무엇인가? 먼저 Java의 javax.sql.DataSource 인터페이스는 Database Connection을 위한 표준을 제공하는데, 이때 DataSource 인터페이스를 사용하기 위한 구현체를 선택한다. javax.sql 패키지javax.sql 패키지는 java.sql 패키지의 기능을 보조. (확장 패키지)(DriverManager : 데이터베이스 드라이버들을 로딩하고, 데이터베이스 연결에 관련된 서비스를 담당)서버 쪽의 데이터 소스에 대한 엑세스를 좀 더 쉽게 하고, 여러 가지 방법으로 데이터를 다룰 수 있도록 API 제공. javax.sql 패키지 주요 기능DriverManager를 대체할 수 있는 DataSource 인터페이스 제공.Connection, Statement 객체 Pooling. 분산 트랜잭션 관리
+
+
+DataSource(2)
+
+DataSource를 사용하는 이유는 Pooling이 들어가고 안들어가고 차이다.먼저 Java의 javax.sql.DataSource 인터페이스는 Database Connection을 위한 표준을 제공하는데, 이때 DataSource 인터페이스를 사용하기 위한 구현체를 선택한다.
+
+이때, Spring Boot에서는 DataSource 관리를 위한 구현체로써 예전에는 Tomcat JDBC Connection Pool을 default로 제공했는데 지금은 HikariCP를 공식적으로 채택하였다. 스프링부트 2.x 버전부터.
+
+이 외에도, Apache의 Commons DBCP, Commons DBCP2 역시 가능한 대안이나 역시 예전 프로젝트에서나 쓰이던 DBCP들이다. 지금은 HikariCP의 성능이 워낙 뛰어나서 스프링부트도 공식적으로 채택하였을 정도이다.
+Pooling 이란? 미리 DB Connection을 여러 개 만들어서 특정 영역에 저장해 놓고, 사용자 요청 시 하나씩 꺼내서 사용하고 다시 반납하는 방식을 말한다.
+
+
+DataSource(3)
+
+DataSource란 무엇인가?  DataSource는 서버에서 관리하는 Connection Pool을 사용할 수 있게 해주는 객체.다시한번 Connection Pool을 사용하는 이유!JDBC를 사용하여 DB에 연결하기 위해서는 먼저 해당 벤더사의 드라이버를 로드하고, DB Connection 객체를 생성하고 닫아줘야 한다. 매번 이렇게 처리하면 DB에 쿼리를 보낼 때 마다 드라이버를 로드하고 Connection 객체를 생성하고 종료하는 과정을 반복하게 되고, 사용자가 많아지면 질수록 사이트 전체의 성능이나 속도가 현저히 낮아질 수 있다. 이런 문제를 해결하기 위해 “Connection Pool"을 사용하는데 DataSource 를 사용하게 되면.. 기존 DriverManager를 통해서 연동하던 방식에 비해 훨씬 쉽고 편리하게 연동을 구현할 수 있다.
+
+
+
+DataSource(4)
+
+DriverManager 보다 DataSource를 사용하면 뭐가 더 좋은가?  DriverManager를 사용하면 웹 어플리케이션에서 관리하기 때문에 이식성이 별로다. 예를들어, DB 접속 정보나 JDBC 드라이버가 변경될 경우 웹 애플리케이션의 소스코드도 변경해야 한다. 그러나, DataSource는 자체적으로 Connection Pool을 구현하므로, 웹 애플리케이션에서 따로 작업해야 할 것이 없다.  DataSource는 기본적인 연결과 Connection Pooling, 그리고 트랜젝션 처리까지 담당한다. JDBC Driver vendor(Oracle, Mysql 등)별로 구현되어 있다. (다 비슷비슷) 사용은 application.properties 파일에 접속정보를 저장한 뒤, 이를 읽어서 처리하는 방식. 이전의 DriverManager를 사용하여 처리하는 방식과 비교해본다면 얼마나 쉽고 편리한지를 알 수 있다. 스프링부트에서도 이와 같은 DataSource를 활용하여 DB Connection을 구현.  DataSource 정보를 읽어와서 스프링부트 컨테이너에 bean으로 등록한 뒤, 이를 주입받아 사용하는 방식이다.
+
+
+MyBatis(1)
+
+MyBatis란 무엇인가? 먼저 스프링부트 DB 연동 및 DB 처리 학습은 마이바티스 기반으로 진행한다. 우선 마이바티스는 데이터베이스가 아니다. 원래는 iBATIS 였는데 구글이 개발팀 대부분을 인수하면서 이름이 MyBatis로 바뀌었다. 한마디로, 마이바티스는 SQL Mapping 프레임워크이다. 쉽게말해, SQL 기반의 데이터베이스와 프로그래밍 언어(자바, 닷넷 등)를 연결시켜주는 역할의 영속성 프레임워크. JDBC를 사용하기 위한 복잡하고 번거로운 작업 없이 간단한 작업으로 데이터베이스와 연동. 따라서, 시스템을 빠르고 안정적으로 개발이 가능. 프로그램의 소스코드에서 SQL 문장을 분리하여 별도의 XML 파일로 저장하고 이 둘을 서로 연결(매핑)시켜주는 방식. XML 파일과 애너테이션을 통해 구현한다는 점이 특징.
+
+
+영속성(Persistence)
+
+영속성(Persistence)이란 무엇인가?  데이터(객체)를 생성한 프로그램이 종료되어도 소멸되지 않고 지속적으로 존재(저장)하는 특성. 영속성을 갖지 않으면 데이터는 메모리에서만 존재. 따라서, 프로그램이 종료되면, 해당 데이터는 모두 메모리에서 사라지게 되므로 영속성을 가지지 못함. 그래서 데이터를 파일이나 데이터베이스에 영구 저장함으로써 데이터에 영속성을 부여.그럼 어떻게 영속성을 부여하나? 전통적인 JDBC를 이용해서 직접 구현. 그러나 현대에 와서는 대부분 영속성 프레임워크를 사용하여 구현. 왜냐하면, JDBC는 Connection 객체를 생성한다든지 하는 번거로움과 복잡성이 있음. Pooling도 사용하지 않음. 따라서, 이런 번거로움 없이 데이터베이스와 연동되는 시스템을 빠르고 안정적으로 개발할 수 있는 프레임워크를 사용.
+
+
+MyBatis(2)
+
+MyBatis란 무엇인가?  자바 코드와 관계형 데이터베이스의 데이터를 개발자가 작성한 SQL로 매핑시켜주는 프레임워크. 개발자가 SQL을 직접 작성 (xml) 작성된 SQL문을 실행하고 얻은 데이터를 객체로 매핑. 데이터를 처리하는 자바 객체 층과 데이터를 저장하는 데이터베이스 층 사이를 자연스럽게 연결해주는 역할.
+
+
+MyBatis(3)
+
+MyBatis란 무엇인가? 장점이라면?  쉬운 접근성과 코드의 간결함. 복잡한 JDBC 프로그래밍 코드가 없어진다. 별도의 XML 파일로 깔끔하게 SQL을 관리. SQL 구문에 대해서 어느정도 알고 있고, 기본적인 쿼리문을 작성 할 수 있다면 바로 사용이 가능. 유지보수나 기타의 사유로 SQL 변경시 편리. 코드가 분리되므로.    (자바 코드 수정이나 컴파일 불필요) SI 프로젝트 등에서 많이 사용. 자사 솔루션 서비스를 하는 회사에서는 보통 JPA로 하거나 변경해가는 추세. 여러 프로그래밍 언어와도 결합이 가능. (Java, C# 등..)
+
+
+
+MyBatis(4)
+
+MyBatis란 무엇인가? 단점이라면?  SQL 구문에 대해서 어느정도 알고 있고, 기본적인 쿼리문을 작성 할 수 있어야 한다. 개발자가 직접 SQL 쿼리문을 작성해야 함. 따라서, 복잡한 쿼리문의 경우 관련 학습에 대한 추가 공부가 필요.  DBMS가 어떤 것이냐에 따라 SQL 쿼리문이 달라질 수 있기 때문에 역시 추가 학습 필요. DBMS에 따라 SQL 문법이 틀리므로 DB 변경시 작성된 SQL의 수정도 고민. (SQL 재사용성 ↓) 
+
+
+MyBatis(5)
+
+MyBatis란 무엇인가?
+ ORM과 비교?
+  ORM 프레임워크(JPA) 처럼 자바 객체와 데이터베이스 테이블을 대응시키는 것이 아닌 자바 메서드와 SQL문을 대응. 그렇기에 보통 마이바티스를 SQL 매퍼라고 부른다. (객체 관계형 매퍼가 아님.) SQL Mapper는 단지 쿼리를 매핑시키는 것이 목적. 반면, ORM은 관계형 데이터베이스의 관계를 객체에 반영하는 것이 목적.
+
+==============
+
+MyBatis vs Spring Boot
+
+MyBatis와 Spring Boot 결합 모듈을 제공
+두 프레임워크의 결합
+→ iBATIS에서 구글이 인수하면서 MyBatis로 바뀌면서 많은 변화가 생김.
+→ 그리고 스프링부트 프레임워크에서 좀 더 편리하게 사용하기 위해서 MyBatis+SpringBoot 모듈이 나옴.
+→ 둘 모두가 큰 프레임워크이기 때문에 결합시 몇몇 기능은 어느 한쪽의 프레임워크에 종속되서 돌아가거나 대체.
+→ 마이바티스 단독 사용시 가능한 기능들도 스프링부트와 결합시에는 프레임워크의 규칙을 따라감.
+
+→ SqlSession : SQL 쿼리문의 실행과 트랜잭션 관리 등을 담당하는 MyBatis의 가장 핵심적인 역할.
+→ MyBatis+SpringBoot 모듈에서는 SqlSessionTemplate이 이를 구현하므로 SqlSessionTemplate이 대체 함.
+→ SqlSession(=SqlSessionTemplate)의 생성은 SqlSessionFactory
+
+
+MyBatis 동작
+
+MyBatis 동작은 어떻게 하는가?
+
+→ Controller 영역 호출		→ Service가 DAO의 메서드를 호출	   → DAO에서 MyBatis를 호출
+
+SqlSession은 개발자가 작성한 
+SQL문을 호출해주는 기능을 담당.즉, SQL 쿼리문의 실행과 
+트랜잭션 등을 담당하는 핵심.
+                                               ↖
+                                           JDBC 통신
+                                                ↑
+                    
+MyBatis Framework                        ↑
+
+SqlSession                                  ↗
+      ↑
+SqlSessionFactory             
+      ↑
+Config file(xml)
+     ↗                 ↖
+mapper.xml     db.properties
+
+
+MyBatis 주요 컴포넌트 역할
+
+MyBatis 주요 컴포넌트의 역할은 어떻게 되는가?
+→ MyBatis 설정 파일(xml)	: 데이터베이스의 접속 주소 정보 및 매핑(Mapping) 파일의 경로 등을 가지고 환경을 설정.
+→ SqlSessionFactoryBuilder	: 위의 MyBatis 설정 파일의 정보를 기반으로 SqlSessionFactory를 생성.
+→ SqlSessionFactory 	: SqlSession을 생성
+→ SqlSession    (가장 중요)  : 가장 핵심적인 역할을 담당하는 클래스. SQL 쿼리문의 실행과 트랙잭션 관리를 담당. SqlSession 객체는 Thread-Safe 하지 않음. Thread 마다 필요에 따라 생성.
+→ Mapping 파일(xml)  	: SQL 쿼리문 작성 파일. SQL과 Mapping을 설정.
+
+
+MyBatis+Spring 조합 모듈(1)
+
+* MyBatis+Spring 조합 모듈에서의 주요 컴포넌트 역할
+→ SqlSessionFactory
+마이바티스만 사용하면 SqlSessionFactoryBuilder를 사용해서 생성. 
+마이바티스+스프링 연동 모듈에서는 SqlSessionFactoryBean을 사용해서 생성.
+
+→ SqlSessionFactory 필요성과 만드는 방법
+마이바티스를 사용하여 데이터베이스에 접속된 세션을 얻기 위해서 필요.
+만드는 방법은 여러 가지가 있는데 위에서 처럼 SqlSessionFactoryBuilder를 이용해서 mybatis 설정(config.xml) 파일을 가져와서 만드는 방법이 있고, 
+이것이 싫으면 Mybatis-Spring 연동 모듈내에 있는 SqlSessionFactoryBean 객체를 사용.
+
+
+MyBatis+Spring 조합 모듈(2)
+
+* MyBatis+Spring 조합 모듈에서의 주요 컴포넌트 역할
+
+→ SqlSessionTemplate 가장 중요하면서 핵심적인 역할을 담당. SQL 쿼리문의 실행이나 트랜잭션 관리를 담당. Thread-safe 하다. 
+
+→ SqlSessionFactory vs SqlSessionTemplate
+    먼저 이 둘은 @Configuration 애너테이션이 붙은 환경설정 클래스에서 @Bean 애너테이션으로 스프링 컨테이너에 등록.
+    이때, DataSource 정보와 Mapping 파일의 정보도 함께 설정. 
+    쉽게 말해, DataSource 정보를 parameter로 받아, sqlSessionFactory를 생성하고, 이를 SqlSessionTemplate 생성 시 인자로 넘겨 사용하기 위해서 필요.
+    이렇게 해서 최종적으로 SqlSessionTemplate이 생성되는 것.
+
+
+MyBatis+Spring 주요 컴포넌트
+
+* MyBatis+Spring 연동 모듈에서의 주요 컴포넌트 암기하기
+→ SqlSessionFactoryBean 
+→ SqlSessionFactory
+→ SqlSessionTemplate
+
+
+@Autowired
+private ApplicationContext applicationContext;
+
+* Spring Boot 프레임워크는 빈을 생성하고 관리하는 컨테이너를 가지고 있다. 
+
+* ApplicationContext란?
+Bean 객체를 생성하고 관리하는 기능을 담당하는 IoC 기반의 Bean Factory.
+DI(Dependency Injection) 과 Ioc(Inverse of Control) 등을 지원.
+컨테이너가 구동되는 시점에 객체들을 생성하는 Pre-Loading 방식의 기반.
+즉, 별도의 환경설정 정보를 참고해서 빈의 생성과 관계설정 등의 제어를 총괄 담당.
+또한, 빈 객체를 싱글톤 기반으로 저장하고 관리.	스프링부트 프레임워크는 기본적으로 내부에서 생성하는 빈 객체들을 모두 싱글톤으로 생성.
+
+
+@Autowired
+private ApplicationContext applicationContext;
+
+*  Ioc(Inversion of control)란?
+Ioc(제어의 역전)이란 프로그램의 제어 흐름 구조가 뒤바뀌는 것. 
+
+일반적인 제어의 흐름은 main() 메소드와 같은 진입점을 통해서 객체를 생성하고, 만들어진 객체를 사용.제어의 역전이란 이런 제어의 흐름을 거꾸로 사용.즉, 모든 제어 권한을 자신이 아닌 다른 대상에게 위임하는데 스프링부트에서는 application context라고하는 IoC 컨테이너를 통해 객체의 생성과 관리를 담당하고, 객체 사용에 필요한 여러 기능을 제공. 
+즉, 프로그램의 흐름을 프레임워크가 주도 → @Autowired 애너테이션으로 Bean을 자동 주입.
+한마디로 객체의 생성과 호출, 생명주기 관리를 개발자가 아닌 컨테이너가 맡아서 관리하므로 제어가 역전되었다고 말한다.
+이러한 IoC 기능으로 DI(의존성 주입)가 가능하게 되어짐.
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+Part 2. 43~52강
+
+
+
