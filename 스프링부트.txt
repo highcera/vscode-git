@@ -252,6 +252,13 @@ public class DBConfig {
 }
 
 
+이클립스나 STS 상단 
+Window > Perspective > Reset Perspective 
+
+Reset Perspective 클릭
+그러면 첫 초기 화면 레이아웃으로 변경될 것이다.
+
+
 
 ■ 3차시
 
@@ -411,10 +418,16 @@ spring.thymeleaf.check-template-location=true
 
 
 ■ 17차시
-controller 폴더 생성 > FirstController.java
+controller Pakage 생성 
+src/main/java > com.example.firstdemo RM > New > Package > ~.controller (하위에 package 생성 시 .)
+
+controller Pakage 생성 > New class > FirstController.java
 mapping 필요
 
 ctrl + shft O : import 자동 생성
+
+localhost:8080/home 고객요청에 대응 위해 Mapping 필요
+
 
 package com.example.firstdemo.controller;
 
@@ -437,11 +450,9 @@ public class FirstController {
 	}
 }
 
-return : root folder
+return : spring.thymeleaf.prefix=classpath:templates/thymeleaf/ →  root folder를 찾아가서 화일일나 하위폴더를 찾음
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
 
 ■ 18차시 스프링부트 MVC 패턴
 MVC 패턴 (Model, View, Controller)
@@ -461,7 +472,7 @@ Controller
 프로젝트도 마찬가지... 
 
 ■ 19차시 - 스프링부트 HTTP 단순 요청 및 모델 데이터 전달 실습
--. SampleController1.java
+[SampleController1.java]
 ackage com.example.firstdemo.controller;
 
 import org.springframework.stereotype.Controller;
@@ -520,7 +531,7 @@ public class SampleController1 {
 	}
 }
 
--. userinfo.html
+[userinfo.html]
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -577,25 +588,7 @@ required = false
 
 
 ■ 24차시 여러 개의 파라미터 값을 전달 받는 RequestParam
-
--. SampleControllerq=1.java
-@GetMapping("/user/userparams")
-	public String userParams(
-			@RequestParam( value="userid" ) String uid, 
-			@RequestParam( value="username" ) String uname,
-			@RequestParam( value="useremail" ) String uemail, 
-			@RequestParam( value="userhp", required=false ) String uhp,
-			Model model	) {
-		
-		model.addAttribute( "userid", uid );
-		model.addAttribute( "username", uname );
-		model.addAttribute( "useremail", uemail );
-		model.addAttribute( "userhp", uhp );
-		
-		return "/user/userparams";
-	}
-
--. userparams.html
+[SampleController1.java]
 @GetMapping("/user/userparams")
 	public String userParams(
 			@RequestParam( value="userid" ) String uid, 
@@ -611,6 +604,38 @@ required = false
 		
 		return "/user/userinfo";
 	}
+
+[userinfo.html]
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset="UTF-8">
+		<title>SampleController1</title>
+	</head>
+	<body>	
+		<h1>userinfo.html</h1>
+		<!--  
+		<h1 th:text="${ username }">Guest</h1>
+		-->
+		<h1 th:text="'안녕하세요~' + ${ username } + '입니다.'">Guest</h1>
+	
+		<h1 th:text="${ userid }">유저아이디</h1>
+		<h1 th:text="${ useremail }">유저이메일</h1>
+		<h1 th:text="${ userhp }">유저핸드폰</h1>
+	
+	</body>
+</html>
+
+[입력]
+http://localhost:8080/user/userparams?userid=%221%22&username=%22%ED%99%8D%EA%B8%B8%EB%8F%99%22&useremail=%22hong@gamil.com%22&userhp=%2201028050866%22	
+
+[출력]
+userinfo.html
+안녕하세요~"홍길동"입니다.
+"1"
+"hong@gamil.com"
+"01028050866"
+
 
 ■ 25차시 Get 방식과 Post 방식의 차이와 스프링부트에서의 처리 방식
 
@@ -648,21 +673,24 @@ Post 방식은 바이너리 데이터도 전달이 가능하기 때문에 파일
 
 ■ 26차시 Post 방식의 요청시 스프링부트에서의 처리 방식 - PostMapping(1)
 post 방식 실습은 form 양삭으로 입력을 받아서 처리하거나 출력...
+
 src/main/resources > static > post 폴더 생성 > form.html (다중 data 입력)
 src/main/resources > templates > thymeleaf > post > post.html (view, 게시)
 src/main/java > com.example.firstdemo > controller > SampleControllers.java (post 방식 입력값 처리)
 
--. form.html
+http://localhost:8080/post/form.html
+
+[form.html]
 <html>
 	<head>
 		<meta charset="UTF-8">
 		<title>Post Demo</title>
 	</head>
 	<body>
-		<h1>The form method="POST"</h1>
+		<h1>The form method="POST" demo</h1>
 		
 		<form action="/post" method="POST" target="_blank">
-		
+		                              // ↙ id Member name:을 선택하면 입력창 입력대기 상태...
 			<label for="membername">Member name:</label>
 			<input type="text" id="membername" name="membername"><br><br>
 			<label for="memberid">Member id:</label>
@@ -678,21 +706,28 @@ src/main/java > com.example.firstdemo > controller > SampleControllers.java (pos
 
 
 ■ 27차시 Post 방식의 요청시 스프링부트에서의 처리 방식 - PostMapping(2)
--. SampleController.java
-public class SampleController2 {
-	@PostMapping("/post")
-	public String demoPosst( @RequestBody String req, Model model ) {
-		model.addAttribute("req", req);
+[SampleController2.java]
+~~
+	@GetMapping("/post")
+	public String demoPost() {
 		
+		return "/post/post";  //post.html	
+		
+	}
+
+GetMapping으로 요청하면 아래의 에러 발생
+There was an unexpected error (type=Method Not Allowed, status=405).
+
+@PostMapping("/post")
+	public String demoPost( @RequestBody String req ) {		
 		System.out.println( "성공" );
 		System.out.println( req );
+		// POST 방식 전달받은 내용을 consol에 출력
 			
 		return "/post/post";  // post.html
 	}
-}
 
-
--.post.html
+[post.html]
 <html xmlns:th="http://www.thymeleaf.org">
 	<head>
 		<meta charset="UTF-8">
@@ -706,7 +741,36 @@ public class SampleController2 {
 
 
 ■ 28차시 Post 방식의 요청시 스프링부트에서의 처리 방식 - PostMapping(3)
--. SampleController.java
+[SampleController2.java]
+@PostMapping("/post")
+	public String demoPost( @RequestParam String mname, Model model ) {
+		model.addAttribute("membername", mname);
+		/*
+		 * @RequestBody는 전달된 데이터를 일괄로 묶어서 출력.
+		 * 만약 Post 방식으로 전달한 폼(Form) 데이터들에 대해서 개별적으로 받고자 한다면?
+		 * 
+		 *  Get 방식 --> @GetMapping    : @RequestParam
+		 *  Post 방식 --> @PostMapping  : @RequestBody, @RequestParam
+		 *  
+		 */		
+			
+		return "/post/post";  // post.html
+	}
+
+[post.html]
+~~
+	<body>
+		<h1>Post 방식으로 전달된 값 출력하기</h1>
+		
+		<h1 th:text="${ membername }">멤버네임</h1>
+		<h1 th:text="${ memberid }">멤버아이디</h1>
+		
+	</body>
+
+※ There was an unexpected error (type=Bad Request, status=400).
+→ @RequestParam String mname 변수명을  form.html의 form의 name과 일치시킬 필요가 있음!!!!
+
+[SampleController.java]
 public class SampleController2 {
 
 	@PostMapping("/post")
@@ -724,8 +788,7 @@ public class SampleController2 {
 	}
 }
 
-
--.post.html
+[post.html]
 <html xmlns:th="http://www.thymeleaf.org">
 	<head>
 		<meta charset="UTF-8">
@@ -740,24 +803,571 @@ public class SampleController2 {
 </html>
 
 
+24차시 GetMapping과 비교!!
+
+
 ■ 29차시 스프링부트 DTO 객체 전달 - 이론
 
 ■ 30차시 스프링부트 DTO 객체 전달 - 실습
-
 ■ 31차시 스프링부트 DTO 객체 전달 - 실습
+src/main/resources
+
+static/post/Samplecontroller3Form.html  (사용자 Data 전송 → Obj → view page에서 출력하는데 사용)
+templates/thymeleaf/post/SampleController3View.html
+src/main/java/com.example.firstdemo > dto package 생성 > class userDTO.java
+controller > SampleController3.java
+
+SampleController3.java | serDTO.java | Samplecontroller3Form.html | SampleController3View
+
+[userDTO.java]
+Formname과 일치하는 변수 선언 뒤 
+        private String userName;
+	private String userId;
+	private String userPhne;
+
+Source > Generate Getters and Setters...
+Selet All
+Generate
+
+Generate toString()...
 
 
-■ 29차시~42차시~
+[SampleController3.java]
+package com.example.demo2.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PostMapping;
+import com.example.demo2.dto.UserDTO;
+
+@Controller
+public class SampleController3 {
+	
+	/*
+	@PostMapping("/SampleController3") 
+	public String userFomat(
+			@RequestParam String userName,
+			@RequestParam String userId,
+			@RequestParam String userPhone) {
+		
+		System.out.println( "================================" );
+		System.out.println( userName );
+		System.out.println( userId);
+		System.out.println( userPhone );		
+		System.out.println( "================================" );
+		
+		return "/post/SampleController3View";
+	
+	}
+ 	*/
+
+	@PostMapping("SampleController3")
+	public String userForm(
+			UserDTO userDTO,
+			Model model ) {
+		
+		// userDTO 객체를 통해서 출력
+		System.out.println( userDTO.getUserName() );
+		System.out.println( userDTO.getUserId() );
+		System.out.println( userDTO.getUserPhone() );	
+
+		
+		// model 내용 전송할 경우
+		model.addAttribute( "heading", "Spring Boot");
+		
+		return "/post/SampleController3View";
+	}
+	
+}
+
+[userDTO.java]
+package com.example.demo2.dto;
+
+public class UserDTO {	
+	private String userName;
+	private String userId;
+	private String userPhone;
+	
+	public String getUserName() {
+		return userName;
+	}
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+	public String getUserId() {
+		return userId;
+	}
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+	public String getUserPhone() {
+		return userPhone;
+	}
+	public void setUserPhone(String userPhone) {
+		this.userPhone = userPhone;
+	}
+
+	@Override
+	public String toString() {
+		return "UserDTO [userName=" + userName + ", userId=" + userId + ", userPhone=" + userPhone + "]";
+	}	
+}
+
+[Samplecontroller3Form.html]
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Form</title>
+	</head>
+	<body>	
+		<h1>스프링부트 객체 전달</h1>
+		 <h1 th:text="${ heading }">스프링부트 객체 전달</h1>
+		
+		<form action="/SampleController3" method="POST" target="_blank">
+		
+			<label for="userName">userName : </label>
+			<input type="text" id="userName" name="userName"><br><br>
+			
+			<label for="userId">userId : </label>
+			<input type="text" id="userId" name="userId"><br><br>
+			
+			<label for="userPhone">userPhone : </label>
+			<input type="text" id="userPhone" name="userPhone"><br><br>
+			<input type="submit" value=" submit ">
+		</form>
+	</body>
+</html>
 
 
+[SampleController3View]
+<!DOCTYPE html>
+<html xmlns:th="www.//www.thymeleaf.org">
+	<head>
+		<meta charset="UTF-8">
+		<title>View</title>
+	</head>
+	<body>
+	    <h1>스프링부트 객체 전달</h1>
+	    
+		<h1 th:text="${ userName }">유저네임</h1>
+		<h1 th:text="${ userId }">유저아이디</h1>
+		<h1 th:text="${ userPhone }">유저폰</h1>
+		
+		<h1 th:text="${ userDTO.getUserName() }"></h1>
+		<h1 th:text="${ userDTO.getUserId() }"></h1>
+		<h1 th:text="${ userDTO.getUserPhone() }"></h1>
+	</body>
+</html>
+--------------------------------------------------------------------------------------------
 
 
+■ 32차시 스프링부트 객체 전달 - Form과 View를 template 폴더내에서 처리
+static/ Form 화일 & templates/thymeleaf/post/ View 화일
+templates/thymeleaf/post 아래 Form & View 화일
+--------------------------------------------------------------------------------------------
 
 
+■ 33차시 스프링부트 객체 전달 - Form에서 타임리프 문법 사용하기(1)
+"@{/SampleController5View}"  thymeleaf 문법을 적용하는 경우에는 {} 여백없이 
+
+<form action="/#" th:action="@{/SampleController5View}" th:object="${bookDTO}" method="POST">
+		
+th:field="*{title}" → id="title" name="title" value> 로 치환됨
+
+[BookDTO.java]
+package com.example.demo2.dto;
+
+public class BookDTO {	
+	private long idx;
+	private String title;
+	private String author;
+	private String publisher;
+	private int PublishingDate;
+	
+	public BookDTO() {}    // 기본 생성자 없으면 에러 발생
+	
+	// Surce > Generate constructor using Fields...
+	public BookDTO(long idx, String title, String author, String publisher, int publishingDate) {
+		super();
+		this.idx = idx;
+		this.title = title;
+		this.author = author;
+		this.publisher = publisher;
+		this.PublishingDate = publishingDate;
+	}
+	
+	// getters & setters
+	public long getIdx() {
+		return idx;
+	}
+	~~
+	
+	@Override
+	public String toString() {
+		return "BookDTO [idx=" + idx + ", title=" + title + ", author=" + author + ", publisher=" + publisher
+				+ ", PublishingDate=" + PublishingDate + "]";
+	}
+		
+}
+
+[SampleController5.java]
+package com.example.demo2.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+
+import com.example.demo2.dto.BookDTO;
+
+/*
+ * Form과 View 그리고 Thymeleaf로 홈페이지 만들기
+ * BookDTO 사용
+ *  함수에 Model model 인자포함, model.Attribute( "bookDTO", new BookDTO() ); 필수
+ */
+
+@Controller
+public class SampleController5 {
+
+	@GetMapping("/SampleController5Form")
+	public String insertBook(Model model) {
+		model.addAttribute( "bookDTO", new BookDTO() );
+		
+		return "/post/SampleController5Form";
+	}
+}
+
+[SampleController5Form.html]
+<!DOCTYPE html>
+<html xmlns="http://www.thymeleaf.org">
+	<head>
+		<meta charset="UTF-8">
+		<title>SampleController5Form</title>
+		<style>
+			form > label {
+				display : inline-block;
+				width: 120px;
+			}
+			form > input {
+				padding: 4px;
+				margin-botton: 4px;
+			}
+		</style>
+	</head>
+	<body>	
+		<h1>Insert New Book</h1>		
+		 
+		<form action="#" th:action="@{/SampleController5View}" th:object="${bookDTO}" method="POST">
+			
+			<label for="title">Title</label>
+			<input type="text" th:field="*{title}">
+			<br>
+			
+			<label for="author">Author</label>
+			<input type="text" th:field="*{author}">
+			<br>
+			
+			<label for="publisher">Publisher</label>
+			<input type="text" th:field="*{publisher}">
+			<br>
+			
+			<label for="publishingDate">Publishing Date</label>
+			<input type="date" th:field="*{publishingDate}">
+			<br>
+				
+			<input type="submit" value=" Submit "><input type="reset" value=" Reset ">
+			
+		</form>
+		
+	</body>
+</html>
+--------------------------------------------------------------------------------------------
 
 
+34차시 스프링부트 객체 전달 - Form에서 타임리프 문법 사용하기(2)
+
+--------------------------------------------------------------------------------------------
 
 
+35차시 스프링부트 객체 전달 - Form에서 타임리프 문법 사용하기(3)
+
+<!DOCTYPE html>
+<html xmlns:th="www.//www.thymeleaf.org">
+	<head>
+		<meta charset="UTF-8">
+		<title>View</title>
+	</head>
+	<body>
+		<div>
+		    <h3 th:text="${ heading }">제목</h3>
+		    <p>사용자가 입력한 책 정보</p>
+		
+	            <table cellpadding=10 border=1>
+		    	<tr>
+		    		<td>Title</td>
+		    		<td>
+		    			<input type="text" th:value="${ bookDTO.getTitle() }" readonly>
+	    			</td>
+    			</tr>
+    			<tr>
+		    		<td>Author</td>
+		    		<td>
+		    			<input type="text" th:value="${ bookDTO.getAuthor() }" readonly>
+	    			</td>
+    			</tr>
+    			<tr>
+		    		<td>Publisher</td>
+		    		<td>
+		    			<input type="text" th:value="${ bookDTO.getPublisher() }" readonly>
+	    			</td>
+    			</tr>
+   				<tr>
+		    		<td>Publing Date</td>
+		    		<td>
+		    			<input type="text" th:value="${ bookDTO.getPublishingDate() }" readonly>
+	    			</td>
+    			</tr>
+		    
+		    </table>
+		</div>
+	
+	</body>
+	
+</html>
+--------------------------------------------------------------------------------------------
+
+
+36차시 DTO 객체와 타임리프를 이용한 뷰페이지 반복 출력(1)
+SampleController6.java → th:object="${ boardDTO }"
+* { btitle }
+
+[SampleController6.java]
+~~
+@Controller
+public class SampleController6 {
+
+	@GetMapping("/SampleController6")
+	public String mainPage(Model model) {
+		
+		// 단일 객체 생성
+		BoardDTO boardDTO = new BoardDTO( 1, "boardDTO 객체입니다.", "홍길동" );
+		
+		// model
+		model.addAttribute( "boardDTO", boardDTO );
+		
+		return "/post/SampleController6";
+	}
+
+
+[SampleController6.html]
+<body>	
+		<h1>Thymeleaf Board Table</h1>
+	    
+        <table>
+        	<thead>
+        		<tr>
+	    			<th>Number</th>
+	    			<th>Title</th>
+	    			<th>Name</th>	    		
+   			</tr>
+        	</thead>
+        	<tbody>        		
+        		<tr th:object="${ boardDTO }">        		
+		    		<td th:text="*{num}"></td>	    		 
+		    		<td th:text="*{btitle}"></td>	    		
+		    		<td th:text="*{bname}"></td>		    		  
+	   		</tr>	   		
+        	</tbody>		    
+	    </table>
+	</body>
+--------------------------------------------------------------------------------------------
+
+
+37차시 DTO 객체와 타임리프를 이용한 뷰페이지 반복 출력(2)
+[SampleController6.java]
+~@Controller
+public class SampleController6 {
+
+	@GetMapping("/SampleController6")
+	public String mainPage(Model model) {
+		
+		// 단일 객체 생성
+		BoardDTO boardDTO = new BoardDTO( 1, "boardDTO 객체입니다.", "홍길동" );
+		
+		// 여러 개의 객체 생성
+		BoardDTO b1 = new BoardDTO( 1, "하늘이 무척 맑은 날씨네요..", "홍길동" );
+		BoardDTO b2 = new BoardDTO( 2, "요즘 너무 더워요..", "이순신" );
+		BoardDTO b3 = new BoardDTO( 3, "다들 휴가는 다녀 오셨나요?", "김유신" );
+		BoardDTO b4 = new BoardDTO( 4, "에어컨 없이는 하루도 못살겠어요.", "을지문덕" );
+		BoardDTO b5 = new BoardDTO( 5, "오늘은 한글날입니다.", "세종대왕" );
+		
+		List<BoardDTO> bList = new ArrayList<>();
+		
+		bList.add( b1 );
+		bList.add( b2 );
+		bList.add( b3 );
+		bList.add( b4 );
+		bList.add( b5 );
+		
+		// model
+		model.addAttribute( "boardDTO", boardDTO );
+		model.addAttribute( "bList", bList);
+		
+		return "/post/SampleController6";
+	}
+
+[SamplController6.html]
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset="UTF-8">
+		<title>타임리프 반복 출력</title>
+		<link rel="stylesheet" th:href="@{ /css }">
+	</head>
+	<body>
+	
+		<h1>Thymeleaf Board Table</h1>
+	    
+        <table>
+        	<thead>
+        		<tr>
+	    			<th>Number</th>
+	    			<th>Title</th>
+	    			<th>Name</th>	    		
+   				</tr>
+        	</thead>
+        
+        	<tbody>
+        		
+        		<tr th:object="${ boardDTO }">        		
+		    		<td th:text="*{num}"></td>	    		 
+		    		<td th:text="*{btitle}"></td>	    		
+		    		<td th:text="*{bname}"></td>		    		  
+	   			</tr>
+	   			
+   				<tr th:each="b : ${ bList }">        		
+		    		<td th:text="${b.num}">1</td>	    		 
+		    		<td th:text="${b.btitle}">하늘이 무척 맑은 날씨네요..</td>	    		
+		    		<td th:text="${b.bname}">이순신</td>		    		  
+	   			</tr>	   		
+        	</tbody>		    
+	    </table>
+	</body>
+</html>
+
+
+38차시 DTO 객체와 타임리프를 이용한 뷰페이지 반복 출력(3) - css1
+css 적용 테스트
+table {
+	width: 100%;
+	border: 10px solid red;	
+}
+<css 적용이 안될 경우>
+cash가 남아 있을 경우 F12 새로고침 > 강력 새로고침
+
+[SampleController.css]
+/*table {
+	width: 100%;
+	border: 10px solid red;	
+}*/
+
+table {
+	table-layout: fixed;
+	/*
+		설명:
+		말 그대로 고정시킨다는 의미.
+		고정값이 있으면 해당 고정갑의 너비로 테이블의 크기를 고정ㅇ시킴. 고정값이 없으면 균형감있게 너비를 고정.
+	*/
+	width: 100%;
+	border-collapse: collapse;
+	/*
+		설명:
+		테이블의 테두리와 셀 (td) 의 테두리 사이의 간격을 어떻게 처리할 지를 결정하는 옵션.
+		seperate(기본) : 사이 간격을 가짐. (default)
+		collapse : 사이 간격을 없앰. 겹치는 부분은 그냥 한 줄로.
+		inherit : 상속
+	*/
+	border-spacing: 10px;
+	/*
+		설명:
+		border-spacing 속성은 collapse일 때는 먹히지 않고, 
+		seperate일 때 간격의 크기를 결정. 
+	*/
+	
+}
+
+td, th {
+	border: 1px solid brown;	
+}
+
+[SampleController6.html]
+~~
+<head>
+	<meta charset="UTF-8">
+	<title>타임리프 반복 출력</title>
+	<link rel="stylesheet" href="#" th:href="@{ /css/SampleController6.css }">
+</head>
+--------------------------------------------------------------------------------------------
+
+
+39차시 DTO 객체와 타임리프를 이용한 뷰페이지 반복 출력(4) - css2
+
+tr:nth-child(odd) {
+	background-color: green;
+	color: #fff;
+}
+
+even의 경우 짝수이기 때문에 thead의 <tr>에는 영향이 없지만 odd의 경우 head도 변함
+
+tbody tr:nth-child(1) {  /* thead가 선택되면 tbody tr 이렇게 명시해주고 스타일 주는게 좋음 */
+	background-color: green;
+	color: #fff;
+	/* 
+		설명:
+		기본적으로 괄호 안의 숫자만을 넣는 경우에는 선택되는 요소가 한개 뿐임  
+		그러나 아래의 옵션을 넣게되면 여러 개의 선택을 다양하게 할 수 있음.
+		nth-child(odd) : 홀수 번째 자식만 선택
+		nth-child(even) : 짝수 번째 자식만 선택
+		nth-child(n+1) : n+0 번째 자식만 선택. n은 0부터 시작하면서 증가.
+		nth-child(-n+1) : 동일.
+		nth-child(2n) : 두 변째 마다 선택.
+		nth-child(2n+1) : 첫 변째 요소부터 2번째 마다 선택.
+	*/
+}
+--------------------------------------------------------------------------------------------
+
+
+40차시 DTO 객체와 타임리프를 이용한 뷰페이지 반복 출력(5) - nth-child 실습1
+n+1 숫자부터 아래로 선택 n+5 5~ 선택  
+-n+1 숫자부타 위로 선택 -n+5 1~5번째 선택
+--------------------------------------------------------------------------------------------
+
+
+41차시 DTO 객체와 타임리프를 이용한 뷰페이지 반복 출력(6) - nth-child 실습2
+2n n=0, 1, 2, 3, ... 2, 4, 6, 8번째 선택
+3n 3, 6, 9번째
+
+2n+1     1, 3, 5번째
+
+css 사용 빈도 best3
+display / Do~ / nth-child
+--------------------------------------------------------------------------------------------
+
+42차시 스프링부트 시작시 경고 에러 해결 - spring.jpa.open-in-view
+
+spring.jpa.open-in-view is enabled by default. 
+Therefore, database queries may be performed during view rendering. 
+Explicitly configure spring.jpa.open-in-view to disable this warning
+
+[application.properties]
+# OSIV (Open Session In View)
+# 기본은 true로 설정되어 있는데 이 기능의 사용을 false로 변경해주면 warn 경고가 뜨지 않음.
+# 트랜젝션이 종료한 후에도 Controller의 Session이 열려있는 상태.
+# 따라서, 영속성 객체의 상태가 유지되어 Session이 열려있는 상태.
+spring.jpa.open-in-view = false
+
+
+====================================================================
 
 
 mysql> Create table tbl_users (
@@ -849,6 +1459,101 @@ Java Spring Boot (스프링부트) 프레임워크 제대로 배우기 Part.2
 15차시 MySQL 데이터베이스 및 테이블 생성 - 실습
 16차시 MySQL 데이터베이스 및 테이블 생성 - 실습 - root 패스워드 변경
 17차시 MySQL 데이터베이스 기본 쿼리문 실습
+
+11차시 MySQL 설치 및 환경설정(1)
+MySQL 설치 후 작동 확인 : command line client 실행 > select version()
+
+12차시 MySQL CHARSET utf8 vs utf8mb4 차이점
+
+13차시 MySQL root 비밀번호 변경하는 방법
+
+14차시 MySQL 데이터베이스 및 테이블 생성
+데이터베이스 보기 : show databases;
+데이터베이스 생성 : creat database member;
+데이터베이스 삭제 : drop database member;
+데이터베이스 선택(사용) : use 데이터베이스명;
+
+테이블 보기 : show tables;
+테이블 생성 : create table member (...);
+테이블 확인 : desc member;
+
+15차시 MySQL 데이터베이스 및 테이블 생성 - 실습
+* CREATE TABLE 테이블명
+
+CREATE TABLE MEMBER (
+	num		int			NOT NULL AUTO_INCREMENT,
+	name		varchar(32)		NOT NULL,
+	id		varchar(12)		DEFAULT 'guest',
+	phone	varchar(12)		DEFAULT NULL,
+	PRIMARY KEY (num)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+insert into member (name, id, phone) values ("홍길동", "mr.hong", "010-111-2222");
+* insert into member (name, phone) values ("홍길동", "010-111-2222");  id ← guest
+
+16차시 MySQL 데이터베이스 및 테이블 생성 - 실습 - root 패스워드 변경
+use mysql;
+show tables;
+user에 root 계정이 들어있음.
+
+(과거) SELECT host. user. password FROM user; X
+password → authentication_string
+
+SELECT host, user From user;
+SELECT host, user, authentication_string FROM user;
+ALTER user 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '12345678';
+
+
+17차시 MySQL 데이터베이스 기본 쿼리문 실습
+Select version();
+show variables like 'version';
+
+show databases;
+use member;
+show tables;
+create table tbl_users (
+u_idx			int			Not Null		Auto_increment,
+u_id			varchar(32)		Not Null,
+u_password		varchar(64)		Not Null,
+u_name		varchar(32)		Not Null,
+u_email		varchar(64)		Not Null,
+Primary Key(u_idx)
+)
+Engine = InnoDB Charset = utf8mb4;
+
+show tables;
+
+insert into tbl_users ( u_id, u_password, u_name, u_email ) values ( 'mr.hong', '1111', '홍길동', 'mr.hong@localhost.com' );
+select * from tbl_users;
+
+insert into tbl_users values ( '2', mr.kim', '2222', '김유신', 'mr.kim@localhost.net' );
+(DELETE FROM tbl_users WHERE u_idx = 2;)
+
+컬럼과 갯수가 맞지 않으면 에러
+( ) 안에 입력할 항목의 컬럼을 명시 해줘야 함
+
+insert into tbl_users ( u_id, u_password, u_name, u_email ) values 
+( 'mr.lee', '3333', '이순신', 'mr.lee@localhost.co.kr' ),
+( 'mr.moon', '4444', '을지문덕', 'mr.moon@localhost.com' ),
+( 'mr.kang', '5555', '강감찬', 'mr.kang@localhost.co.kr' )
+;
+select * from tbl_users;
+
+update tbl_users Set u_id='mr.py', u_name='파이썬' where u_idx = 5;
+select * from tbl_users;
+
+Delete From tbl_users Where u_idx = 5;
+select * from tbl_users;
+
+Rename table tbl_users to tbl_members;
+select * from tbl_users;
+
+update tbl_members Set u_id='mr.hong', u_name='홍발장'; * where로 대상 지정하지 않을 경우 모든 레코드에 대해 변경
+Delete From tbl_members;  * where로 대상을 지정하지 않을 경우 모든 레코드 삭제됨. 주의!!
+
+
+
+========================>>>>>>>>>>>>>>>>
 
 18차시 데이터베이스 연동 실습(1) - 프로젝트 생성
 new > start project > testboard (type Maven), com.testboard >project depency >web - spring web
