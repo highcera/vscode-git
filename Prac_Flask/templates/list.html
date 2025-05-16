@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+  <html lang="ko">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>리스트 보여주기</title>
+    <link rel="stylesheet" href="/css/style.css"/>
+  </head>
+  <body>
+    <article class="page sans">
+      <header>
+        <h1 class="page-title">등록한 집 목록 보기</h1>
+      </header>
+      <div class="page-body">
+        <p></p>
+        {% if length != 0 %}
+          {% for house in house_list %}  
+          <a href = {{url_for("house_info", index = house[0])}}><h2>{{house[1]}}</h2></a>
+          {% endfor %}
+        {% else %}
+          <h2>집을 등록해 주세요!</h2>  
+        {% endif %}
+      </div>
+    </article>
+  </body>
+</html>

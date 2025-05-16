@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+  <html lang="ko">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>사진 업로드 하기</title>
+    <link rel="stylesheet" href="/css/style.css"/>
+  </head>
+  <body>
+    <article class="page sans">
+      <header>
+        <h1 class="page-title">사진 업로드 하기</h1>
+      </header>
+      <div class="page-body">
+        <p></p>
+        <p>사진 업로드 하기</p>
+        <p>
+          <form method="POST" enctype="multipart/form-data" action="{{ url_for('upload_done') }}">
+            <input type="file" name="file"/>
+            <input type="submit"/>
+          </form>
+        </p>
+      </div>
+    </article>
+  </body>
+</html>

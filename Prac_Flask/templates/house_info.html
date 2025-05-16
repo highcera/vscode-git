@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+  <html lang="ko">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>등록한 집 세부내용</title>
+    <link rel="stylesheet" href="/css/style.css"/>
+  </head>
+  <body>
+    <article class="page sans">
+      <header>
+        <h1 class="page-title">등록한 집 세부내용</h1>
+      </header>
+      <div class="page-body">
+        <p>집 위치 - {{location}}</p>
+        <p>청결도 -
+          {% if cleaness == True %}★★★
+          {% else %}☆
+          {% endif %}</p>
+        <p>빌트인 항목 - {{built_in}}</p>
+        <p>
+          <div>
+            <img src = {{url_for('static', filename = photo)}}>
+          </div>
+        </p>
+      </div>
+    </article>
+  </body>
+</html>

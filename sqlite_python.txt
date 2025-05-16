@@ -1,0 +1,689 @@
+https://wikidocs.net/12474
+
+ 파이썬으로 배우는 알고리즘 트레이딩 (개정판… 17. 주가 데이터 저장하기 (revisio… 1) SQLite 1) sqlite3 모듈 기초 위키독스
+
+https://wikidocs.net/5327
+
+1) sqlite3 모듈 기초
+sqlite3 모듈은 파이썬 표준 라이브러리(파이썬이 설치될 때 기본적으로 설치되는 모듈)로 SQLite에 대한 인터페이스를 제공합니다. 
+쉽게 설명하면 표준 라이브러리인 sqlite3 모듈을 이용하면 따로 모듈을 설치할 필요 없이 데이터베이스를 쉽게 이용할 수 있습니다.
+
+그림 17.2와 같이 Jupyter QtConsole을 실행한 후 sqlite3 모듈을 임포트합니다. 그리고 version과 sqlite_version을 확인해보기 바랍니다. 
+여기서 version은 sqlite3 모듈 자체의 버전을 의미하고, sqlite_version은 SQLite의 버전을 의미합니다.
+
+그림 17.2 sqlite3 모듈 임포트 및 버전 확인
+
+sqlite3 모듈이 정상적으로 임포트됐다면 이번에는 데이터베이스를 생성해 보겠습니다. 데이터베이스 생성은 sqlite3 모듈의 connect 함수를 사용합니다. 
+이때 함수의 인자로 생성할 데이터베이스 파일의 경로 및 이름을 지정하면 됩니다. 
+윈도우 c:\ 드라이브의 최상위 경로에는 권한 문제 때문에 데이터베이스가 생성되지 않을 수도 있는데 이때는 다른 경로를 사용하면 됩니다.
+
+다음 예에서 저자는 'c:/Users/Jason'이라는 경로에 데이터베이스를 생성했는데 여기서 'Jason'은 저자의 윈도우 로그인 아이디입니다. 
+여러분은 본인의 윈도우 로그인 아이디에 맞춰 적당히 경로를 수정하면 됩니다.
+
+connect 함수가 에러 없이 정상적으로 호출됐다면 con 타입도 살펴보기 바랍니다. type 내장 함수를 통해 확인해보면 Connection 객체임을 확인할 수 있습니다. 
+사실 con의 타입이 중요한 것은 아니고 con이라는 객체를 통해 앞으로 데이터베이스를 조작할 수 있다는 것을 기억하는 것이 중요합니다.
+
+In [1]: con = sqlite3.connect("c:/Users/Jason/kospi.db")
+In [2]: type(con)
+Out[3]: sqlite3.Connection
+파일 다루기에서 open 내장 함수를 사용해서 파일을 생성했던 것처럼 connect 함수를 호출하면 새로운 데이터베이스 파일이 생성됩니다. 
+그림 17.3과 같이 connect 함수의 인자로 사용했던 경로(‘c:/Users/Jason')를 윈도우의 파일 탐색기를 통해 접근해보면 kospi.db라는 파일이 생성됐음을 확인할 수 있습니다.
+
+그림 17.3 생성된 kospi.db 파일
+
+이번에는 생성된 데이터베이스에 데이터를 넣어보겠습니다. 
+그림 17.1을 참조하면 DBMS는 SQL(Structured Query Language)이라는 데이터베이스 관리 전용 프로그래밍 언어를 통해 사용할 수 있습니다. 
+파이썬도 배우고 있는데 여기에 또 SQL까지 배울 생각을 하니 벌써 머리가 아프지요? 그래도 SQL은 생각보다는 어렵지 않으니 천천히 따라오기 바랍니다.
+
+DBMS에서는 보통 SQL 구문을 호출해서 데이터를 조작하게 되는데 SQL 구문을 호출하려면 Cursor객체가 필요합니다. 
+다음과 같이 Connection 객체인 con을 사용해 Cursor 객체를 생성합니다. 이것으로 데이터베이스 조작을 위한 기본적인 준비를 마쳤습니다.
+
+In [4]: cursor = con.cursor()
+데이터베이스 파일에 데이터를 저장하는 데는 다양한 방법이 있지만 가장 일반적인 방법은 그림 17.4와 같이 2차원 형태로 데이터를 저장하는 것 입니다. 
+그림 17.4는 카카오 종목에 대한 5일치 시가,고가, 저가, 종가, 거래량 데이터를 마이크로소프트 엑셀로 정리해본 것입니다. 
+여러분도 이러한 형태의 데이터에 익숙할 것입니다.
+
+데이터베이스를 사용할 때 가장 자주 사용하는 용어 세 가지에 대해 먼저 정리해보겠습니다. 
+그림 17.4에서 각 열에 위치하는 일자, 시가, 고가, 저가, 종가, 거래량 데이터를 칼럼(column)이라고 부르고 각 행에 해당하는 데이터 묶음을 로우(row)라고 합니다. 
+마지막으로 그림 17.4와 같이 2차원 형태의 데이터 구조를 테이블(table)이라고 합니다.
+
+그림 17.4 데이터베이스 용어(테이블, 칼럼, 로우)
+
+이번에는 그림 17.4의 데이터를 파이썬을 통해 데이터베이스에 저장해보겠습니다. 데이터를 넣기 전에 가장 먼저 해야 하는 일은 테이블을 만드는 것입니다. 
+테이블을 만들 때는 각 칼럼에 어떤 데이터가 저장되는지에 대해 함께 기술해야 합니다.
+
+테이블을 만들 때는 다음과 같이 SQL 구문을 사용합니다. 'CREATE TABLE'은 테이블을 만든다는 SQL 구문이고 kakao는 테이블의 이름입니다. 
+함수의 인자와 같은 부분은 각각 칼럼 이름과 칼럼 데이터 타입을 기술하는 부분입니다. 
+일자 데이터는 데이터 타입으로 text를 사용했는데 이는 파이썬의 문자열과 같은 의미입니다. 나머지 데이터는 모두 int로 지정했는데 이는 파이썬의 정수형과 같습니다.
+
+CREATE TABLE kakao(Date text, Open int, High int, Low int, Closing int, Volumn int)
+DBMS에는 데이터베이스를 관리할 때 위와 같이 SQL 구문을 사용합니다. 파이썬에서 SQL 구문을 실행하려면 앞서 생성한 Cursor 객체의 execute 메서드를 사용하면 됩니다. 
+다음 코드를 보면 execute 메서드의 인자로 kakao라는 테이블을 생성하는 SQL 구문이 입력된 것을 확인할 수 있습니다.
+
+In [5]: cursor.execute("CREATE TABLE kakao(Date text, Open int, High int, Low int, Closing int, Volumn int)")
+Out[5]: <sqlite3.Cursor at 0x4aa2d60>
+위 코드를 실행하면 그림 17.5와 같은 형태의 테이블이 만들어집니다. 
+SQL 구문을 사용하는 것이 복잡해 보이지만 단계별로 나눠서 생각해보면 여러분이 엑셀로 데이터를 만드는 과정과 그 절차가 매우 비슷하다는 것을 확인할 수 있습니다.
+
+그림 17.5 테이블 생성
+
+kakao라는 테이블을 만들었으니 이번에는 테이블에 데이터를 넣어보겠습니다. 역시 SQL 구문을 만든 후 해당 구문을 cursor.execute 메서드를 사용해서 호출하면 됩니다. 
+로우(Row)에 데이터를 삽입하는 SQL 구문은 다음과 같습니다. 'INSERT INTO kakao VALUES'는 kakao라는 테이블 안으로(into) VALUES를 삽입(insert)한다는 의미입니다. 
+테이블로 입력할 로우 데이터는 VALUES() 부분에 지정하면 됩니다.
+
+INSERT INTO kakao VALUES(“16.06.03”, 97000, 98600, 96900, 98000, 321405)
+SQL 구문이 실제로 수행되게 하려면 cursor.execute를 통해 실행하면 됩니다.
+
+In [8]: cursor.execute("INSERT INTO kakao VALUES('16.06.03', 97000, 98600, 96900, 98000, 321405)")
+Out[8]: <sqlite3.Cursor at 0x4aa2d60>
+execute 메서드를 사용해 SQL 구문을 실행할 때 한 가지 주의할 점이 있습니다. 
+SQL 구문을 실행하는 코드를 살펴보면 SQL 구문 전체를 큰따옴표를 사용해서 문자열로 만들었습니다. 
+따라서 '16.06.03'과 같이 SQL 구문에 문자열이 있는 경우 작은따옴표를 사용해야 합니다. 
+만약 그림 17.6과 같이 내부에서도 큰따옴표를 사용하는 경우 에러가 발생합니다.
+
+그림 17.6 SQL 구문 실행 에러
+
+이번에는 16.06.02에 해당하는 데이터를 로우로 추가해 보겠습니다.
+
+In [9]: cursor.execute("INSERT INTO kakao VALUES('16.06.02', 99000, 99300, 96300, 97500, 556790)")
+Out[9]: <sqlite3.Cursor at 0x4aa2d60>
+지금까지 작업한 내용을 실제로 데이터베이스에 반영하려면 commit 메서드를 호출해야 합니다. 
+그리고 close 메서드를 통해 DB 연결을 닫습니다.
+
+In [10]: con.commit()
+In [11]: con.close()
+
+마지막 편집일시 : 2021년 3월 27일 9:22 오후
+
+
+
+
+
+3) 데이터베이스로부터 데이터 읽기
+이번 절에서는 앞서 생성한 kospi.db라는 데이터베이스 파일로부터 데이터를 읽어와 보겠습니다. 먼저 Jypyter QtConsole을 실행한 후 다음과 같이 Cursor 객체까지 생성합니다. 참고로 kospi.db 파일의 경로가 다른 경우에는 적절히 수정해야 합니다.
+
+In [1]: import sqlite3
+
+In [2]: con = sqlite3.connect("c:/Users/Jason/kospi.db")
+
+In [3]: cursor = con.cursor()
+데이터베이스에서 데이터를 읽으려면 먼저 테이블을 선택하는 SQL 구문을 실행해야 합니다. "SELECT * FROM kakao"라는 SQL 구문은 ‘kakoa라는 테이블로부터 모든 것(*)을 선택하라’는 의미입니다. 항상 느끼는 것이지만 SQL 구문의 구조가 생각보다 어렵지 않지요?
+
+In [4]: cursor.execute("SELECT * FROM kakao")
+Out[4]: <sqlite3.Cursor at 0x4a9f3a0>
+선택한 테이블로부터 로우 단위로 데이터를 읽으려면 fetchone 메서드를 호출합니다. 다음 코드와 같이 fetchone을 호출할 때마다 로우 단위로 데이터를 얻을 수 있음을 확인할 수 있습니다. kakao라는 테이블에는 두 개의 로우만 존재하기 때문에 fetchone을 세 번 호출하면 마지막 호출에 대해서는 아무런 값도 반환되지 않음을 확인할 수 있습니다. 참고로 fetchone 메서드의 리턴 값은 튜플입니다.
+
+In [5]: cursor.fetchone()
+Out[5]: ('16.06.03', 97000, 98600, 96900, 98000, 321405)
+
+In [6]: cursor.fetchone()
+Out[6]: ('16.06.02', 99000, 99300, 96300, 97500, 556790)
+
+In [7]: cursor.fetchone()
+
+In [8]:
+테이블로부터 로우 단위로 데이터를 읽을 수도 있지만 한 번에 모든 로우를 읽을 수도 있습니다. 한 번에 모든 로우를 읽기 위해서는 fetchall 메서드를 사용하면 됩니다. 앞서 선택한 테이블에서는 모든 데이터를 읽어 버렸기 때문에 다시 한 번 SELECT 구문을 실행한 후 fetchall 메서드를 호출하면 됩니다.
+
+In [8]: cursor.execute("SELECT * FROM kakao")
+Out[8]: <sqlite3.Cursor at 0x4a9f3a0>
+
+In [9]: cursor.fetchall()
+Out[9]: 
+[('16.06.03', 97000, 98600, 96900, 98000, 321405),
+('16.06.02', 99000, 99300, 96300, 97500, 556790)]
+이번에는 리턴 값을 변수로 바인딩해둔 후 해당 변수를 통해 데이터에 접근해 보겠습니다. 보통 데이터베이스로부터 읽어온 데이터는 이 같은 방식으로 처리합니다. fetchall 메서드의 반환값을 kakao라는 변수로 바인딩합니다. kakao는 리스트 타입이기 때문에 인덱싱을 통해 데이터에 접근할 수 있습니다.
+
+In [10]: cursor.execute("SELECT * FROM kakao")
+Out[10]: <sqlite3.Cursor at 0x4a9f3a0>
+
+In [11]: kakao = cursor.fetchall()
+
+In [12]: kakao[0][0]
+Out[12]: '16.06.03'
+
+In [13]: kakao[0][1]
+Out[13]: 97000
+
+In [14]: kakao[0][2]
+Out[14]: 98600
+
+In [15]:
+마지막 편집일시 : 2018년 3월 20일 3:18 오후
+
+
+1) DataFrame 객체를 SQLite DB에 저장하기
+DataFrame 객체를 SQLite DB에 저장하기 위해 먼저 간단한 형태의 DataFrame 객체를 생성해 보겠습니다. Jupyter QtConsole을 실행한 후 다음과 같이 입력하면 됩니다. 참고로 DataFrame 객체를 쉽게 생성하는 방법은 데이터를 파이썬 딕셔너리로 표현한 후 DataFrame 생성자를 호출하는 것입니다.
+
+In [1]: import pandas as pd
+
+In [2]: from pandas import Series, DataFrame
+
+In [3]: raw_data = {'col0': [1, 2, 3, 4], 'col1': [10, 20, 30, 40], 'col2':[100, 200, 300, 400]}
+
+In [4]: df = DataFrame(raw_data)
+
+In [5]: df
+Out[5]:         
+col0 col1 col2
+0  1   10   100
+1  2   20   200
+2  3   30   300
+3  4   40   400
+
+In [6]:
+sqlite3 모듈을 임포트한 후 connect 함수를 호출해 기존에 생성해둔 kospi.db를 엽니다.
+
+In [6]: import sqlite3
+
+In [7]: con = sqlite3.connect("c:/Users/Jason/kospi.db")
+앞서 Cursor 객체를 생성한 후 SQL 구문을 execute 메서드로 호출하는 방식을 통해 데이터베이스를 조작했습니다. pandas의 DataFrame 클래스는 DataFrame 객체 내의 데이터를 데이터베이스로 저장하기 위해 to_sql이라는 메서드를 제공합니다. 따라서 명시적으로 SQL 구문을 사용하지 않고도 to_sql 메서드 호출을 통해 데이터베이스에 데이터를 저장할 수 있습니다. 다음과 같이 to_sql 메서드를 호출해 'test'라는 이름의 테이블에 df 객체의 내용을 저장합니다.
+
+In [10]: df.to_sql('test', con)
+to_sql 메서드가 제대로 동작했는지 확인해보기 위해 DB Browser for SQLite 프로그램을 실행해 'kospi.db' 파일을 열어봅니다. [Browse Data] 탭에서 [Table] 항목을 'test'로 선택하면 그림 17.16과 같이 df 객체의 데이터가 저장돼 있음을 확인할 수 있습니다.
+
+
+
+그림 17.17 test 테이블 확인
+
+pandas 웹 페이지(http://pandas.pydata.org/)에서 to_sql 메서드를 살펴보면 다음과 같이 정의돼 있습니다.
+
+DataFrame.to_sql(name, con, flavor='sqlite', schema=None, if_exists='fail', index=True, index_label=None, chunksize=None, dtype=None)
+to_sql 메서드의 파라미터에 대한 자세한 내용은 표 17.1을 참고하기 바랍니다.
+
+표 17.1 DataFrame.to_sql 메서드 파라미터
+
+파라미터	설명
+name	SQL 테이블 이름으로 파이썬 문자열로 형태로 나타낸다.
+con	Cursor 객체
+flavor	사용한 DBMS를 지정할 수 있는데 'sqlite' 또는 'mysql'을 사용할 수 있다. 기본값은 'sqlite'이다.
+schema	Schema를 지정할 수 있는데 기본값은 None이다.
+if_exists	데이터베이스에 테이블이 존재할 때 수행 동작을 지정한다. 'fail', 'replace', 'append' 중 하나를 사용할 수 있는데 기본값은 'fail'이다. 'fail'은 데이터베이스에 테이블이 있다면 아무 동작도 수행하지 않는다. 'replace'는 테이블이 존재하면 기존 테이블을 삭제하고 새로 테이블을 생성한 후 데이터를 삽입한다. 'append'는 테이블이 존재하면 데이터만을 추가한다.
+index	DataFrame의 index를 데이터베이스에 칼럼으로 추가할지에 대한 여부를 지정한다. 기본값은 True이다.
+index_label	인덱스 칼럼에 대한 라벨을 지정할 수 있다. 기본값은 None이다.
+chunksize	한 번에 써지는 로우의 크기를 정숫값으로 지정할 수 있다. 기본값은 None으로 DataFrame 내의 모든 로우가 한 번에 써진다.
+dtype	칼럼에 대한 SQL 타입을 파이썬 딕셔너리로 넘겨줄 수 있다.
+to_sql 메서드에는 여러 파라미터가 있지만 대부분 기본값을 가지고 있어 따로 지정할 필요가 없는 경우가 많습니다. 다만 DataFrame 객체에 많은 로우가 있어 이를 데이터베이스 한 번에 쓰는 경우 패킷 크기 제약으로 에러가 발생할 수 있습니다. 이 경우 다음과 같이 한 번에 데이터베이스로 저장될 로우의 개수를 지정하면 됩니다.
+
+In [11]: df.to_sql('test', con, chunksize=1000)
+
+
+
+
+2) SQLite DB에서 테이블 로드하기
+이번 절에서는 pandas를 이용해 데이터베이스의 테이블을 DataFrame 객체로 읽어오는 방법을 알아보겠습니다. pandas는 데이터베이스의 테이블을 DataFrame 객체로 읽어오기 위해 read_sql 함수를 제공합니다.
+
+먼저 Jupyter QtConsole을 실행합니다. 그리고 필요한 모듈을 임포트한 후 앞서 생성한 kospi.db 파일을 엽니다.
+
+In [1]: import pandas as pd
+
+In [2]: from pandas import Series, DataFrame
+
+In [3]: import sqlite3
+
+In [4]: con = sqlite3.connect("c:/Users/Jason/kospi.db")
+read_sql 함수를 호출해 kakao 테이블 데이터를 df라는 DataFrame 객체로 로드합니다. read_sql 함수의 첫 번째 인자로는 SQL 구문을 입력하고, 두 번째 인자로는 Connection 객체를 전달합니다. index_col 인자는 DataFrame 객체에서 인덱스로 사용될 칼럼을 지정하는 것으로 기본값은 None입니다. None을 입력하면 자동으로 0부터 시작하는 정숫값이 인덱스로 할당됩니다.
+
+In [23]: df = pd.read_sql("SELECT * FROM kakao", con, index_col=None)
+
+In [24]: df
+Out[24]: 
+       Date   Open   High    Low  Closing  Volumn
+0  16.06.03  97000  98600  96900    98000  321405
+1  16.06.02  99000  99300  96300    97500  556790
+이번에는 앞서 생성했던 'test'라는 테이블을 로드합니다. 그림 17.17과 같이 read_sql 함수를 사용해 'test' 테이블을 로드하면 DataFrame 객체에 추가로 인덱스 칼럼이 생성된 것을 확인할 수 있습니다.
+
+
+
+그림 17.17 read_sql 함수를 사용해 데이터베이스 테이블을 로드
+
+이처럼 테이블에 이미 DataFrame의 인덱스에 해당하는 칼럼이 존재하는 경우에는 해당 칼럼의 이름을 index_col 인자로 전달하면 됩니다. 이번에는 추가로 인덱스 칼럼이 생성되지 않았음을 확인할 수 있습니다.
+
+In [27]: df = pd.read_sql("SELECT * FROM test", con, index_col='index')
+
+In [28]: df
+Out[28]: 
+       col0  col1  col2
+index                  
+0         1    10   100
+1         2    20   200
+2         3    30   300
+3         4    40   400
+마지막 편집일시 : 2018년 3월 20일 3:22 오후
+
+
+
+3) Pandas를 이용한 주가 데이터 저장
+
+이번 절에서는 pandas의 DataReader를 통해 특정 종목의 일봉 데이터를 DataFrame 형태로 다운로드 한 후 이를 데이터베이스로 저장해보겠습니다.
+
+먼저 관련 모듈을 임포트합니다. DataReader를 통해 읽은 데이터를 SQLite로 저장하기 위해 sqlite3 모듈도 미리 임포트합니다.
+
+import pandas as pd
+import pandas_datareader.data as web
+import datetime
+import sqlite3
+DataReader를 통해 GS 종목(종목 코드: '078930.KS')의 일별 데이터를 DataFrame 형태로 다운로드합니다.
+
+start = datetime.datetime(2010, 1, 1)
+end = datetime.datetime(2016, 6, 12)
+df = web.DataReader("078930.KS", "yahoo", start, end)
+df.head()를 이용해 df 객체에 저장된 일부 값을 확인해 봅니다. 다음과 같이 시가, 고가, 저가, 종가, 거래량, 수정 종가가 거래일별로 존재하는 것을 확인할 수 있습니다.
+
+               High      Low     Open    Close    Volume     Adj Close
+Date                                                                  
+2010-01-04  34050.0  33500.0  33500.0  33750.0  237735.0  27447.957031
+2010-01-05  34500.0  33600.0  33950.0  33900.0  440485.0  27569.951172
+2010-01-06  34900.0  33900.0  33900.0  34250.0  534581.0  27854.591797
+2010-01-07  35100.0  34300.0  34350.0  34600.0  543769.0  28139.236328
+2010-01-08  35100.0  34200.0  34700.0  34450.0  553288.0  28017.250000
+SQLite 데이터베이스에 테이블로 생성한 후 DataFrame 객체를 저장합니다. 테이블 이름은 종목별로 구분될 수 있도록 6자리 숫자의 종목 코드를 그대로 사용하겠습니다.
+
+con = sqlite3.connect("c:/Users/Jason/kospi.db")
+df.to_sql('078930', con, if_exists='replace')
+이번에는 데이터베이스에 저장된 데이터를 다시 로드해서 pandas의 DataFrame 객체로 생성해보겠습니다. 앞에서 배운 것처럼 pandas의 read_sql 함수를 사용하면 됩니다. 이때 read_sql 함수의 첫 번째 인자로 SQL 쿼리를 전달합니다. 종목 코드가 숫자 형태로 구성돼 있으므로 한 번 작은따옴표로 감싸줘야 합니다.
+
+readed_df = pd.read_sql("SELECT * FROM '078930'", con, index_col = 'Date')
+readed_df 객체에 데이터가 잘 저장돼 있는지 readed_df.head()를 호출해서 확인해 봅니다.
+
+                        High      Low     Open    Close    Volume     Adj Close
+Date                                                                           
+2010-01-04 00:00:00  34050.0  33500.0  33500.0  33750.0  237735.0  27447.957031
+2010-01-05 00:00:00  34500.0  33600.0  33950.0  33900.0  440485.0  27569.951172
+2010-01-06 00:00:00  34900.0  33900.0  33900.0  34250.0  534581.0  27854.591797
+2010-01-07 00:00:00  35100.0  34300.0  34350.0  34600.0  543769.0  28139.236328
+2010-01-08 00:00:00  35100.0  34200.0  34700.0  34450.0  553288.0  28017.250000
+예제 17.1은 지금까지 설명한 내용의 전체 코드입니다. pandas와 SQLite를 이용해 몇 줄 안 되는 코드로 과거 주식 데이터를 얻어오고 이를 저장할 수 있음을 확인할 수 있습니다.
+
+import pandas as pd
+import pandas_datareader.data as web
+import datetime
+import sqlite3
+
+start = datetime.datetime(2010, 1, 1)
+end = datetime.datetime(2016, 6, 12)
+df = web.DataReader("078930.KS", "yahoo", start, end)
+
+con = sqlite3.connect("c:/Users/Jason/kospi.db")
+df.to_sql('078930', con, if_exists='replace')
+
+readed_df = pd.read_sql("SELECT * FROM '078930'", con, index_col = 'Date')
+예제 17.1 pandas와 SQLite(소스코드: book/ch17/01.py)
+
+
+
+
+
+
+
+
+
+https://rrohchan.tistory.com/50
+
+[python] pymysql을 사용한 sql 연동1
+Rrohchan 2021. 12. 23. 12:01
+
+* python과 mysql 연동
+
+pymysql
+pymysql은 mysql을 python에서 사용할 수 있는 라이브러리이다. pymysql은 python 프로그램이 mysql의 서버와 연결되어 DB에 저장되어 있는 데이터들을 파이썬으로 불러올 수 있게 해 준다.
+DB의 ['user', 'password', 'host', 'database', 'charset'] 등을 지정해주고, connect 메소드를 사용하여 객체와 연결을 해준다. 예시를 보며 실습해보자
+ 
+
+실습
+1. 라이브러리 설치
+
+!pip install pymysql
+ 
+
+2. 라이브러리 호출
+
+import pymysql
+import pandas as pd
+ 
+
+3. mysql과 python 연결
+
+## MYSQL connection으로 host, port 등 확인
+host = "127.0.0.1"
+port = 3306
+database = "class"
+username = "root"
+password = "abcd1234"
+### pymysql을 사용해서 파이썬과 mysql 연결
+# .connect 사용
+class_db = pymysql.connect(host=host, user=username, passwd=password, db=database, port=port,charset='utf8')
+ 
+
+4. 연결한 DB와 상호작용 하기위해 cursor 객체 생성
+
+cursor 클래스는 실제적으로 DB의 sql 구문을 실행시키고 조회된 결과를 가져오게 된다. 
+## cursor 객체 생성
+cursor = class_db.cursor()
+cursor​
+ 
+
+코드 실행 결과
+ 
+
+[cursor 함수]
+
+cursor객체.execute() : sql문을 실행시키기 위해 execute 함수 호출
+cursor객체.fetchone() : 조회된 결과로부터 데이터 1개(하나의 row)를 반환
+cursor객체.fetchall() : 모든 데이터를 한꺼번에 클라이언트로 가져올 때 사용이 된다.
+cursor객체.fetchmany() : 여러 개의 데이터를 반환하게 된다.
+## sql문 작성
+sql = 'select * from exam_result'
+cursor.execute(sql)
+
+# 몇 개의 행으로 이루어져 있는지 확인
+print(cursor.execute(sql))
+
+## 데이터 1개 가져오기
+result_fist = cursor.fetchone()
+
+## 모든 데이터 한번에 가져오기 (1행이 포함되지 않는다.(얖에서 한 줄을 읽었기 때문에 커서가 내려와서 다음 줄부터 읽게 됨))
+result_all = cursor.fetchall()
+
+## 여러 개의 데이터를 반환한게 된다.
+    # 읽고 싶은 줄 수를 괄호 안에 적어야 함
+    # fetchall()을 실행하고 나면 커서가 맨 마지막으로 가 있기에 select 문을 다시 할당해주고 fetchmany()를 확인해야 한다.
+cursor.execute(sql)
+result_many = cursor.fetchmany(2)
+ 
+
+5. 튜플 값 확인
+
+ 
+
+DB의 행이 하나의 튜플에 들어와서 저장되어 있다.
+따라서 변수를 출력하기 위해서는 행을 불러온 후에 그 안에서 변수를 출력한다.
+## 튜픞 값 확인
+for  i in result_many:
+	print("## 행:", i, end='\n\n')
+    for j in i:
+        print("# 변수 출력:", j)
+---------------------------------------------코드 실행 결과---------------------------------------------
+## 행: ('변수1', '변수2', '변수3', '변수4')
+
+# 변수 출력: 변수1
+# 변수 출력: 변수2
+# 변수 출력: 변수3
+# 변수 출력: 변수4
+ 
+
+6. 데이터프레임으로 만들기
+
+## fetchall() 데이터 프레임
+df_all = pd.DataFrame(result_all)
+df_all.head()
+
+코드 실행 결과
+
+
+
+[python] pymysql을 사용한 sql 연동2
+Rrohchan 2021. 12. 24. 16:03
+
+ 
+
+python과 mysql 연동
+ 
+
+with 문을 사용해서 확인
+파일을 열고 사용한 뒤, 반납의 과정
+데이터베이스 세션을 얻어 사용했다면 다른 프로세스를 위해 반납
+자동으로 마지막에 close()를 해줌
+ 
+
+0. commit이란?
+
+commit 명령어는 모든 작업을 정상적으로 처리하겠다고 하는 명령어이다.
+쿼리문의 내용을 DB에 반영하기 위해, 처리된 내용을 모두 영구 저장한다.
+commit을 수행하면, 하나의 트랜젝션 과정이 종료된다.
+auto commit을 설정하여 자동으로 바뀌게 설정할 수 있는데 commit을 하게 되면 데이터 복구가 어렵기에 주의해야 한다.
+ 
+
+ 
+
+1. try | finally + with
+
+finally를 사용하여 마지막에 DB 연결을 닫아줘야 함
+단순하게 데이터를 불러오는 경우에는 commit()을 하지 않아도 된다.
+sql의 DML 언어를 사용할 때만 commit을 하면 된다.
+### 1번 test
+connection = pymysql.connect(host=host, user=username, passwd=password, db=database, port=port,charset='utf8')
+
+try:
+    with connection.cursor() as cursor:
+        sql = "select * from exam_result"
+        cursor.execute(sql)
+        result = cursor.fetchall()
+        
+        # commit을 이용하여 데이터를 확정지어야 한다.
+        result.commit()
+        
+        for i in result:
+            print(i)
+finally:
+    # close()를 사용해서 DB 연결을 닫는다.
+    connection.close()
+
+코드 결과
+ 
+
+ 
+
+2. 한글 출력
+
+### 2번 test
+    # 한글이 정상적으로 출력되지 않을 때
+
+connection = pymysql.connect(host=host, user=username, passwd=password, db=database, port=port)#,charset='utf8')
+    
+with connection.cursor() as cursor:
+    sql = "select * from major"
+    
+    # 데이터베이스 정의 시 charset='utf8'로 하였어도 한글이 제대로 안 뜰 수가 있다.
+    # 이럴 경우 .execute("set names utf8") 사용
+    cursor.execute("set names utf8")
+    cursor.execute(sql)
+    result = cursor.fetchall()
+    connection.commit()
+    
+    for i in result:
+        print(i)
+
+코드 결과
+ 
+
+3. insert문의 사용
+
+table에 insert into로 데이터 추가
+## 3번 테스트
+
+connection = pymysql.connect(host=host, user=username, passwd=password, db=database, port=port, charset='utf8')
+
+try:
+    with connection.cursor() as cursor:
+        sql = "Insert into major values (%s, %s, %s)"
+        
+        # 포맷팅 사용
+        cursor.execute(sql, (107, "통계학과", '손흥민'))
+        cursor.execute(sql, (108, "경영학과", '올라프'))
+    
+    # execute() 만으로는 실행이 일어나지 않는다.테이블의 변화를 지시하는 함수 
+    # commit()을 사용해야 변화가 일어난다.
+    connection.commit()
+
+finally:
+    connection.close()
+ 
+
+추가 되었는지 결과 확인
+
+## 추가 되었는지 확인
+    # 손흥민과 올라프 관측치가 추가되었음을 알 수 있다.
+connection = pymysql.connect(host=host, user=username, passwd=password, db=database, port=port, charset='utf8')
+
+try:
+    with connection.cursor() as cursor:
+        sql = "select * from major"
+        cursor.execute(sql)
+        result = cursor.fetchall()
+        for i in result:
+            print(i)
+    
+finally:
+    connection.close()
+ 
+
+4. update문의 사용
+
+## 손흥민의 학과를 토트넘으로 변경
+
+# connection을 다시 설정해주는 이유는 앞에서 close()를 했기 때문
+connection = pymysql.connect(host=host, user=username, passwd=password, db=database, port=port, charset='utf8')
+
+# try:
+with connection.cursor() as cursor:
+    sql = "update major set major_nm = %s where professor_nm = %s"
+    cursor.execute(sql, ('토트넘', '손흥민'))
+    
+    # update더 insert와 마찬가지로 commit을 해줘야 한다.
+connection.commit()
+    
+# finally:
+#     connection.close()
+## 추가 되었는지 확인 -> 알맞게 바뀜 
+try:
+    with connection.cursor() as cursor:
+        sql = "select * from major"
+        cursor.execute(sql)
+        result = cursor.fetchall()
+        for i in result:
+            print(i)
+    
+finally:
+    # connection을 1번 더 불러오지 않기 위해 updqte문에서 try, finally를 제외함
+    connection.close()
+
+코드 결과
+ 
+
+5. delete 문의 사용
+
+delete 문으로 관측값 제거 후 바로 확인
+## connection 설정
+connection = pymysql.connect(host=host, user=username, passwd=password, db=database, port=port, charset='utf8')
+
+try:
+	### 관측값 제거
+    with connection.cursor() as cursor:
+        sql="delete from major where professor_nm=%s"
+        cursor.execute(sql, '올라프')
+    
+    # cursor 객체가 아닌 connection에 commit 해야함
+    connection.commit()
+    
+    ### 결과 확인
+    with connection.cursor() as cursor:
+        sql = 'select major_cd, major_nm, professor_nm from major'
+        cursor.execute(sql)
+        result = cursor.fetchall()
+        
+        for i in result:
+            print(i)
+
+finally:
+    connection.close()
+
+
+## 올라프 관측치가 잘 사라졌음을 알 수 있음
+ 
+
+6. 튜플 변수를 사용한 update
+
+## connection close 여부를 확인 후 진행
+    # 위에서 close를 하지 않았기에 그대로 진행
+try:
+    professor_name = '손흥민'
+    with connection.cursor() as cursor:
+        sql = 'update major set major_nm=%s where professor_nm=%s'
+        cursor.execute(sql, ('맨시티', professor_name))
+        connection.commit()
+#     connection.commit()
+    
+    with connection.cursor() as cursor:
+        sql = "select * from major"
+        cursor.execute(sql)
+        
+        result = cursor.fetchall()
+    # for 문을 with문 안에 써도 된다.
+    for i in result:
+        print(i)
+            
+finally:
+    connection.close()
+
+코드 결과
+ 
+
+7. 관측치 한 번에 여러 개 추가
+
+connection = pymysql.connect(host=host, user=username, passwd=password, db=database, port=port, charset='utf8')
+
+with connection.cursor() as cursor:
+    data = (
+    ('108', '포르투','헐크'),
+    ('109', 'psg', '네이마르')
+    )
+
+    sql = ("insert into major values (%s, %s, %s)")
+    
+    # execute문으로 여러 개를 동시에 추가하는 것은 불가능
+    # executemany를 사용해야 함
+    cursor.executemany(sql, (data))
+    connection.commit()
+    
+with connection.cursor() as cursor:
+    sql = ("select * from major")
+    
+    cursor.execute(sql)
+    result = cursor.fetchall()
+    
+    for i in result:
+        print(i)
+
+ 
+
+8. Dictionary Cursor를 이용한 데이터 조회
+
+데이터 조회
+connection = pymysql.connect(host=host, user=username, passwd=password, db=database, port=port, charset='utf8', cursorclass=pymysql.cursors.DictCursor)
+
+try:
+    with connection.cursor(pymysql.cursors.DictCursor) as cursor:
+        sql = """select *
+                 from major"""
+        cursor.execute(sql)
+        result = cursor.fetchall()
+        
+        for i in result:
+            print(i['major_cd'])
+
+finally:
+    connection.close()
+
+코드 결과
+
+
+
+
+
+SQLite로 가볍게 배우는 데이터베이스
+https://wikidocs.net/book/1530
+
+https://www.youtube.com/watch?v=3vsC05rxZ8c&list=PLzMcBGfZo4-l5kVSNVKGO60V6RkXAVtp-
+
+
+
