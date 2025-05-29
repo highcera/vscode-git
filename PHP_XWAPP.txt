@@ -1,3 +1,83 @@
+https://blog.naver.com/chogar/221925309816
+
+로컬 PC MySQL 접속을 위해 XAMPP Control Panel > Shell
+mysql -u root -p
+show databasees;
+use mysql;
+show tables;
+
+create database company;
+use compay;
+show tables;
+
+web 계정 (모든 권한) 만들기
+grant all privileges on *.* to 'web'@'%' identified by 'web_admin';
+flush privileges;
+
+보안상 불필요하다 생각하는 권한은 phpmyadmin에서 권한 제외를 설정 가능
+
+mysql -u web -p
+Enter password:
+
+show databases;
+
+
+http://localhost/phpmyadmin
+
+phpmyadmin
+사용자 계정
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+https://beop07.tistory.com/14
+
+XAMPP mariaDB / mysql 초기 비밀번호 설정 방법입니다.
+
+ 
+
+1. xmapp 아파치 서버와 mysql 서버를 Start 합니다.
+2. cmd창을 엽니다.
+3. cd C:\xampp\mysql\bin 입력 (각 사용자 환경에 맞게 mysql/bin 경로로 잡아준다.)
+cd C:\xampp\mysql\bin
+4. mysql -u root -p 입력
+mysql -u root -p 
+5. 초기 비밀번호가 없으니 그냥 엔터
+Enter password: 
+6. use mysql 입력하여 mysql데이터 베이스 선택
+use mysql
+7. 비밀번호쿼리문을 입력
+UPDATE user SET Password = password('설정하실 비밀번호') WHERE user = 'root';
+MariaDB 버전에따라(최신) 경우 위와 같이 입력시 Column 'Password' is not updatable 이라고 에러가 발생합니다.
+
+mysql의 update를 제한하기때문에 update 대신 아래와 같이 alter로 사용합니다.
+
+ALTER USER 'root'@'localhost' IDENTIFIED BY '설정하실 비밀번호';
+
+8. flush privileges 입력 하여 시스템에 커밋.
+flush privileges;
+
+9. quit 입력. 종료
+quit
+10. PHPMYADMIN 설정 변경
+C:\xampp\phpMyAdmin\config.inc.php 수정하거나 XAMPP Control Panel -> Apache -> Config -> PHPMYADMIN
+
+$cfg['Servers'][$i]['password'] = '설정된 비밀번호';
+ 
+
+※ 참고로 PHPMYADMIN에서 mysql 데이터 베이스를 선택하고 7~8번의 과정만 해도 성공적으로 적용 된다.
+
+keyword : xampp mysql 비밀번호, xmapp mysql password, xampp mariadb 비밀번호, xampp db 비밀번호, xampp 초기설정, mysql 초기 비밀번호
+
+---------------------------------------------------------------------------------------------------------------------------------------------
+https://hoon93.tistory.com/9
+MySQL 접속 에러 / ERROR 2003(HY000): Can't connect to MySQL server on 'localhost' (10061)
+
+----------------------------------------------------------------------------------------------------------------------------------------------
+LearnCodeEasy
+PHP로 MySQL 데이터베이스 연동하기
+ MySQLi와 PDO 
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
 Sub DeleteNames()
     Dim n As Name
     Dim lngCount As Long
@@ -16,7 +96,7 @@ End Sub
 MySQL Workbench
 Local instance MySQL80
 root
-localhost:3306
+localhost:3307
 1234
 
 ------------------------------------------      

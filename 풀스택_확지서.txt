@@ -1,0 +1,347 @@
+참고 site
+https://megastudyitacademy.tistory.com/entry/%ED%92%80%EC%8A%A4%ED%83%9D-%EA%B0%9C%EB%B0%9C%EC%9E%90%EB%A1%9C-%EC%84%B1%EC%9E%A5%ED%95%98%EA%B8%B0-%EC%9C%84%ED%95%9C-%ED%95%84%EC%88%98-%EA%B0%80%EC%9D%B4%EB%93%9C
+
+
+==================================================================================================
+
+Web · 프론트엔드
+풀스택 웹 개발로 배우는 확진자 지도 서비스 만들기
+
+Welcome. 나도 '개발자'가 될 수 있을까?
+1. 웹 개발자의 삶과 장점
+2. 수업 진행 방식
+3. React, Node, MySQL, AWS가 무엇인가?
+4. 코칭권 사용방법
+
+Ch1. React와 Node 서버를 각각 구동해, 데이터를 주고 받아보기
+1. Node.JS 설치, CREATE React APP 설치, Node EXPRESS FRAMWORK 설치
+2. React, Node 서버 디렉터리 구조 설정
+3. 프록시 설정
+4. GET 방식, POST 방식으로 React 서버에서 Node 서버의 JSON 데이터를 가져오기
+
+Ch2. Bootstrap 템플릿을 React 서버에 적용해보자
+1. Bootstrap 템플릿파일(HTML, CSS, IMG)로 React서버 HOME 페이지를 세팅
+2. 레이아웃 HEADER, FOOTER 처리
+3. React 페이지 라우팅 적용하기
+
+Ch3. 카카오 MAP API를 사용해, 바이러스 확진자 지도 만들기
+1. 카카오 MAP API 키 발급 및 사이트 도메인 등록
+2. 확진자 데이터를 JSON 형태로 변환하기
+3. React 페이지에 카카오 MAP 나타내기
+4. 확진자 데이터를 읽어와, 카카오 MAP 위에 표시하기
+
+Ch4. 확진자 데이터를 관리하는 관리자 페이지 만들기 - 조회
+1. Node 서버에 MySQL 테스트 서버 연결하기
+2. React 서버에 확진자 데이터 조회 페이지 만들기
+3. 조회 페이지에서 Node API를 호출해, DB(테스트 서버)에 있는 확진자 데이터 가져오기
+
+Ch5. 확진자 데이터를 관리하는 관리자 페이지 만들기 - AWS DB서버 생성
+1. AWS 가입 후, RDS (MySQL 서버) 인스턴스 생성하기(프리티어 버전 : 무료)
+2. WORKBENCH(MySQL툴)로 확진자 TABLE 생성하고, 더미 데이터 넣기
+3. 조회 페이지에서 Node API를 호출해, 생성한 RDS 서버에 있는 확진자 데이터 가져오기
+
+Ch6. 확진자 데이터를 관리하는 관리자 페이지 만들기 - 등록, 수정, 삭제
+1. React 서버에 확진자 데이터 등록/수정 페이지 만들기
+2. Node 서버에 등록 API 구현하기
+3. Node 서버에 수정 API 구현하기
+4. 확진자 격리 병원 이미지 업로드 하기
+5. Node 서버에 삭제 API 구현하기
+
+Ch7. AWS에 로컬 소스 배포 후, 외부 접속해보기
+1. EC2(React, Node 서버)인스턴스 생성하기 (프리티어 버전 : 무료)
+2. SFTP, SSH 환경 세팅, 리눅스 명령어 학습
+3. EC2서버에 필요한 프로그램 설치
+4. React, Node 소스코드를 EC2서버에 배포, 패키지 설치
+5. 서버를 구동하고, 외부에서 IP로 접속
+
+
+Outro. 이제 완성된 프레임워크로 원하는 서비스를 구현해보세요
+1. 이제 완성된 프레임워크로 원하는 서비스를 구현해보세요
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Welcome 3강에서는 수업에서 학습하게 될 react.js, node.js, mysql, aws의 개념과 각각 특징 그리고 웹 프로젝트에서 어떤 역할을 하게 되는 지에 대해 설명 드리겠습니다.
+
+1강 수업부터 윈도우 운영체제를 사용하는 데스크탑 혹은 노트북 컴퓨터가 필요합니다. 이후에 AWS실습을 위해 해외 결제가 가능한 신용카드 또는 체크카드가 필요합니다.
+📌 프론트엔드(reactjs), 백엔드(nodejs, mysql 데이터베이스), 클라우드 서버(aws) 영역을 모두 학습합니다.
+📌 화면 디자인과 css등 퍼블리싱 영역은 꼭 필요한 부분만 배우게 됩니다.
+
+React.js란?
+📌 페이스북에서 개발한 자바스크립트 라이브러리입니다.
+📌 Component 단위로 화면을 구성해, 코드 가독성, 이식성, 재활용성이 좋습니다.
+📌 화면에 구성요소를 그려주는 렌더링 효율이 좋습니다.
+📌 한마디로, 사용자 눈에 보이는 화면 영역(프론트엔드)을 효율적으로 구현하는 언어입니다.
+
+□ Node.js란?
+- 자바스크립트 기반의 백엔드 지원 언어입니다.
+- 쉬운 자바스크립트 언어로 복잡한 백엔드 서버 구현이 가능합니다.
+- 비동기 방식으로 동작해, 개수는 많지만 크기가 작은 데이터를 주고 받는데 유리한 언어입니다.
+- 쉽게 말하면, DB를 연결하고 복잡한 로직을 수행할 수 있는 언어입니다. (프론트엔드 언어인 react에서는 DB를 연결할 수 없습니다.)
+
+□ MySQL이란?
+- 무료 오픈소스 관계형 데이터 베이스 시스템입니다.
+- 웹 사이트에 필요한 정보를 영구적으로 보관, 관리해줍니다.
+- 사이트에 접속한 사용자는 조회, 저장, 수정, 삭제 기능을 사용합니다.
+
+□ AWS란?
+- 클라우딩 컴퓨팅 서비스로, 내 컴퓨터가 아닌 인터넷으로 연결된 다른 컴퓨터를 사용할 수 있게 해주는 서비스입니다.
+- 쉽게 말하면 컴퓨터를 온라인으로 대여해주는 서비스입니다.
+- 사용자는 필요한 만큼만 지불하고 컴퓨터 자원을 사용합니다.
+- 수업에서는 mysql 서버로 사용할 RDS 인스턴스, react와 node서버를 배포할 EC2 인스턴스를 사용합니다.
+- 프리티어라는 1년 무료 버전으로, 과금 없이 인스턴스를 사용해 보겠습니다.
+
+----------------------------------------------------------------------------------------------------------------------
+■ React와 Node 서버를 각각 구동해, 데이터를 주고 받아보기
+1. Node.JS 설치, CREATE React APP 설치, Node EXPRESS FRAMWORK 설치
+
+[수업목표]
+Chapter 1에서는 React와 Node 서버를 각각 구동해, http통신을 통해 데이터를 주고 받는 실습을 합니다.
+
+1강에서는 node.js를 설치하고
+react 프레임워크인 Create-reate-app과 node프레임워크인 express를 설치해보겠습니다.
+
+** 20220714 공지사항 **
+
+create-react-app 패키지 설치 방법이 변경되었습니다.
+
+[기존]
+1. create-react-app 프레임워크 설치 :
+[npm install -g create-react-app]
+
+2. client 프로젝트 설치 :
+[create-react-app client]
+
+[변경] 아래 명령어 하나로, 패키지 설치와 client 프로젝트 동시 생성
+3. [npx create-react-app client]
+
+참고 : https://create-react-app.dev/
+
+7:55 5번이 2개로 오타입니다. 두 번째는 6번입니다.
+그리고 class101 폴더가 아닌, project101 폴더에서 npm start명령어를 실행해야합니다. 뒤에 나오는 실습 영상에서는 올바르게 실행합니다.
+
+□ 전체 웹 프로젝트 흐름과 구조
+- React는 html, css, javascript를 사용해 화면을 구성합니다.
+- Node는 React서버의 호출을 받아, 실행할 Mysql쿼리를 mysql서버에 전달합니다.
+- Mysql에서 실행한 쿼리 결과를, React서버에 전달해 화면에 표시합니다.
+- React > Node > Mysql를 모두 AWS에 배포하면, 외부에서도 접속가능한 서비스가 됩니다.
+
+□ nodejs 설치, npm과 yarn
+- 14.16.1버전의 nodejs를 설치합니다. 다른 버전을 설치해도 큰 문제는 없겠지만, 혹시 모를 버그에 대비해 수업과 동일한 버전을 설치해 주는 것이 좋습니다.
+- npm은 node package manager로 프로젝트에 필요한 패키지을 다운로드 및 설치해줍니다.
+- yarn도 npm과 기본 기능은 동일합니다. 페이스북에서 npm을 경량화해 만든 패키지입니다.
+
+□ 사용 URL 및 명령어
+1. nodejs 설치 url : https://nodejs.org/ko/download
+2. node 버전 확인 명령어 : [node --version]
+
+□ react서버를 구동한다.
+- React의 package.json파일이 있는 client폴더 경로에서, npm start명령어를 실행해 React서버를 구동합니다.
+
+□ 사용 명령어
+1. create-react-app 프레임워크 설치 : [npm install -g create-react-app]
+2. client 프로젝트 설치 : [npx create-react-app client]
+
+□ node서버를 구동한다.
+- Node의 package.json파일이 있는 project101폴더 경로에서, npm start명령어를 실행해 Node서버를 구동합니다.
+
+□ 사용 명령어
+1. express 프레임워크 설치 : [npm i -g express-generator]
+2. project101 프로젝트 설치 : [express project101]
+
+
+Chapter 2. Bootstrap 템플릿을 React 서버에 적용해보자
+
+1. Bootstrap 템플릿파일(HTML, CSS, IMG)로 React서버 HOME 페이지를 세팅
+[수업목표]
+Chapter2의 1강에서는 bootstrap의 html, css, img소스를 react서버에 적용해보고, home페이지를 세팅해보겠습니다.
+
+[수업개요]
+□ 부트스트랩이란
+- 부트스트랩이란 웹사이트 디자인을 쉽게 할 수 있도록 도와주는 프론트 엔드 프레임워크 입니다.
+- 화면을구성하는 html, css, js파일을 제공해줍니다.
+-사용 URL
+ 부트스트랩 테마 url : https://startbootstrap.com/themes
+
+□ 데모사이트 URL이 변경되었습니다.
+http://52.78.200.180 > http://3.37.100.68/
+
+□ 상대 경로로 css파일 적용하기
+- css파일을 import하는 컴포넌트 파일을 기준으로, css파일의 상대경로를 import해줘야 합니다.
+
+□ html소스를 jsx에 적용할 때, 주의할 점
+- jsx에서는 꼭 닫아줘야 하는 html태그가 있습니다.
+- {/* 주석 *}문법으로 주석 처리를 해야 합니다.
+- 하나의 태그로 하위 태그를 감싸야합니다.
+- class대신 className을 사용합니다.
+- 이벤트 핸들러는 카멜표기법을 사용합니다.
+
+
+2. 레이아웃 HEADER, FOOTER 처리
+[수업목표]
+Chapter2의 2강에서는 header와 footer처리방법과 reactstrap패키지 사용법을 학습해보겠습니다.
+그리고 react 컴포넌트 내부에서 사용하는 state변수에 대해 알아보겠습니다.
+
+[수업개요]
+□ reactstrap이란
+- bootstrap과 react의 함성어로, react에서 bootstrap을 편하게 사용할 수 있도록 개발된 패키지입니다.
+- 사용 URL
+   reactstrap의 dropdowns url : https://reactstrap.github.io/components/dropdowns
+
+□ state변수란
+- react컴포넌트 내부에서 관리되는 자바스크립트 객체입니다.
+- javascript와 html코드 영역에서 모두 사용 가능합니다.
+- state변수의 변화에 따라 화면을 렌더링하거나, 특정 함수를 실행할 수 있습니다.
+
+
+3. React 페이지 라우팅 적용하기
+[수업목표]
+Chapter2의 3강에서는 react-router-dom패키지를 사용해, react페이지에 라우팅을 적용해보고
+함수형 컴포넌트와 props변수에 대해서 학습하도록 하겠습니다.
+
+[수업개요]
+□  react-router-dom패키지 사용
+- react경로의 App.js가 react서버의 라우팅을 담당합니다.
+- 호출경로 별로 연결할 컴포넌트를 매칭해줍니다.
+- BrowserRouter, Route, Switch, Redirect 태그별 기능을 확인합니다.
+
+□ 클래스형 컴포넌트, 함수형 컴포넌트
+- 클래스형 컴포넌트는 Componet를 상속받아, class키워드로 컴포넌트를 선업해 사용합니다.
+- 생명주기 함수를 사용해, state변수 변화 등을 고려해서 화면을 렌더링 할 수 있습니다.
+- 함수형 컴포넌트는 생명주기 함수 대신, hook을 사용합니다.
+- hook의 useState, useEffect함수로 클래스형 컴포넌트의 생명주기 함수 기능을 대신합니다.
+
+□ props변수란
+- props변수는 부모에서 자식 컴포넌트로 데이터를 전달하기 위한 변수입니다.
+- 자식 컴포넌트는 props변수를 받아서, 내부 변수인 state변수에 할당해 사용할 수 있습니다.
+
+
+Chapter 3. 카카오 MAP API를 사용해, 바이러스 확진자 지도 만들기
+
+1. 카카오 MAP API 키 발급 및 사이트 도메인 등록
+[수업목표]
+Chapter3의 1강에서는 카카오 Map Api사용하기 위해, 키 발급 및 도메인 등록 작업을 해보겠습니다.
+그리고 카카오 지도 사이트에서 사용할 지도 기능을 확인해 보겠습니다.
+
+[수업개요]
+□ 카카오 지도 API란
+- 웹사이트에서 카카오 지도의 다양한 기능을 사용할 수 있도록, 무료로 제공합니다.
+- 카카오 지도 API url : https://apis.map.kakao.com
+
+□ API 키 소스에 삽입하기
+- 무료 API이지만 API를 사용하려면, API키를 발급 받고 호출 URL에 파라미터로 추가해야 합니다.
+- html head태그 안에 script태그로, 카카오 맵 API 호출 URL을 삽입합니다.
+
+□ 카카오 지도 API를 사용할 사이트의 도메인 등록
+- 카카오 지도 API를 react서버에서 호출하니, 로컬 react서버의 주소를 입력합니다.
+- 로컬 도메인 주소를 입력할 때, 포트 번호도 함께 입력해야 합니다.
+
+
+2. 확진자 데이터를 JSON 형태로 변환하기
+[수업목표]
+Chapter3의 2강에서는 확진자 데이터의 특징과 json이란 무엇인지 그리고 excel파일로 작성된 데이터를 json으로 변경하는 방법을 학습하겠습니다.
+
+[수업개요]
+□ JSON이란
+- key와 value쌍으로 이루어진 데이터 형태를 의미합니다.
+- 문자열, 숫자, 배열 등을 할당할 수 있습니다. 
+- 웹페이지에서 json을 사용할때 key를 사용해 개발하면, 서버가 value를 추출해 화면에 보여주게 됩니다.
+
+□ Excel데이터를 JSON데이터로 변경하기
+- Excel데이터를 웹에서 사용하기 위해 JSON데이터로 변경합니다.
+- html head태그 안에 script태그로, 카카오 맵 API 호출 URL을 삽입합니다.
+- 사용 URL
+   Excel To Json Converter URL : https://beautifytools.com/excel-to-json-converter.php
+
+
+3. React 페이지에 카카오 MAP 나타내기
+[수업목표]
+Chapter3의 3강에서는 카카오 맵 api에서 제공하는 기능들 중, 예제에서 사용할 기능들의 샘플 코드를 기능 단위 별로 react서버에서 실행해 보겠습니다.
+
+[수업개요]
+□ 카카오 맵 Api 샘플 페이지
+- 샘플 페이지에 접속하면 구현하고 싶은 지도 기능을 체험해 볼 수 있습니다.
+- Javascript + HTML 탭을 클릭해서, 사용된 소스를 확인합니다.
+- 이 소스들을 react jsx파일 형식에 맞게 옮겨 놓으면, react서버에서 카카오 맵 기능들을 사용할 수 있습니다.
+- 사용 URL
+  카카오 맵 Api 샘플 페이지 : https://apis.map.kakao.com/web/sample
+
+□ 마커 클러스터러 사용하기
+- 클러스터러는 지도가 일정 기준 이상 축소될 때, 인접한 마커들이 모여 개수가 표시됩니다.
+- 클러스터러에서는 Jquery를 사용하는데요. Jquery는 자바스크립트에서 자주 사용하는 기능들을, 쉽고 간결한 코드로 표현한 자바스크립트 라이브러리 입니다.
+
+
+4. 확진자 데이터를 읽어와, 카카오 MAP 위에 표시하기
+[수업목표]
+Chapter3의 4강에서는chapter3 예제소스로 서버를 구동해 기능들을 확인해보고, 카카오 지도 샘플 코드를 어떤 식으로 응용해 적용했는지 설명해 드리겠습니다.
+
+[수업개요]
+□ 클러스터러 파라미터를 API URL에 추가
+- 클러스터러 기능을 사용하려면 카카오 지도 API URL뒤에 
+   &libraries=clusterer파라미터를 추가해야합니다.
+
+□ 조건부 렌더링, 3항 연산자
+- 조건부 렌더링은 조건에 따라 화면 표시 내용을 다르게 출력하는 것입니다.
+- 조건부 렌더링은 보통 3항 연산자와 같이 사용합니다.
+- 3항 연산자는 [ 조건 ? true일 경우 소스 : false일 경우 소스] 형태로 사용합니다.
+
+
+Ch4. 확진자 데이터를 관리하는 관리자 페이지 만들기 - 조회
+1. Node 서버에 MySQL 테스트 서버 연결하기
+[수업목표]
+Chapter4의 1강에서는 mysql을 설치해보고, node서버에서 mysql을 사용할 수 있도록 연결해보겠습니다.
+
+[수업개요]
+□  MySql 설치
+- 강의를 보는 시점의 버전으로 다운로드 합니다.
+- 용량이 작은 Client Only버전으로 설치합니다.
+- Client Only는 내 PC가 아닌 외부 MySql 서버에만 접속할 수 있습니다.
+- MySql쿼리를 실행할 DB툴 workbench을 함께 설치합니다.
+- 사용 URL
+  MySql 설치 URL : https://dev.mysql.com/downloads/installer
+
+□ workbench에서 명령어 실행해 보기
+- 세미콜론으로 실행한 명령어를 구분합니다.
+- [Ctrl + Enter]를 누르면 선택된 쿼리가 실행됩니다.
+- use 명령어로 데이터베이스를 선택하고, select 쿼리를 실행합니다.
+- 사용 mysql 서버 접속 정보 (20220810 update)
+   Hostname : rds20220702.cablfiftoknm.ap-northeast-2.rds.amazonaws.com
+   Username : onlyselect
+   Password : password101
+
+예제 소스(chapter4.zip) > env파일의 DB정보도 위와 같이 변경되었으니 참고 부탁드립니다.
+
+□ Database Connection Pool 사용
+- DB서버와 연결하는데 발생하는 비용과 대기시간을 줄이기 위해 DBCP를 사용합니다.
+- 생성한 연결을 재활용해, 다음 사용자에게 물려줄 수 있습니다.
+
+□ mybatis-mapper패키지
+- mybatis는 원래 자바 언어에서 데이터베이스 연결에 사용하는 프레임워크 입니다.
+- 비즈니스 소스(node)와 sql소스(msyql)를 분리해서 개발하기 위해, mybatis-mapper패키지를 사용합니다.
+
+2. React 서버에 확진자 데이터 조회 페이지 만들기
+
+
+
+3. 조회 페이지에서 Node API를 호출해, DB(테스트 서버)에 있는 확진자 데이터 가져오기
+
+
+
+Ch5. 확진자 데이터를 관리하는 관리자 페이지 만들기 - AWS DB서버 생성
+1. AWS 가입 후, RDS (MySQL 서버) 인스턴스 생성하기(프리티어 버전 : 무료)
+2. WORKBENCH(MySQL툴)로 확진자 TABLE 생성하고, 더미 데이터 넣기
+3. 조회 페이지에서 Node API를 호출해, 생성한 RDS 서버에 있는 확진자 데이터 가져오기
+
+Ch6. 확진자 데이터를 관리하는 관리자 페이지 만들기 - 등록, 수정, 삭제
+1. React 서버에 확진자 데이터 등록/수정 페이지 만들기
+2. Node 서버에 등록 API 구현하기
+3. Node 서버에 수정 API 구현하기
+4. 확진자 격리 병원 이미지 업로드 하기
+5. Node 서버에 삭제 API 구현하기
+
+Ch7. AWS에 로컬 소스 배포 후, 외부 접속해보기
+1. EC2(React, Node 서버)인스턴스 생성하기 (프리티어 버전 : 무료)
+2. SFTP, SSH 환경 세팅, 리눅스 명령어 학습
+3. EC2서버에 필요한 프로그램 설치
+4. React, Node 소스코드를 EC2서버에 배포, 패키지 설치
+5. 서버를 구동하고, 외부에서 IP로 접속
+

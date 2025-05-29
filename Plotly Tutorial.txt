@@ -15,10 +15,11 @@ express 모듈을 활용한 그래프 생성
 : Matplotlib 를 기반으로 만들어진 Seaborn 이미 만들어진 템플릿을 활용하여 더 쉽게 사용이 가능하듯이 
   express 또한 graph_objects 로 제작이 된 모듈로 사용이 더욱 쉽습니다.
 
+
+
 https://wikidocs.net/185049
 
 02. Plotly 기초 그래프 생성하기
-
 Plotly를 활용해서 그래프를 그리는 다양한 방법 중 가장 많이 사용되는 2가지 방법에 대해 소개합니다.
 
 본 책에서는 2가지 방법 사용법에 대해 모두 자세히 설명 합니다. 
@@ -30,7 +31,7 @@ express 모듈을 활용한 그래프 생성
 각 방법의 장단점 및 활용방안
 아래의 막대 그래프를 2가지 방법을 활용하여 시각화 하는 방법에 대해 알아 보겠습니다. 
 
-graph_objects 모듈을 활용한 생성
+▶ graph_objects 모듈을 활용한 생성
 그래프를 하나하나 설명하고 직접 지정하며 제작하는 방법입니다.
 API Reference https://plotly.com/python/reference/
 
@@ -63,35 +64,35 @@ fig = go.Figure(
     layout=go.Layout(
         title=go.layout.Title(text="A Figure Specified By A Graph Object"))
     )
-Figure는 Plotly 작업의 기본 단위 입니다. Figure는 go.Figure() 함수를 통해 생성이 가능합니다. 이때 go.Figure 힘수의 구조는 아래와 같습니다. data와 layout 총 2개를 input으로 받는 구조입니다.
 
-
-
+Figure는 Plotly 작업의 기본 단위 입니다. Figure는 go.Figure() 함수를 통해 생성이 가능합니다. 
+이때 go.Figure 힘수의 구조는 아래와 같습니다. data와 layout 총 2개를 input으로 받는 구조입니다.
 
 data
-data는 일명 "Trace" 를 Python List 형태로 받습니다. Trace는 그리고자 하는 그래프의 타입(ex. Bar, Scatter, Line, Box..)과 그 그래프에 시각화 하고자 하는 Raw 데이터를 품고있는 단위 입니다.
-
-예를들면 위의 예제에서는 go.Bar(x=[1, 2, 3], y=[1, 3, 2]) 가 하나의 Trace가 됩니다. 리스트 형태로 받는 이유는 하나의 Figure에 다양한 Trace를 동시에 시각화를 하기위헤 리스트 형태로 받습니다.
+data는 일명 "Trace" 를 Python List 형태로 받습니다. 
+Trace는 그리고자 하는 그래프의 타입(ex. Bar, Scatter, Line, Box..)과 그 그래프에 시각화 하고자 하는 Raw 데이터를 품고있는 단위 입니다.
+예를들면 위의 예제에서는 go.Bar(x=[1, 2, 3], y=[1, 3, 2]) 가 하나의 Trace가 됩니다. 
+리스트 형태로 받는 이유는 하나의 Figure에 다양한 Trace를 동시에 시각화를 하기위헤 리스트 형태로 받습니다.
 
 layout
-그래프의 data와는 무관하고 그외 모든 부분을 편집 및 가공하는 부분입니다. Title, legend, Colors, Hover-label, Axes, Shape 등 그래프 등 시각화를 높히기 위한 다양한 도구들은 모두 layout을 통해 지정합니다.
+그래프의 data와는 무관하고 그외 모든 부분을 편집 및 가공하는 부분입니다. 
+Title, legend, Colors, Hover-label, Axes, Shape 등 그래프 등 시각화를 높히기 위한 다양한 도구들은 모두 layout을 통해 지정합니다.
 
 3) Figure 랜더링
 fig.show()
 Figure를 받은 객체에 show() 함수를 마지막에 작성하면 랜더링 과정을 통해 내 주피터 노트북 출력 셀에 그래프가 나타납니다.
 
 
-
-express 모듈을 활용한 그래프 생성
+▶ express 모듈을 활용한 그래프 생성
 그래프를 이미 제작되어있는 템플릿으로 빠르게 제작하는 방법으로 매우 짧은 코드만으로 양질의 그래프를 제작할수있는 high-level 모듈 입니다.
-
-graph_objects 모듈과 express 모듈은 Matplotlib과 Seaborn 의 사이와 같습니다. Matplotlib 를 기반으로 만들어진 Seaborn 이미 만들어진 템플릿을 활용하여 더 쉽게 사용이 가능하듯이 express 또한 graph_objects 로 제작이 된 모듈로 사용이 더욱 쉽습니다.
-
-또하나 비슷한 점은 Seaborn 을 Matplotlib의 문법을 활용해서 튜닝이 가능하듯 express 또한 graph_objects의 기능인 add_trace(), update_layout(), update_traces() 기능을 활용하여 세세한 튜닝이 가능합니다. "Todo" 링크 연결
+graph_objects 모듈과 express 모듈은 Matplotlib과 Seaborn 의 사이와 같습니다. 
+Matplotlib를 기반으로 만들어진 Seaborn 이미 만들어진 템플릿을 활용하여 더 쉽게 사용이 가능하듯이 
+express 또한 graph_objects 로 제작이 된 모듈로 사용이 더욱 쉽습니다.
+또하나 비슷한 점은 Seaborn 을 Matplotlib의 문법을 활용해서 튜닝이 가능하듯 express 또한 graph_objects의 기능인 
+add_trace(), update_layout(), update_traces() 기능을 활용하여 세세한 튜닝이 가능합니다. "Todo" 링크 연결
 API Reference https://plotly.com/python-api-reference/plotly.express.html
 
 예제)
-
 # express 패키지를  px로 불러옴
 import plotly.express as px
 
@@ -109,7 +110,8 @@ express 를 사용하기 위해 먼저 개발환경에 express 를 px 라는 별
 2) Figure 생성
 fig = px.bar(x=["a", "b", "c"], y=[1, 3, 2],
             title="A Figure Specified By express")
-px.bar 를 활용해서 바로 그래프의 타입을 bar로 지정하고, x, y 에 각각 데이터를 넣어줍니다. 마지막으로 title 또한 펑션안에서 바로 넣어주어서 매우 짧은 코드만으로 Figure 제작을 완료하였습니다.
+px.bar 를 활용해서 바로 그래프의 타입을 bar로 지정하고, x, y 에 각각 데이터를 넣어줍니다. 
+마지막으로 title 또한 펑션안에서 바로 넣어주어서 매우 짧은 코드만으로 Figure 제작을 완료하였습니다.
 
 지금 현재 px.bar 와 같이 express 를 통해 제작된 템플릿은 아래와 같습니다.
 
@@ -124,6 +126,7 @@ Tile Maps: scatter_mapbox, line_mapbox, choropleth_mapbox, density_mapbox
 Outline Maps: scatter_geo, line_geo, choropleth
 Polar Charts: scatter_polar, line_polar, bar_polar
 Ternary Charts: scatter_ternary, line_ternary
+
 3) Figure 랜더링
 fig.show()
 Figure를 받은 객체에 show() 함수를 마지막에 작성하면 랜더링 과정을 통해 내 주피터 노트북 출력 셀에 그래프가 나타납니다.
@@ -142,9 +145,8 @@ graph_objects 는 논문, 발표자료와 같이 그래프 visualization에 중�
 ============================================================================================================
 
 02-01 Ploty 그래프 업데이트 기초문법
-Plotly에서 그래프를 그리는 가장 보편적인 방법은 아래 그림과 같이 기초 그래프를 생성 후 다양한 방법으로 그래프를 업데이트하는 2단계를 거치는 방법입니다. 이번 장에서는 2번째 단계인 그래프를 업데이트 하는 5가지의 함수 기능에 대해 간략히 설명드리겠습니다.
-
-
+Plotly에서 그래프를 그리는 가장 보편적인 방법은 아래 그림과 같이 기초 그래프를 생성 후 다양한 방법으로 그래프를 업데이트하는 2단계를 거치는 방법입니다. 
+이번 장에서는 2번째 단계인 그래프를 업데이트 하는 5가지의 함수 기능에 대해 간략히 설명드리겠습니다.
 
 앞으로 진행 될 Plotly 기본 문법 및 여러 그래프들은 대부분 지금부터 소개 해 드릴 5개의 함수를 활용한 Plotly 그래프 튜닝 과정이라고 볼 수 있습니다.
 
@@ -158,7 +160,8 @@ add_trace()
 fig.add_trace(추가할 Trace 입력)
 add_trace() 함수를 활용하면 Figure에 새로운 Trace를 추가 가능합니다. ex) go.Scatter, go.Bar...등등
 
-04-09.Plotly 여러개의 그래프 겹쳐 그리기 에서 add_trace() 를 활용한 다양한 그래프 추가 방법에 대해 다룰 설명 드릴 예정입니다.
+
+04-09.Plotly 여러개의 그래프 겹쳐 그리기에서 add_trace() 를 활용한 다양한 그래프 추가 방법에 대해 다룰 설명 드릴 예정입니다.
 
 예제 1) 빈 Figure 에 Trace 추가하기
 
@@ -172,7 +175,6 @@ fig.show()
 
 
 예제 2) 이미 Trace가 있는Figure에Trace 추가하여 겹쳐 그리기
-
 
 import plotly.express as px
 
@@ -198,7 +200,9 @@ fig.show()
 
 update_trace()
 fig.update_traces(업데이트 내용)
-update_trace() 함수를 사용하면 이미 생성된 trace의 type, 색, 스타일, 템플릿 등 추가 편집이 가능합니다. 물론 처음 Trace를 생성할 때 스타일 지정을 해서 생성이 가능하지만 update_trace 를 활용하면 한번에 모든 Trace의 스타일 업데이트가 가능하여 코드의 길이를 줄일 수 있으며 가독성이 높은 코드구현을 위해 Trace 생성부 와 Trace 편집부를 나눠서 작성 가능하게 합니다.
+update_trace() 함수를 사용하면 이미 생성된 trace의 type, 색, 스타일, 템플릿 등 추가 편집이 가능합니다. 
+물론 처음 Trace를 생성할 때 스타일 지정을 해서 생성이 가능하지만 update_trace 를 활용하면 한번에 모든 Trace의 스타일 업데이트가 가능하여 
+코드의 길이를 줄일 수 있으며 가독성이 높은 코드구현을 위해 Trace 생성부 와 Trace 편집부를 나눠서 작성 가능하게 합니다.
 
 04.Plotly 기본문법 에서 update_traces() 를 활용한 다양한 편집 방법에 대해 자세히 설명드릴 예정입니다.
 
@@ -231,15 +235,13 @@ fig.update_traces(marker=dict(color="RoyalBlue"),
                   selector=dict(type="bar"))
 
 fig.show()
+
 총 4개의 Trace를 생성하였습니다.
 update_traces() 를 활용하여 4개 중 Barplot만 RoyalBlue 색으로 한번에 변경하였습니다.
-
-
 
 update_layout()
 fig.update_layout(업데이트 내용)
 update_layout() 함수를 사용하면 그래프 사이즈, 제목 및 텍스트, 글꼴크기 와 같은 Trace 외적인 그래프 요소를 업데이트 가능합니다.
-
 04.Plotly 기본문법 에서 update_layout() 를 활용한 다양한 편집 방법에 대해 자세히 설명드릴 예정입니다.
 
 예제)
@@ -264,8 +266,6 @@ update_xaxes(), update_yaxes() 함수를 사용하면 각각 X축, Y축에 관�
 04.Plotly 기본문법 에서 update_xaxes() , update_yaxes() 를 활용한 다양한 편집 방법에 대해 자세히 설명드릴 예정입니다.
 
 예제)
-
-
 import plotly.graph_objects as go
 import plotly.express as px
 
