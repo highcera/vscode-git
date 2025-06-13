@@ -27,6 +27,8 @@ http://localhost/phpmyadmin
 phpmyadmin
 사용자 계정
 
+
+
 ------------------------------------------------------------------------------------------------------------------------------------------------------
 https://beop07.tistory.com/14
 
@@ -218,6 +220,48 @@ receivename.php
 
 ---------------------------------------------------------------------------
 [Web/PHP]
+
+13-01.php 실패
+<?php
+   $db_host="localhost:3307";
+   // $db_host="localhost";
+   $db_user="root";
+   $db_password="1234";
+   $db_name="";
+   $con=mysqli_connect($db_host, $db_user, $db_password, $db_name);
+   //   $con=mysqli_connect($db_host, $db_user, $db_password, $db_name, "3307");
+   if ( mysqli_connect_error($con) ) {
+	   echo "MySQL 접속 실패 !!", "<br>";
+	   echo "오류 원인 : ", mysqli_connect_error();
+	   exit();
+   }
+   echo "MySQL 접속 완전히 성공!!";
+   mysqli_close($con);
+?>
+
+Fatal error: Uncaught ArgumentCountError: mysqli_connect_error() expects exactly 0 arguments, 1 given in C:\xampp\htdocs\mysql\13-01.php:7 Stack trace: #0 C:\xampp\htdocs\mysql\13-01.php(7): mysqli_connect_error(Object(mysqli)) #1 {main} thrown in C:\xampp\htdocs\mysql\13-01.php on line 7
+→ mysqli_connect_error($con) 0 arg ( )안 인자 삭제
+
+13-02.php 성공
+<?php
+   $con=mysqli_connect("localhost:3307", "root", "1234", "") or die("MySQL 접속 실패 !!");
+         
+   $sql="CREATE DATABASE sqlDB";
+   $ret = mysqli_query($con, $sql);
+   
+   if($ret) {
+	   echo "sqlDB가 성공적으로 생성됨.";
+   }
+   else {
+	   echo "sqlDB 생성 실패!!!"."<br>";
+	   echo "실패 원인 :".mysqli_error($con);
+   }
+   
+   mysqli_close($con);
+?>
+
+
+
 ■ PHP + MySQL            2021. 10. 9. 21:49
 
 1. XAMPP에서 Apache 먼저 킨 후 MySQL 켜기
