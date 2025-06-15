@@ -3,9 +3,26 @@ https://megastudyitacademy.tistory.com/entry/%ED%92%80%EC%8A%A4%ED%83%9D-%EA%B0%
 
 
 ==================================================================================================
+aws-ubuntu
 
-Web · 프론트엔드
-풀스택 웹 개발로 배우는 확진자 지도 서비스 만들기
+ec2-54-180-92-186.ap-northeast-2.compute.amazonaws.com
+
+ssh -i "autobotkey.pem" ubuntu@ec2-54-180-92-186.ap-northeast-2.compute.amazonaws.com
+
+탄력적 IP : 15.165.252.13
+
+=============================================
+NAS - Host
+https://host.csh980116.synology.me/index.html
+
+https://csh980116.synology.me/phpmyadmin/index.php
+D***#*2***
+
+csh980116.synology.me > File Station > host_folder
+
+
+[Web · 프론트엔드]
+■ 풀스택 웹 개발로 배우는 확진자 지도 서비스 만들기
 
 Welcome. 나도 '개발자'가 될 수 있을까?
 1. 웹 개발자의 삶과 장점
@@ -13,41 +30,41 @@ Welcome. 나도 '개발자'가 될 수 있을까?
 3. React, Node, MySQL, AWS가 무엇인가?
 4. 코칭권 사용방법
 
-Ch1. React와 Node 서버를 각각 구동해, 데이터를 주고 받아보기
+Chapter 1. React와 Node 서버를 각각 구동해, 데이터를 주고 받아보기
 1. Node.JS 설치, CREATE React APP 설치, Node EXPRESS FRAMWORK 설치
 2. React, Node 서버 디렉터리 구조 설정
 3. 프록시 설정
 4. GET 방식, POST 방식으로 React 서버에서 Node 서버의 JSON 데이터를 가져오기
 
-Ch2. Bootstrap 템플릿을 React 서버에 적용해보자
+Chapter 2. Bootstrap 템플릿을 React 서버에 적용해보자
 1. Bootstrap 템플릿파일(HTML, CSS, IMG)로 React서버 HOME 페이지를 세팅
 2. 레이아웃 HEADER, FOOTER 처리
 3. React 페이지 라우팅 적용하기
 
-Ch3. 카카오 MAP API를 사용해, 바이러스 확진자 지도 만들기
+Chapter 3. 카카오 MAP API를 사용해, 바이러스 확진자 지도 만들기
 1. 카카오 MAP API 키 발급 및 사이트 도메인 등록
 2. 확진자 데이터를 JSON 형태로 변환하기
 3. React 페이지에 카카오 MAP 나타내기
 4. 확진자 데이터를 읽어와, 카카오 MAP 위에 표시하기
 
-Ch4. 확진자 데이터를 관리하는 관리자 페이지 만들기 - 조회
+Chapter 4. 확진자 데이터를 관리하는 관리자 페이지 만들기 - 조회
 1. Node 서버에 MySQL 테스트 서버 연결하기
 2. React 서버에 확진자 데이터 조회 페이지 만들기
 3. 조회 페이지에서 Node API를 호출해, DB(테스트 서버)에 있는 확진자 데이터 가져오기
 
-Ch5. 확진자 데이터를 관리하는 관리자 페이지 만들기 - AWS DB서버 생성
+Chapter 5. 확진자 데이터를 관리하는 관리자 페이지 만들기 - AWS DB서버 생성
 1. AWS 가입 후, RDS (MySQL 서버) 인스턴스 생성하기(프리티어 버전 : 무료)
 2. WORKBENCH(MySQL툴)로 확진자 TABLE 생성하고, 더미 데이터 넣기
 3. 조회 페이지에서 Node API를 호출해, 생성한 RDS 서버에 있는 확진자 데이터 가져오기
 
-Ch6. 확진자 데이터를 관리하는 관리자 페이지 만들기 - 등록, 수정, 삭제
+Chapter 6. 확진자 데이터를 관리하는 관리자 페이지 만들기 - 등록, 수정, 삭제
 1. React 서버에 확진자 데이터 등록/수정 페이지 만들기
 2. Node 서버에 등록 API 구현하기
 3. Node 서버에 수정 API 구현하기
 4. 확진자 격리 병원 이미지 업로드 하기
 5. Node 서버에 삭제 API 구현하기
 
-Ch7. AWS에 로컬 소스 배포 후, 외부 접속해보기
+Chapter 7. AWS에 로컬 소스 배포 후, 외부 접속해보기
 1. EC2(React, Node 서버)인스턴스 생성하기 (프리티어 버전 : 무료)
 2. SFTP, SSH 환경 세팅, 리눅스 명령어 학습
 3. EC2서버에 필요한 프로그램 설치
@@ -56,9 +73,10 @@ Ch7. AWS에 로컬 소스 배포 후, 외부 접속해보기
 
 
 Outro. 이제 완성된 프레임워크로 원하는 서비스를 구현해보세요
-1. 이제 완성된 프레임워크로 원하는 서비스를 구현해보세요
+Out-1. 이제 완성된 프레임워크로 원하는 서비스를 구현해보세요
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Welcome-3. React, Node, MySQL, AWS가 무엇인가?
 
 Welcome 3강에서는 수업에서 학습하게 될 react.js, node.js, mysql, aws의 개념과 각각 특징 그리고 웹 프로젝트에서 어떤 역할을 하게 되는 지에 대해 설명 드리겠습니다.
 
@@ -92,14 +110,14 @@ React.js란?
 - 프리티어라는 1년 무료 버전으로, 과금 없이 인스턴스를 사용해 보겠습니다.
 
 ----------------------------------------------------------------------------------------------------------------------
-■ React와 Node 서버를 각각 구동해, 데이터를 주고 받아보기
-1. Node.JS 설치, CREATE React APP 설치, Node EXPRESS FRAMWORK 설치
+Chapter 1. React와 Node 서버를 각각 구동해, 데이터를 주고 받아보기
+Ch1-1. Node.JS 설치, CREATE React APP 설치, Node EXPRESS FRAMWORK 설치
 
 [수업목표]
 Chapter 1에서는 React와 Node 서버를 각각 구동해, http통신을 통해 데이터를 주고 받는 실습을 합니다.
 
 1강에서는 node.js를 설치하고
-react 프레임워크인 Create-reate-app과 node프레임워크인 express를 설치해보겠습니다.
+react 프레임워크인 Create-reate-app과 node 프레임워크인 express를 설치해보겠습니다.
 
 ** 20220714 공지사항 **
 create-react-app 패키지 설치 방법이 변경되었습니다.
@@ -120,10 +138,11 @@ create-react-app 패키지 설치 방법이 변경되었습니다.
 그리고 class101 폴더가 아닌, project101 폴더에서 npm start명령어를 실행해야합니다. 뒤에 나오는 실습 영상에서는 올바르게 실행합니다.
 
 □ 전체 웹 프로젝트 흐름과 구조
+라우팅 : 호출되는 경로에 맞는 화면 또는 로직을 매칭해 주는 것
 - React는 html, css, javascript를 사용해 화면을 구성합니다.
 - Node는 React서버의 호출을 받아, 실행할 Mysql쿼리를 mysql서버에 전달합니다.
 - Mysql에서 실행한 쿼리 결과를, React서버에 전달해 화면에 표시합니다.
-- React > Node > Mysql를 모두 AWS에 배포하면, 외부에서도 접속가능한 서비스가 됩니다.
+- React > Node > Mysql를 모두 AWS에 배포하면, 외부에서도 접속가능한 서비스가 됩니다. (EC2 / RDS)
 
 □ nodejs 설치, npm과 yarn
 - 14.16.1버전의 nodejs를 설치합니다. 다른 버전을 설치해도 큰 문제는 없겠지만, 혹시 모를 버그에 대비해 수업과 동일한 버전을 설치해 주는 것이 좋습니다.
@@ -141,6 +160,8 @@ create-react-app 패키지 설치 방법이 변경되었습니다.
 1. create-react-app 프레임워크 설치 : [npm install -g create-react-app]
 2. client 프로젝트 설치 : [npx create-react-app client]
 
+localhost:3000
+
 □ node서버를 구동한다.
 - Node의 package.json파일이 있는 project101폴더 경로에서, npm start명령어를 실행해 Node서버를 구동합니다.
 
@@ -148,9 +169,176 @@ create-react-app 패키지 설치 방법이 변경되었습니다.
 1. express 프레임워크 설치 : [npm i -g express-generator]
 2. project101 프로젝트 설치 : [express project101]
 
+localhost:5000
 
+* 프레임 워크 (framework) : 웹 개발에서는 웝사이트를 구도아는데 필수적으로 필요한 기능들을 구조화해 놓은 소스이다. 반쯤 완성된 코드를 의미.
+
+
+Ch1-2. React, Node 서버 디렉터리 구조 설정
+
+[수업목표]
+Chapter1의 2강에서는 React와 Node소스의 디렉터리 구조를 설정해보고, 각각의 소스를 보면서 프레임워크가 어떻게 동작하는지 학습해 보겠습니다.
+
+chapter1-2.zip 예제 파일을 업로드 했는데요. 챕터1의 2강~3강은 예제 소스를 사용하지 않고, 강의 내용을 따라서 직접 해보시길 권장합니다.
+
+[수업개요]
+□ Visual Studio Code 설치
+- 개발을 하면서 react와 node소스를 수정할 툴(Visual Studio Code)을 설치합니다.
+1. nodejs 설치 url : https://code.visualstudio.com/
+
+□ package.json (React 경로)
+- scripts변수의 값으로 cmd창에서 실행하는 명령어가 작성돼 있습니다. cmd창에서 [npm start] 명령어를 실행하면, package.json파일의 scripts에 작성된 [react-scripts start] 명령어가 실행됩니다.
+이 명령어로 react서버가 구동됩니다.
+- dependencies변수의 값으로 react 프로젝트를 구동하는데 필요한, 패키지들이 작성됩니다. 패키지명과 버전 범위가 함께 작성됩니다.
+- Node서버의 package.json도 React와 동일하게 동작합니다.
+
+□ www파일
+- node서버의 package.json소스를 보면, start명령어를 실행했을 때 www파일을 읽어 node서버를 구동한다고 작성되어 있습니다.
+- www파일에는 포트 정보가 기본 값으로 3000이 할당되어 있습니다. react와 포트가 같으니 5000으로 수정합니다.
+
+□ express 기본 제공 API 호출(get방식)
+- localhost:5000/users 경로를 호출하면, node서버의 server.js에서 실행할 파일을 라우팅합니다. /users경로는 routes폴더의 users.js파일과 연결되어 있습니다.
+- users.js 라우터는 get방식으로 호출되면 [respond with a resource]라는 텍스트를 반환합니다.
+
+리액트 / node 서버 port가 달라서 cors 오류 발생
+node npm i --save cors
+
+server.js에서 
+var cors = require('cors')
+app.use(cors( ));
+
+node 서버 재가동
+
+정상적으로 alert로 호출
+
+전체 경로 hppt://localhost:5000/users 호출 node 서버 호출이 많아질수록 비효율적으로 중복 → proxy 사용 : hppt://localhost:5000 생략 가능, cors 설정 불필요
+proxy 설정 package.json에 "proxy": "http://127.0.0.1:5000/" 추가
+
+Ch1-3. 프록시 설정
+
+[수업목표]
+Chapter1의 3강에서는 프록시를 사용하는 이유와 사용법
+그리고 http통신중 get과 post 메소드에 대해 학습해보겠습니다.
+
+chapter1-2.zip 예제 파일을 업로드 했는데요. 챕터1의 2강~3강은 예제 소스를 사용하지 않고, 강의 내용을 따라서 직접 해보시길 권장합니다.
+
+[수업개요]
+□ 프록시를 사용하는 이유
+- react에서 node서버 경로를 호출할 때, 호출 URL을 간호화 하기 위해 프록시를 사용합니다.
+
+예) localhost:5000/users > /users
+
+- 프록시를 사용하면 cors설정을 하지 않아도 된다.
+
+□ http get메소드
+- get메소드는 쿼리스트링 형태로 데이터를 전달하고, URL에 파라미터가 노출됩니다.
+예) ?name=value&name2=value2
+
+- 단순 조회 기능에 사용하기 적합합니다.
+
+□  http post메소드
+- post메소드는 http body에 데이터를 담아 전달합니다. URL에 파라미터가 노출되지 않고, 전송 길이 제한이 없습니다.
+- 조회를 포함해 저장, 수정, 삭제 등 어떤 작업을 수행할 때 사용합니다.
+
+HEADER : Content-type : application/json
+BODY : { key : '사과' }
+
+HEADER : Content-type : application/...urlendoded (query string 방식)
+BODY :  key=사과
+
+□  cors패키지 설치
+- node서버에 cors설정을 추가하면, react와 node서버가 서로 다른 서버이지만 프록시 설정 없이 통신할 수 있습니다.
+- cors 패키지 설치 : [npm install --save cors]
+
+
+Ch1-4. GET 방식, POST 방식으로 React 서버에서 Node 서버의 JSON 데이터를 가져오기
+
+[수업목표]
+Chapter1의 4강에서는 http통신 중 가장 많이 사용하는, get과 post 메소드를 사용해 보겠습니다.
+react서버에서 node서버의 json데이터를 가져와 화면에 노출해보겠습니다.
+
+[수업개요]
+react / node server를 구동하기 위해 project101 안의 폴더, 파일들을 상위 경로(워크스페이스)로 이동, poject101 폴더 삭제
+
+□ node_modules폴더
+- node_modules폴더에는 실제 패키지 프로그램이 설치되는데, 파일 수도 많고 용량도 큽니다.
+- 그래서 소스를 옮기거나 백업할 때, 제외합니다.
+- 대신 [npm install] 명령어를 사용하면, package.json파일의 패키지 리스트를 읽어 한 번에 필요한 패키지들을 설치할 수 있습니다.
+
+node / react 경로에서 각각 npm install 
+
+이전 --save 옵션을 추가해서 명려어를 실행해야 package.json 파일에 설치한 패키지가 작성되었지만 지금은 사용하지 않아도 됨
+
+package.json 파일에 설치할 패키지가 적혀있지 않다면
+npm install [설치할 패키지 명]을 실행해 하나씩 설치할 수 있다.
+ex) npm install axios
+
+특정 버전의 패키지를 설치하고 싶다면
+npm install [설치할 패키지 명]@[버전] 명령어 사용
+ex) npm install axios@4.6.1
+
+□  하나의 명령어로 react, node서버 동시 구동
+- cmd 창 2개를 열고 react / node 각각 실행 → node 서버의 package.json 파일을 수정하면 하나의 cmd 창에서 하나의 명령어를 실행해 두 서버를 동시에 시작 가능
+
+  "scripts": {
+    "client": "cd client && yarn start",
+    "server": "nodemon server.js",
+    "dev": "concurrently --kill-others-on-fail \"yarn server\" \"yarn client\""
+  },
+
+--kill-others-on-fail 나열된 명령어 중 하나라도 실패하면, 실행을 취소
+
+이전에는 bin folder www 사용 했지만 
+server.js만 사용하기 때문에 5000번 port 사용한다는 설정을 server.js에 추가
+
+- concurrently 패키지를 사용하면, 하나의 명령어에 여러개의 명령어를 연결해 실행할 수 있습니다.
+- 사용 명령어
+1. yarn 패키지 설치 : [npm install -g yarn]
+2. nodemon 패키지 설치 : [npm install -g nodemon]
+nodemon 설치하면 새로고침만 해주면 서버 재시작 (원래 node 소스 수정하면 서버 재시작해야 함)
+
+□  fetch와 axios함수
+- 비동기 통신 함수 사용하기
+fetch로 get 호출, axios로 post 호출
+react 서버와 node 서버가 데이터를 주고 받을 때, http 통신을 함
+이때 react 서버에서는 비동기 통신 라이브러리인 fetch와 axios를 사용
+fetch : 자바스크립트 기본 내장 라이브러리, 추가 설치 필요 없음
+axios : npm install axios로 패키지 설치 후, react 페이지에서는 import 해서 사용
+- fetch와 axios함수는 모두 비동기적으로 동작합니다. 정확한 동작을 위해 두 함수를 동기적으로 사용 필요.
+- fetch는 async/awati구문을 사용해 동기적으로 사용
+ const callApi = async () => {
+    try {
+      const response = await fetch('/users');
+      const body = await response.json();
+      alert(body.message)
+    } catch (error) {
+      alert(error)      
+    }
+  };
+
+- axios는 프로미스 함수(then)을 사용해 동기적으로 사용
+const submitClick = async e => {
+    axios.post('/users', {
+    })
+    .then( response => {
+        alert(response.data.message)
+    })  
+  }
+
+useEffect는 html code가 return된 후 실행 → fetch('/users') 실행, 
+'POST' 버튼을 누르면, submitClick 함수 실행 →  axios.post 실행
+axios.post('/users', { }) 전달경로, 전달할  데이터  .then 동기적으로 변경
+response 변수에 전달된 data가 할당 (response.data.message)
+
+□  node 라우터 동작(get, post)
+- node소스의 users.js라우터는 호출되는, http메소드(get, post)에 따라서 다르게 동작합니다.
+- res.send함수가 json형태의 데이터를 응답하면, react서버에서 이를 받아 화면에 노출합니다.
+
+
+=======================================
 Chapter 2. Bootstrap 템플릿을 React 서버에 적용해보자
-1. Bootstrap 템플릿파일(HTML, CSS, IMG)로 React서버 HOME 페이지를 세팅
+
+Ch2-1. Bootstrap 템플릿파일(HTML, CSS, IMG)로 React서버 HOME 페이지를 세팅
 [수업목표]
 Chapter2의 1강에서는 bootstrap의 html, css, img소스를 react서버에 적용해보고, home페이지를 세팅해보겠습니다.
 
@@ -161,41 +349,78 @@ Chapter2의 1강에서는 bootstrap의 html, css, img소스를 react서버에 �
 -사용 URL
  부트스트랩 테마 url : https://startbootstrap.com/themes
 
-□ 데모사이트 URL이 변경되었습니다.
-http://52.78.200.180 > http://3.37.100.68/
+app.css에서 bg-primary / bg-secondary 색상 변경 가능
+
+src > component > Home.js
+<!-- Navigation--> Header.js에 포함
+<!-- Masthead--> 이하는 Home.js에 포함
+
+다운받은 부트스트랩 테마의 index.html에 있는 폰트 스크립트 복사해서 chapter2> public> index.html에 붙여넣기
+<!-- Font Awesome icons (free version)-->
+        <script src="https://use.~~
+        <!-- Google fonts-->
+        <link href="https://~~
+        <link href="https://~~
+
+화면에 노출되는 부트스트랩 코드는 react의 index.html의 <div id="root"></div> 안에 노출
+
+하단의 script tag들도 마찬가지로 react의 index.html 하단에 에 붙여 넣음
+<script src="https://cdnjs.cloudflare.com~~</script>
+<script src="https://cdn.jsdelivr.net~~</script>
+<script src="https://cdnjs.cloudflare.com~~</script>
+<script src="assets/mail/jqBootstrapValidation.js"></script>
+<script src="assets/mail/contact_me.js"></script>
+<script src="js/scripts.js"></script>
+
+기존 css > styles.css는
+src > css > App.css 에 넣고 App.j에 import './css/App.css'; 추가
+
 
 □ 상대 경로로 css파일 적용하기
 - css파일을 import하는 컴포넌트 파일을 기준으로, css파일의 상대경로를 import해줘야 합니다.
 
-□ html 소스를 jsx에 적용할 때, 주의할 점
+□ html 소스를 jsx에 적용할 때, 주의할 점  10:50
 - jsx에서는 꼭 닫아줘야 하는 html태그가 있습니다.
 - {/* 주석 *}문법으로 주석 처리를 해야 합니다.
+  html <!--    -->, javascript //
 - 하나의 태그로 하위 태그를 감싸야합니다.
+   <></>, <Fragment></Fragment>
 - class대신 className을 사용합니다.
 - 이벤트 핸들러는 카멜표기법을 사용합니다.
 
 
-2. 레이아웃 HEADER, FOOTER 처리
+Ch2-2. 레이아웃 HEADER, FOOTER 처리
 [수업목표]
 Chapter2의 2강에서는 header와 footer처리방법과 reactstrap패키지 사용법을 학습해보겠습니다.
 그리고 react 컴포넌트 내부에서 사용하는 state변수에 대해 알아보겠습니다.
 
 [수업개요]
+
+a tag, 
+Link : react-router-dom 패키지에서 제공, 상단에 패키지 기능 중 사용할 기능만 선택해서 import 가능, className 적용 가능, 개발자 도구 a tag로 노출
+
 □ reactstrap이란
 - bootstrap과 react의 함성어로, react에서 bootstrap을 편하게 사용할 수 있도록 개발된 패키지입니다.
 - 사용 URL
    reactstrap의 dropdowns url : https://reactstrap.github.io/components/dropdowns
+npm install reactstrap 
+react package.json에 reactstrap 작성되어 설치된 상태
 
 □ state변수란
 - react컴포넌트 내부에서 관리되는 자바스크립트 객체입니다.
 - javascript와 html코드 영역에서 모두 사용 가능합니다.
 - state변수의 변화에 따라 화면을 렌더링하거나, 특정 함수를 실행할 수 있습니다.
+vs. props
 
+const [number, setNumber] = useState(0);
+<button onClick={( ) => setNumber(number + 1))}>Click
+</button>
+<p>{number}개</p>
 
-3. React 페이지 라우팅 적용하기
+Ch2-3. React 페이지 라우팅 적용하기
 [수업목표]
 Chapter2의 3강에서는 react-router-dom패키지를 사용해, react페이지에 라우팅을 적용해보고
-함수형 컴포넌트와 props변수에 대해서 학습하도록 하겠습니다.
+함수형 컴포넌트와 props변수에 대해서 학습하도록 하겠습니다.  
 
 [수업개요]
 □  react-router-dom패키지 사용
@@ -203,20 +428,70 @@ Chapter2의 3강에서는 react-router-dom패키지를 사용해, react페이지
 - 호출경로 별로 연결할 컴포넌트를 매칭해줍니다.
 - BrowserRouter, Route, Switch, Redirect 태그별 기능을 확인합니다.
 
+switch가 없을 경우 /a/b/c 3개 모두 호출
+switch 사용 시 윗 줄일수록 우선순위 /a /a/b /a/b/c 경로 호출 시 /a 경로가 포한된 것 중 가장 상단의 a컴포넌트만 노출됨.
+
+Redirect * switch 맨마지막에 놓음
+<Redirect path="*" to="/"/>
+
+exact 완전히 일치하는 호출에만 동작
+
+<BrowserRouter> index.js에서 <App/>을 감싸줘도 가능
+
+<Header><Footer> 항상 노출 route를 사용하지 않음
+
+
 □ 클래스형 컴포넌트, 함수형 컴포넌트
 - 클래스형 컴포넌트는 Componet를 상속받아, class키워드로 컴포넌트를 선업해 사용합니다.
 - 생명주기 함수를 사용해, state변수 변화 등을 고려해서 화면을 렌더링 할 수 있습니다.
+
+import React, { Component } from 'react';
+
+class App extend Component {
+    componentDidMount( ) {
+        this.setState({ count: this.state.count+1 });
+    }
+    2. componentDidMount 함수가 실행
+    3. State 변수 선언과 할당을 setState 함수가 함
+
+    render( ) {
+        return <div>{this.state.count}</div>
+    }
+}
+    1. render 함수가 html을 화면에 그려주고
+export default App;
+
+- 함수형 컴포넌트는 자바스크립트 함수를 선언하는 것과 동일하게 컴포넌트 선언
 - 함수형 컴포넌트는 생명주기 함수 대신, hook을 사용합니다.
+  hook은 class형 컴포넌트의 생명주기 함수와 setState 함수 등을 사용할 수 있게 도와주는 기능
 - hook의 useState, useEffect함수로 클래스형 컴포넌트의 생명주기 함수 기능을 대신합니다.
+
+import React, { useState, useEffect } from 'react';
+
+function App( ) {
+    const [count, setCount] = useState(0)
+
+    useEffect(( ) => {
+        setCount(count+1)
+    }, []);
+    2. useEffect 함수가 실행
+    3. 미리 선언한 함수(setCount)로 State를 변경
+
+    return <div>{this.state.count}</div>
+}
+    1. render 함수없이 html을 화면에 return 한다.
+export default App;
 
 □ props변수란
 - props변수는 부모에서 자식 컴포넌트로 데이터를 전달하기 위한 변수입니다.
 - 자식 컴포넌트는 props변수를 받아서, 내부 변수인 state변수에 할당해 사용할 수 있습니다.
+- 원칙적으로 부모 컴포넌트의 props 데이터는 변경할 수 없다.
 
 
+=======================================
 Chapter 3. 카카오 MAP API를 사용해, 바이러스 확진자 지도 만들기
 
-1. 카카오 MAP API 키 발급 및 사이트 도메인 등록
+Ch3-1. 카카오 MAP API 키 발급 및 사이트 도메인 등록
 [수업목표]
 Chapter3의 1강에서는 카카오 Map Api사용하기 위해, 키 발급 및 도메인 등록 작업을 해보겠습니다.
 그리고 카카오 지도 사이트에서 사용할 지도 기능을 확인해 보겠습니다.
@@ -230,12 +505,42 @@ Chapter3의 1강에서는 카카오 Map Api사용하기 위해, 키 발급 및 �
 - 무료 API이지만 API를 사용하려면, API키를 발급 받고 호출 URL에 파라미터로 추가해야 합니다.
 - html head태그 안에 script태그로, 카카오 맵 API 호출 URL을 삽입합니다.
 
+네이티브 앱 키 : 5f7d1aadc188bee1bc2b59f6bf22c814
+Javascript 키 : 25944f891ac66a63e3a589acfcaad71d
+25944f891ac66a63e3a589acfcaad71d
+
+Map_App_Test
+
+플랫폼	앱 키	재발급
+네이티브 앱 키 : 46c3ebf364f91e3171d491c298d85df7
+Javascript 키 : 47847d9e6927b2abd98f9b952671afc1
+
 □ 카카오 지도 API를 사용할 사이트의 도메인 등록
 - 카카오 지도 API를 react서버에서 호출하니, 로컬 react서버의 주소를 입력합니다.
+  http://localhost:3000
 - 로컬 도메인 주소를 입력할 때, 포트 번호도 함께 입력해야 합니다.
 
 
-2. 확진자 데이터를 JSON 형태로 변환하기
+
+
+~~~~~~~~~~ 정리 필요 ~~~~~~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Ch3-2. 확진자 데이터를 JSON 형태로 변환하기
 [수업목표]
 Chapter3의 2강에서는 확진자 데이터의 특징과 json이란 무엇인지 그리고 excel파일로 작성된 데이터를 json으로 변경하는 방법을 학습하겠습니다.
 
@@ -252,7 +557,7 @@ Chapter3의 2강에서는 확진자 데이터의 특징과 json이란 무엇인�
    Excel To Json Converter URL : https://beautifytools.com/excel-to-json-converter.php
 
 
-3. React 페이지에 카카오 MAP 나타내기
+Ch3-3. React 페이지에 카카오 MAP 나타내기
 [수업목표]
 Chapter3의 3강에서는 카카오 맵 api에서 제공하는 기능들 중, 예제에서 사용할 기능들의 샘플 코드를 기능 단위 별로 react서버에서 실행해 보겠습니다.
 
@@ -267,9 +572,9 @@ Chapter3의 3강에서는 카카오 맵 api에서 제공하는 기능들 중, �
 □ 마커 클러스터러 사용하기
 - 클러스터러는 지도가 일정 기준 이상 축소될 때, 인접한 마커들이 모여 개수가 표시됩니다.
 - 클러스터러에서는 Jquery를 사용하는데요. Jquery는 자바스크립트에서 자주 사용하는 기능들을, 쉽고 간결한 코드로 표현한 자바스크립트 라이브러리 입니다.
+- npm install jquery
 
-
-4. 확진자 데이터를 읽어와, 카카오 MAP 위에 표시하기
+Ch3-4. 확진자 데이터를 읽어와, 카카오 MAP 위에 표시하기
 [수업목표]
 Chapter3의 4강에서는chapter3 예제소스로 서버를 구동해 기능들을 확인해보고, 카카오 지도 샘플 코드를 어떤 식으로 응용해 적용했는지 설명해 드리겠습니다.
 
@@ -284,8 +589,17 @@ Chapter3의 4강에서는chapter3 예제소스로 서버를 구동해 기능들�
 - 3항 연산자는 [ 조건 ? true일 경우 소스 : false일 경우 소스] 형태로 사용합니다.
 
 
-Ch4. 확진자 데이터를 관리하는 관리자 페이지 만들기 - 조회
-1. Node 서버에 MySQL 테스트 서버 연결하기
+Chapter 4. 확진자 데이터를 관리하는 관리자 페이지 만들기 - 조회
+
+HOST = "class101.cbkke4c20nx2.ap-northeast-2.rds.amazonaws.com"
+PORT = "3306"
+DATABASE = 'class101'
+USER = "class101"
+PASSWORD = "dark##2993"
+
+
+
+Ch4-1. Node 서버에 MySQL 테스트 서버 연결하기
 [수업목표]
 Chapter4의 1강에서는 mysql을 설치해보고, node서버에서 mysql을 사용할 수 있도록 연결해보겠습니다.
 
@@ -303,9 +617,7 @@ Chapter4의 1강에서는 mysql을 설치해보고, node서버에서 mysql을 �
 - [Ctrl + Enter]를 누르면 선택된 쿼리가 실행됩니다.
 - use 명령어로 데이터베이스를 선택하고, select 쿼리를 실행합니다.
 - 사용 mysql 서버 접속 정보 (20220810 update)
-   Hostname : rds20220702.cablfiftoknm.ap-northeast-2.rds.amazonaws.com
-   Username : onlyselect
-   Password : password101
+
 
 예제 소스(chapter4.zip) > env파일의 DB정보도 위와 같이 변경되었으니 참고 부탁드립니다.
 
@@ -317,30 +629,284 @@ Chapter4의 1강에서는 mysql을 설치해보고, node서버에서 mysql을 �
 - mybatis는 원래 자바 언어에서 데이터베이스 연결에 사용하는 프레임워크 입니다.
 - 비즈니스 소스(node)와 sql소스(msyql)를 분리해서 개발하기 위해, mybatis-mapper패키지를 사용합니다.
 
-2. React 서버에 확진자 데이터 조회 페이지 만들기
 
 
 
-3. 조회 페이지에서 Node API를 호출해, DB(테스트 서버)에 있는 확진자 데이터 가져오기
+
+
+Ch4-2. React 서버에 확진자 데이터 조회 페이지 만들기
+
+
+[수업목표]
+
+Chapter4의 2강에서는 확진자 격리 정보 리스트 react페이지 구현을 해보고, package-lock.json파일과 env 환경변수 파일 활용법을 학습해보겠습니다.
 
 
 
-Ch5. 확진자 데이터를 관리하는 관리자 페이지 만들기 - AWS DB서버 생성
-1. AWS 가입 후, RDS (MySQL 서버) 인스턴스 생성하기(프리티어 버전 : 무료)
-2. WORKBENCH(MySQL툴)로 확진자 TABLE 생성하고, 더미 데이터 넣기
-3. 조회 페이지에서 Node API를 호출해, 생성한 RDS 서버에 있는 확진자 데이터 가져오기
+[준비물]
 
-Ch6. 확진자 데이터를 관리하는 관리자 페이지 만들기 - 등록, 수정, 삭제
-1. React 서버에 확진자 데이터 등록/수정 페이지 만들기
-2. Node 서버에 등록 API 구현하기
-3. Node 서버에 수정 API 구현하기
-4. 확진자 격리 병원 이미지 업로드 하기
-5. Node 서버에 삭제 API 구현하기
+윈도우 운영체제를 사용하는 데스크탑 혹은 노트북 컴퓨터가 필요합니다.
 
-Ch7. AWS에 로컬 소스 배포 후, 외부 접속해보기
-1. EC2(React, Node 서버)인스턴스 생성하기 (프리티어 버전 : 무료)
-2. SFTP, SSH 환경 세팅, 리눅스 명령어 학습
-3. EC2서버에 필요한 프로그램 설치
-4. React, Node 소스코드를 EC2서버에 배포, 패키지 설치
-5. 서버를 구동하고, 외부에서 IP로 접속
+
+
+[수업개요]
+
+
+
+0:15 package-lock.json 파일의 용도
+
+📌 package.json파일에 작성된 패키지 버전은 범위로 표현됩니다.
+
+
+
+📌 같은 package.json파일을 사용해, 패키지를 설치하더라도 서로 다른 버전의 패키지가 설치될 수 있습니다.
+
+
+
+📌 package-lock.json에는 정확한 버전이 작성돼있어, 항상 동일한 버전의 패키지 설치를 보장해준다.
+
+
+
+
+
+1:37 env파일이란
+
+
+
+📌 프로그램 동작에 영향을 주는 동적인 값. 환경변수를 의미합니다.
+
+📌 API키, DB 접속정보 등 보안이 필요한 정보를, 형상 관리 툴에 공유하지 않고 env파일에 작성해 관리합니다.
+
+
+
+## 첫번째 질문 ##
+1. CoronaList.js =======================================
+<수정전>
+  const callInfectListApi = () => {
+    axios.post('/api/infection?type=list', {
+      testKey : "testValue"
+    })
+    .then( function(response){
+        try {
+            setResponseInfectList(response.data.result)
+        } catch (error) {
+            alert('작업중 오류가 발생하였습니다.'+error);
+        }
+    })
+    .catch( error => {alert('작업중 오류가 발생하였습니다.');return false;} );
+  }
+<수정후>
+  const callInfectListApi = () => {
+    axios.get('/api/infection?type=list', {//수정된 부분
+    })
+    .then( function(response){
+        try {
+            setResponseInfectList(response.data.result)
+        } catch (error) {
+            alert('작업중 오류가 발생하였습니다.'+error);
+        }
+    })
+    .catch( error => {alert('작업중 오류가 발생하였습니다.');return false;} );
+  }
+
+infectionRout.js =======================================
+<수정전>
+router.post('/', (req, res, next) => {
+    var type = req.query.type;
+    console.log("### req.body.testKey : "+req.body.testKey+" ###")
+    if(type == 'list'){
+      // 리스트 조회
+      try {
+        // Mysql Api 모듈(CRUD)
+        var dbconnect_Module = require('./dbconnect_Module');
+    
+        //Mysql 쿼리 호출 정보 입력
+        req.body.mapper = 'InfectionMapper';//mybatis xml 파일명
+        req.body.crud = 'select';//select, insert, update, delete 중에 입력
+        req.body.mapper_id = 'selectInfectionList';
+        
+        router.use('/', dbconnect_Module);
+        next()
+      } catch (error) {
+        console.log("Module > dbconnect error : "+ error);      
+      }
+    }
+});
+<수정후>
+router.get('/', (req, res, next) => {//수정된 부분
+    var type = req.query.type;
+    if(type == 'list'){
+      // 리스트 조회
+      try {
+        // Mysql Api 모듈(CRUD)
+        var dbconnect_Module = require('./dbconnect_Module');
+    
+        //Mysql 쿼리 호출 정보 입력
+        req.body.mapper = 'InfectionMapper';//mybatis xml 파일명
+        req.body.crud = 'select';//select, insert, update, delete 중에 입력
+        req.body.mapper_id = 'selectInfectionList';
+        
+        router.use('/', dbconnect_Module);
+        next()
+      } catch (error) {
+        console.log("Module > dbconnect error : "+ error);      
+      }
+    }
+});
+dbconnect_Module.js =======================================
+<수정전>
+router.post("/", (req, res) => {
+<수정후>
+router.get("/", (req, res) => {//수정된 부분
+
+
+## 두번째 질문 ##
+{responseInfectList[0].comment}
+와 같은 방법으로 특정 인덱스(엑셀로 치면 행)의 컬럼(엑셀의 열)을 출력할 수 있습니다.
+위 예시는 responseInfectList 배열의 첫 번째 데이터의 comment컬럼 데이터를 출력합니다.
+CoronaList.js에서 아래와 같이 소스를 추가하시면, 출력된 데이터 확인이 가능합니다.
+
+            </thead>
+            {responseInfectList[0].comment}//추가된 부분
+            <tbody>
+            {
+              responseInfectList.map((position, i) => {
+                return (
+                    <tr>
+                        <th scope="row">{position.num}</th>
+                        <td>{position.comment}</td>
+                        <td>{position.finish}</td>
+                        <td>{position.date}</td>
+                        <td>{position.birth}</td>
+                        <td>{position.gender}</td>
+                        <td>{position.nation}</td>
+                        <td>
+                            <Button color="warning"><Link to={'/CoronaView/'+position.num}>수정</Link></Button>
+                            <Button color="danger" id={position.num}>삭제</Button>
+                        </td>
+                    </tr>
+                );
+              })
+            }
+            </tbody>
+
+
+Ch4-3. 조회 페이지에서 Node API를 호출해, DB(테스트 서버)에 있는 확진자 데이터 가져오기
+
+[수업목표]
+
+Chapter4의 3강에서는 조회 페이지에서 node api를 호출해 보고, db서버에서 가져온 데이터를 화면에 그려보도록 하겠습니다.
+
+
+
+그리고 useEffect함수의 deps활용 방법을 공부하겠습니다.
+
+
+
+[준비물]
+
+윈도우 운영체제를 사용하는 데스크탑 혹은 노트북 컴퓨터가 필요합니다.
+
+
+
+[수업개요]
+
+
+
+3:07 프로미스 then함수와 콜백함수
+
+
+
+📌 then함수는 axios가 node api를 호출한 다음, 응답이 도착하면 실행됩니다.
+
+📌 이때 then함수의 파라미터로 콜백함수가 전달되고, 이 콜백함수의 파라미터에 node서버에서 반환 된 response가 할당됩니다.
+
+
+
+📌 response가 파라미터로 할당된 콜백함수는 then함수 내부 로직이 끝난 다음 실행됩니다. then함수의 내부 로직은 node api의 응답 값을 기다리는 것 입니다.
+
+
+
+
+
+7:45 useEffect함수의 [deps]값
+
+
+
+📌 [deps]값이 없는 useEffect함수는 컴포넌트의 첫 렌더링 때 1번 실행이 됩니다.
+
+📌 [deps]값이 없는 useEffect함수는 컴포넌트의 첫 렌더링 때와 deps값에 할당된 값이 변경되었을 때 실행됩니다.
+
+
+
+
+
+
+
+Chapter 5. 확진자 데이터를 관리하는 관리자 페이지 만들기 - AWS DB서버 생성
+highcera
+highcera69@gmail.com
+aws 이메일 아이디로 사용
+개인
+전체 이름 : cho, 전화번호 : 12354567, 국가 또는 리전 : 대한민국, 
+주소 : seoul 이하 동일, 우편번호: 123456
+
+MySQL : dark##2993
+class101.cbkke4c20nx2.ap-northeast-2.rds.amazonaws.com
+parameter timezone 변경 ??? seoul
+/* 데이터베이스 서버 시간 조회 */
+SELECT NOW(); seoul 시간과 다름
+
+/* 데이터베이스 서버 시간 국가 조회 */
+SHOW GLOBAL VARIABLES LIKE 'time_zone';   UTC
+
+
+admin / class101 select, update, insert, delete
+
+Ch5-1. AWS 가입 후, RDS (MySQL 서버) 인스턴스 생성하기(프리티어 버전 : 무료)
+Ch5-2. WORKBENCH(MySQL툴)로 확진자 TABLE 생성하고, 더미 데이터 넣기
+Ch5-3. 조회 페이지에서 Node API를 호출해, 생성한 RDS 서버에 있는 확진자 데이터 가져오기
+
+Chapter 6. 확진자 데이터를 관리하는 관리자 페이지 만들기 - 등록, 수정, 삭제
+Ch6-1. React 서버에 확진자 데이터 등록/수정 페이지 만들기
+Ch6-2. Node 서버에 등록 API 구현하기
+Ch6-3. Node 서버에 수정 API 구현하기
+Ch6-4. 확진자 격리 병원 이미지 업로드 하기
+Ch6-5. Node 서버에 삭제 API 구현하기
+
+Chapter 7. AWS에 로컬 소스 배포 후, 외부 접속해보기
+Ch7-1. EC2(React, Node 서버)인스턴스 생성하기 (프리티어 버전 : 무료)
+Ch7-2. SFTP, SSH 환경 세팅, 리눅스 명령어 학습
+Ch7-3. EC2서버에 필요한 프로그램 설치
+Ch7-4. React, Node 소스코드를 EC2서버에 배포, 패키지 설치
+Ch7-5. 서버를 구동하고, 외부에서 IP로 접속
+
+[nodejs yarn 설치 명령어]
+1. 최고 권한을 갖는 root계정으로 전환
+sudo su -
+
+2. curl명령어로 14 버전의 nodejs 파일을 가져온다.
+curl -sL https://deb.nodesource.com/setup_14.x | bash -
+
+3. apt-get명령어로 nodejs를 설치한다.
+apt-get install -y nodejs
+
+4. nodejs와 npm버전을 확인한다.
+nodejs -v
+npm -v
+
+## 참고
+nodejs 삭제 명령어 : apt-get purge nodejs
+
+5. yarn 설치를 위해, curl명령어로 yarn repository에서 gpg키를 가져온다.
+curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+
+6. apt로 yarn을 정확히 받을 수 있도록, yarn repository정보를 apt 저장소에 추가한다.
+echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+
+7. apt-get을 최신화하고 yarn을 설치한다.
+apt-get update && sudo apt-get install yarn
+
+8. yarn 버전을 확인한다.
+yarn --version
 

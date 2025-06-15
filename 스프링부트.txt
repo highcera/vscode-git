@@ -1861,6 +1861,10 @@ Java Spring Boot (스프링부트) 프레임워크 제대로 배우기 Part.3
 5차시 스프링 부트 프레임워크 각 계층(3) - Data Access Layer
 6차시 스프링 부트 프레임워크 각 계층(4) - Domain
 7차시 스프링 부트 프레임워크 각 계층(5) - DTO, DAO
+
+
+
+
 8차시 Service Layer(서비스 계층) 만들기(1) - 메인과 멤버 폼페이지
 
 testboard2
@@ -1894,7 +1898,8 @@ thymeleaf를 root folder로 인식하도록 했는지 확인
 
 application.properties에 아래 내용 추가
 # Thymeleaf
-# cache 기능은 서버 내부에 cache 저장을 못하도록 끄면 좋은. 수정 시 매번 프로젝트를 재시작 안해도 됨. 
+# cache 기능은 서버 내부에 cache 저장을 못하도록 끄면 좋음. 
+* 수정 시 매번 프로젝트를 재시작 안해도 됨. 
 spring.thymeleaf.prefix=classpath:templates/thymeleaf/
 spring.thymeleaf.check-template-location=true
 spring.thymeleaf.mode=HTML5
@@ -1907,13 +1912,184 @@ testboard3/pom.xml thymleaf depency 추가
     <artifactId>spring-boot-starter-thymeleaf</artifactId>
 </dependency>
 
-
 project명에서 오른쪽 마우스 maven > update project
+
+test > mapper 동작만 확인 
+실제는 Form page (입력), service단, controller도 다 만들어 주어야 함
 
 
 9차시 Service Layer(서비스 계층) 만들기(2) - 메인과 멤버 폼페이지와 에러 대처
+ 
+[memberWriteForm]
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset="UTF-8">
+		<title>Member Registration Form</title>
+		<style>
+			form > label {
+				display: inline-block; 
+				width: 120px;
+			}
+			form > input {
+				padding: 4px;
+				margin-bottom: 4px;
+			}			
+		</style>	
+	</head>
+	<body>
+		<h1>Member Registration Form</h1>
+		<form action="/member/memberWriteOk" method="POST" >			
+			<label for="name">Name</label>
+			<input type="text" id="name" name="name">
+			<br>
+			
+			<label for="id">ID</label>
+			<input type="text" id="id" name="id">
+			<br>
+			
+			<label for="phone">Phone</label>
+			<input type="text" id="phone" name="phone">
+			<br>
+			<br>
+			
+			<input type="submit" value=" Submit "> <input type="reset" value=" Reset ">
+			
+		</form>
+	</body>
+</html>
+
+css
+inline / block / inline-block, inline : 너비 지정 X, block : width가 없으면 전체 행, width가 있으면 width만큼, 줄바꿈 → inline-block 사용
+label {background: red} 로 영역 확인 가능
+
+label을 사용하면 라벨선텍 시 입력창 활성화 > id를 사용해야 함
+
+
 10차시 Service Layer(서비스 계층) 만들기(3) - Form 화면
+Form단 name - memberDTO 객체로 만들어 놓음
+memberDTO 객체에 담겨서 controller단 으로 넘어옴
+
+
+[controller.java]
+package com.testboard.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+
+import com.testboard.dto.MemberDTO;
+import com.testboard.service.MemberService;
+
+@Controller
+public class MemberController {
+	
+	@Autowired
+	private MemberService memberService;
+	
+	@GetMapping("/member/memberWriteForm")
+	public String memberWriteForm() {
+		
+		return "/member/memberWriteForm";    // memberWriteForm.html
+	}
+	
+	@PostMapping("/member/memberWriteOk")
+	public String insertMember(MemberDTO m1) {
+		
+		try {
+			// 등록처리
+			System.out.println(m1.getName());
+			System.out.println(m1.getId());
+			System.out.println(m1.getPhone());
+			
+			memberService.insertMember( m1 );  // Service 단 작성 필요
+		} 
+		catch(Exception e) {			
+			// err			
+		}
+				
+		return "redirect:/";   // member/memberWriteForm / redirect:/member/memberWriteForm
+		/*
+		 * 그냥 리턴처리 하는 것과 redirect 리턴의 차이!
+		 * 				1. 별 차이는 없다.
+		 *              2. 다만 redirect 경우는 다시 한번 해당 URL로 HTTP 요청을 넣는 형태
+		 *              
+		 */
+		
+	}
+}
+
+
+              M~S~.java (I)   (목록)
+              M~S~Impl.java 
+                      ↓
+[   C   ]   →   [   S   ]   →   [   M   ] 
+
+[index.html]
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Insert title here</title>
+	</head>
+	<body>
+		index.html ~ :)
+		<br>
+		<br>
+	
+		<a href="/member/memberWriteForm">사용자 등록화면 이동하기</a>	
+		<br>
+		<br>
+	
+	</body>
+</html>
+
+
+
 11차시 Service Layer(서비스 계층) 만들기(3) - Form 정보 DB 입력
+memberService.insertMember( m1 );  // Service 단 작성 필요
+
+service 단 만든 후 주입 필요
+	@Autowired
+	private MemberService memberService;
+
+[MemberService.java]
+package com.testboard.service;
+
+import org.springframework.stereotype.Service;
+
+import com.testboard.dto.MemberDTO;
+
+@Service
+public interface MemberService {
+	
+	public void insertMember( MemberDTO memberDTO );
+}
+
+[MemberServiceImpl.java]
+package com.testboard.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.testboard.dto.MemberDTO;
+import com.testboard.mapper.MemberMapper;
+
+@Service
+public class MemberServiceImpl implements MemberService {
+	
+	@Autowired
+	private MemberMapper memberMapper;
+	
+	@Override
+	public void insertMember( MemberDTO memberDTO ) {
+		memberMapper.insertMember( memberDTO );
+	}
+
+}
+
 12차시 Service Layer(서비스 계층) 만들기(4) - 서비스단 구현
 
 [MemberController.java]
