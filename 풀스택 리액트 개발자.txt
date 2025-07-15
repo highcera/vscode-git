@@ -1,3 +1,11 @@
+        
+server    react(nodejs)     flask       스프링부트
+client     react               react        react
+
+
+https://wikidocs.net/book/17295
+
+
 ========================================================
 ■ 풀스택 리액트 개발자 취업을 위한 핵심 커리큘럼 by 몰입코딩
 

@@ -1,3 +1,14 @@
+PHP 한글 설명서
+https://wikidocs.net/book/10743
+
+SQLite3 - Manual
+https://www.php.net/manual/en/book.sqlite3.php
+
+SQLite3 PHP Quickstart Tutorial
+https://gist.github.com/bladeSk/6294d3266370868601a7d2e50285dbf5
+
+
+
 https://blog.naver.com/chogar/221925309816
 
 로컬 PC MySQL 접속을 위해 XAMPP Control Panel > Shell
