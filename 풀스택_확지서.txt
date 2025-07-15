@@ -1,3 +1,364 @@
+■ 성현 PC
+http://219.240.123.39:3000/
+ 
+- ssh 접속
+ssh highcera@219.240.123.39
+
+
+https://jongsky.tistory.com/79
+1. MySQL 설치
+sudo apt update
+sudo apt install mysql-server
+ 
+2. MySQL 포트 설정 (mysql 기본 포트는 3306임)
+sudo ufw allow mysql
+
+3. MySQL 실행
+- MySQL 실행
+sudo systemctl start mysql
+
+- 서버 재시작시 MySQL 자동 재시작 설정 방법 (권장사항)
+sudo systemctl enable mysql
+
+4. root(관리자) 계정 비밀번호 재설정
+- mysql 접속
+sudo mysql -u root
+- root 계정 비밀번호 설정
+ALTER USER 'root'@'localhost' IDENTIFIED BY '비밀번호';
+- 변경된 비밀번호 적용하기
+FLUSH PRIVILEGES;
+
+5. 특정 계정 생성 및 접속 권한 변경
+- user 테이블 업데이트 하기 위해 database 사용하기
+use mysql;
+
+- 생성하기 전 현재 계정들 확인
+SELECT Host,User,plugin,authentication_string FROM mysql.user;
+ 
+- 계정 생성하기
+CREATE USER '생성할계정이름'@'%' identified by '비밀번호';
+
+- 권한 할당
+GRANT ALL PRIVILEGES ON *.* to '생성된계정이름'@'%';
+
+- 적용하기
+FLUSH PRIVILEGES;
+ 
+- 생성 후 계정들 확인
+SELECT Host,User,plugin,authentication_string FROM mysql.user;
+
+- mysql 빠져나오기
+exit
+
+6. 외부 접속 허용 (외부에서 접속하기 위해서는 config 파일을 수정해주고 MySQL을 재시작해야 합니다.)
+- mysqld.cnf 내용 수정
+sudo vi /etc/mysql/mysql.conf.d/mysqld.cnf
+
+- 최초 127.0.0.1에서 모든 접속을 허용하는 0.0.0.0으로 수정
+# bind-address            = 127.0.0.1 
+bind-address            = 0.0.0.0
+
+- MySQL 재실행
+sudo systemctl restart mysql
+
+MySQL
+root
+d***#*2***
+
+---------------------------------------------------------------------------------------------
+https://mingg123.tistory.com/88
+mySql을 로컬에 깔아야 할 일이 생겼다. 
+몇 번이나 삭제, 수정을 하면서 그냥 포스팅 하려고한다.
+
+재설치 
+mysql관련된 라이브러리 까지 모두 깔끔하게 삭제한다. 
+sudo apt-get remove --purge mysql*
+
+혹여나 남아 있는 파일이 있는지 확인한다.
+dpkg -l | grep mysql
+
+다른 파일들을 제거한다.
+sudo rm -rf /etc/mysql /var/lib/mysql
+sudo apt-get autoremove
+sudo apt-get autoclean
+ 
+설치를 시작한다.
+sudo apt-get update
+sudo apt-get install mysql-server
+
+■ NAS
+https://shhome.synology.me:5001/
+ssh highcera@shhome.synology.me -p 10005
+---------------------------------------------------------------------------------------------
+
+Maria DB
+class101@shhome.synology.me -p 3307
+Class101!@
+
+====================================
+[확인 필요]
+NAS - Host
+https://host.csh980116.synology.me/index.html
+
+https://csh980116.synology.me/phpmyadmin/index.php
+D***#*2***
+
+csh980116.synology.me > File Station > host_folder
+====================================
+
+
+■ AWS
+highcera
+highcera69@gmail.com
+aws 이메일 아이디로 사용
+개인
+전체 이름 : cho, 전화번호 : 12354567, 국가 또는 리전 : 대한민국, 
+주소 : seoul 이하 동일, 우편번호: 123456
+
+43.201.161.188
+ssh -i "101key.pem" ubuntu@ec2-43-201-161-188.ap-northeast-2.compute.amazonaws.com
+
+EACCES: permission denied, open '/home/ubuntu/class101/client/node_modules/.cache/.eslintcache'
+는 권한 부족으로 .eslintcache 파일에 접근할 수 없어서 컴파일에 실패했다는 의미입니다.
+
+✅ 원인 요약
+해당 파일 또는 디렉토리(/node_modules/.cache/.eslintcache)의 소유자 또는 권한 설정이 잘못되어 현재 사용자(여기선 ubuntu)가 접근하지 못하고 있습니다. 보통 sudo나 root로 설치된 패키지들이 문제가 됩니다.
+
+✅ 해결 방법
+1. .cache 폴더를 삭제하고 재설치
+bash
+복사
+편집
+rm -rf node_modules/.cache
+그 다음:
+
+bash
+복사
+편집
+yarn install
+또는 그냥 다시 시작:
+
+bash
+복사
+편집
+yarn dev
+2. 전체 권한 재설정 (권장)
+현재 프로젝트 폴더의 모든 파일 소유자를 ubuntu로 변경:
+
+bash
+복사
+편집
+sudo chown -R ubuntu:ubuntu /home/ubuntu/class101/client
+그 다음 캐시 삭제:
+
+bash
+복사
+편집
+rm -rf node_modules/.cache
+3. 필요하면 전체 재설치
+bash
+복사
+편집
+rm -rf node_modules yarn.lock
+yarn install
+🔍 보충: root 권한으로 yarn을 실행했던 적이 있다면
+sudo yarn 등으로 설치하면 권한 꼬임 문제가 자주 발생합니다. 이후엔 항상 일반 사용자(ubuntu) 권한으로 yarn 실행하세요.
+
+필요하면 ls -l node_modules/.cache 결과를 공유해 주시면 어떤 사용자로 파일이 생성되었는지 확인해드릴 수 있어요.
+
+
+
+
+
+
+
+
+
+ChatGPT에게 묻기
+
+
+
+
+MySQL : dark##2993
+class101.cbkke4c20nx2.ap-northeast-2.rds.amazonaws.com
+parameter timezone 변경 ??? seoul
+/* 데이터베이스 서버 시간 조회 */
+SELECT NOW(); seoul 시간과 다름
+
+/* 데이터베이스 서버 시간 국가 조회 */
+SHOW GLOBAL VARIABLES LIKE 'time_zone';   UTC
+
+
+
+
+https://shhome.synology.me:5001/
+ssh highcera@shhome.synology.me -p 10005
+
+
+당 에러는 Node.js 17 이상 버전에서 발생하는 OpenSSL 3.0과 webpack (또는 babel-loader 등 일부 의존성) 간의 호환성 문제입니다.
+특히 이 오류 메시지의 핵심은 아래와 같습니다:
+
+vbnet
+복사
+편집
+Error: error:0308010C:digital envelope routines::unsupported
+...
+code: 'ERR_OSSL_EVP_UNSUPPORTED'
+🔧 해결 방법 2가지
+✅ 방법 1: 환경변수 설정 (권장)
+NODE_OPTIONS=--openssl-legacy-provider 환경 변수를 설정해서 실행하는 방식입니다.
+
+bash
+복사
+편집
+export NODE_OPTIONS=--openssl-legacy-provider
+yarn dev
+또는 한 줄로 실행:
+
+bash
+복사
+편집
+NODE_OPTIONS=--openssl-legacy-provider yarn dev
+✅ 방법 2: Node.js 버전 다운그레이드
+Node 16 버전으로 변경하면 이 문제는 사라집니다.
+
+1. n 명령어 사용 (Node Version Manager)
+bash
+복사
+편집
+sudo npm install -g n
+sudo n 16.20.2
+2. 설치 확인
+bash
+복사
+편집
+node -v  # v16.20.2 등
+npm -v
+🔄 정리
+방법	설명	추천 여부
+방법 1	환경변수로 OpenSSL 구버전 호환 허용	✅ 단기 해결 (간단함)
+방법 2	Node.js 버전 16으로 다운그레이드	✅ 장기적 호환성 확보
+
+🔁 추가 팁
+package.json에 start 스크립트 또는 .env 파일에도 아래처럼 설정해둘 수 있습니다:
+
+json
+복사
+편집
+"scripts": {
+  "start": "react-scripts start",
+  "dev": "NODE_OPTIONS=--openssl-legacy-provider concurrently \"yarn server\" \"yarn client\""
+}
+또는 .env 파일에:
+
+ini
+복사
+편집
+NODE_OPTIONS=--openssl-legacy-provider
+필요하면 nodemon이나 concurrently 설정도 함께 점검해드릴 수 있어요.
+
+
+
+
+
+
+
+■ SSH(Secure Shell)
+- 원격 컴퓨터에 로그인하고, 명령어를 실행할 수 있게 지원하는 프로토콜.
+- 전송하는 모든 데이터를 암호화 한다.
+- EC2에서는 키페어로 암호화된 데이터를 복호화 한다.
+
+■ SFTP(Secure File Transfer Protocal)
+- FTP는 원격 컴퓨터에 파일을 주고 받는 것을 지원하는 프로토콜이다.
+- SFTP는 FTP에서 전송하는 데이터를 암호화하는 기능을 제공한다.
+
+■ curl을 사용해 nodejs를 설치
+- apt-get은 ubuntu 내부 저장소에서 패키지를 가져와서 설치한다.
+- 저장소에 없는 버전의 패키지는 curl명령어로, 사용할 프로그램 경로를 불러온 다음 설치할 수 있다.
+
+■ yarn 설치
+- npm으로 yarn을 설치하면, ubuntu에서는 cmdtest라는 패키지가 잘못 설치될 수 있다.
+- curl을 통해 yarn repository경로를 지정해주면, 정확하게 yarn을 설치할 수 있다.
+
+1. 최고 권한을 갖는 root계정으로 전환
+sudo su -
+
+2. curl명령어로 14 버전의 nodejs 파일을 가져온다.
+curl -sL https://deb.nodesource.com/setup_14.x | bash -
+
+3. apt-get명령어로 nodejs를 설치한다.
+apt-get install -y nodejs
+
+4. nodejs와 npm버전을 확인한다.
+nodejs -v
+npm -v
+
+(npm 설치 안되었을 때)
+apt install -y npm
+
+## 참고
+nodejs 삭제 명령어 : apt-get purge nodejs
+
+5. yarn 설치를 위해, curl명령어로 yarn repository에서 gpg키를 가져온다.
+curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+
+6. apt로 yarn을 정확히 받을 수 있도록, yarn repository정보를 apt 저장소에 추가한다.
+echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+
+7. apt-get을 최신화하고 yarn을 설치한다.
+apt-get update && sudo apt-get install yarn
+
+8. yarn 버전을 확인한다.
+yarn --version
+
+
+■ 배포용 폴더 sftp로 이동
+client, node_modules 폴더 제외하고 배포용 폴더로 복사
+배포용 폴더에 client 폴더 생성
+원본 client 폴더에서 node_modules를 제외하고 배포용 폴더>client 폴더에 복사
+
+폴더(workspace) 생성 후 배포용 폴더의 모든 화일을 upload
+
+ssh 접속
+sudo su - (root 권한)
+workspace (node)로 이동 npm i
+client (react) 폴더로 이동 npm i
+node 경로로 이동 후 yarn dev (nodemon 설치 필요)
+npm i nodemon
+yarn dev
+
+browser EC2 서버의 탄력적 IP 입력
+43.201.161.188:3000
+
+우분투 환경변수와 ENV 변수 동일 문제 발생
+sftp ENV화일 편집 > USER → USER1
+dbdonnect_Moudule.js 화일 편집 > process.env.USER → USER1 수정 
+서버 ^C 종료 후 재구동 
+
+
+수정 시 이미지 깨져 있음 > uploads > image 폴더  
+수정에서 새로운 이미지 등록 > image 폴더 화일 추가 
+
+■ aws EC2서버의 IP 사이트 도메인 추가
+kakao developers web 플랫폼 3.35.114.19:3000 추가
+
+■ ssh 창 닫혀도 프로그램 구동
+
+sudo su -
+cd ..
+cd home/ubuntu/class101/
+screen yarn dev
+
+ssh 재접속 후
+sudo su -
+cd ..
+cd home/ubuntu/class101/
+fuser -k 3000/tcp
+fuser -k 5000/tcp
+
+
+
+
 참고 site
 https://megastudyitacademy.tistory.com/entry/%ED%92%80%EC%8A%A4%ED%83%9D-%EA%B0%9C%EB%B0%9C%EC%9E%90%EB%A1%9C-%EC%84%B1%EC%9E%A5%ED%95%98%EA%B8%B0-%EC%9C%84%ED%95%9C-%ED%95%84%EC%88%98-%EA%B0%80%EC%9D%B4%EB%93%9C
 
@@ -844,6 +1205,9 @@ Chapter4의 3강에서는 조회 페이지에서 node api를 호출해 보고, d
 
 
 Chapter 5. 확진자 데이터를 관리하는 관리자 페이지 만들기 - AWS DB서버 생성
+
+
+
 highcera
 highcera69@gmail.com
 aws 이메일 아이디로 사용
@@ -863,6 +1227,10 @@ SHOW GLOBAL VARIABLES LIKE 'time_zone';   UTC
 
 admin / class101 select, update, insert, delete
 
+https://www.npmjs.com/package/mysql
+
+
+
 Ch5-1. AWS 가입 후, RDS (MySQL 서버) 인스턴스 생성하기(프리티어 버전 : 무료)
 Ch5-2. WORKBENCH(MySQL툴)로 확진자 TABLE 생성하고, 더미 데이터 넣기
 Ch5-3. 조회 페이지에서 Node API를 호출해, 생성한 RDS 서버에 있는 확진자 데이터 가져오기
@@ -879,7 +1247,25 @@ Ch7-1. EC2(React, Node 서버)인스턴스 생성하기 (프리티어 버전 : �
 Ch7-2. SFTP, SSH 환경 세팅, 리눅스 명령어 학습
 Ch7-3. EC2서버에 필요한 프로그램 설치
 Ch7-4. React, Node 소스코드를 EC2서버에 배포, 패키지 설치
+
+
 Ch7-5. 서버를 구동하고, 외부에서 IP로 접속
+Chapter7의 5강에서는 4강에서 구동했던 서버를, 터미널을 닫아도 항상 구동 되도록 설정해보겠습니다.
+그리고 ubuntu 파일 소유자와 권한에 대해서 배웁니다. EC2서버에도 카카오 맵 api를 사용할 수 있도록, 사이트 도메인을 추가해보겠습니다.
+
+■ 터미널을 닫아도, 서버는 계속 구동되도록
+- 로컬 PC처럼 EC2서버에서 명령어를 실행하는 SSH창을 닫으면, 서버가 종료된다.
+- ubuntu의 screen명령어를 사용하면, 서버를 백그라운드에서 구동할 수 있다.
+- 구동 된 서버를 종료하려면, fuser명령어로 종료할 포트를 지정해 사용할 수 있다.
+
+■ 카카오 개발자 사이트에서, API 사이트 도메인 등록
+- 로컬 서버에서 카카오 지도 API를 사용하기 위해, localhost:3000을 사이트 도메인에 등록했다.
+- 마찬가지로 EC2서버에서 카카오 지도 API를 사용하려면, EC2 탄력적 IP와 포트 번호를 입력해야한다.-
+
+■ 권한이 없는 사용자가, 소스에 접근
+- 읽기, 쓰기, 실행 3가지 권한이 모두 없는 ubuntu계정이, 권한이 없는 소스에 접근을 시도하면, Permission Denied메시지가 노출된다.
+- root사용자는 슈퍼 권한을 갖는 사용자로 모든 폴더 및 파일에, 모든 권한을 갖는다.
+
 
 [nodejs yarn 설치 명령어]
 1. 최고 권한을 갖는 root계정으로 전환
