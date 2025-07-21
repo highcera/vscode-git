@@ -1,0 +1,66 @@
+#separator:tab
+#html:true
+택시승차장은 호텔 앞에 있어요. 	 <b>A taxi stand is in front of the hotel.</b><br>
+택시가 와서 손님을 태워갈 거예요. 	 <b>A taxi will come and get you.</b><br>
+택시기사님과 협상해보셔야 해요. 	 <b>You should negotiate with the driver.</b><br>
+노란색 택시 보이세요? 	 <b>Can you see a yellow cab?</b><br>
+목적지를 알려주세요. 	 <b>Give me your destination.</b><br>
+도심지역의 요금은 정해져 있어요. 	 <b>Prices are fixed for the downtown area.</b><br>
+기차역 쪽에 계신 거예요, 아니면 반대편이세요? 	 <b>Are you on the railway station side or the opposite side?</b><br>
+길 아래로 좀 걸어오세요. 	 <b>Please walk down the street.</b><br>
+저 노란색 택시에 있어요. 	 <b>I'm in a yellow cab.</b><br>
+택시기사님과 얘기해보세요. 	 <b>You have to talk to the taxi driver.</b><br>
+택시승차장은 어디에 있어요? 	 <b>Where can I find a taxi stand?</b><br>
+저를 태울 택시가 필요합니다. 	 <b>I'd like a cab to pick me up.</b><br>
+예전 기차역 옆의 시내에 있어요. 	 <b>I'm downtown by the old railway station.</b><br>
+먼저 요금을 협의해야 하나요? 	 <b>Should I negotiate the price first?</b><br>
+여기서는 노란 택시가 한 대도 안 보여요. 	 <b>I can't see any yellow cab from here.</b><br>
+공항으로 가고 싶어요. 	 <b>I want to go to the airport.</b><br>
+만약 도심에서 외곽으로 나가게 되면요? 	 <b>What if I want to go outside of the downtown core?</b><br>
+역 바로 앞에서 있어요. 	 <b>I'm standing directly in front of the station.</b><br>
+공항까지 가려면 얼마 정도 할까요? 	 <b>How much do you think to go to the airport?</b><br>
+건물 앞에 있는 분수대 옆에서 있을게요. 	 <b>I’ll be standing by the fountain in front of the building.</b><br>
+차량번호가 3253인가요? 	 <b>Is your plate number 3253?</b><br>
+안녕하세요. 택시 서비스입니다. 	 <b>Morning. This is Taxi Services.</b><br>
+안녕하세요. 저를 태울 택시가 필요합니다. 	 <b>Hello. I'd like a cab to pick me up.</b><br>
+어디 계세요? 아니면 주소가 어떻게 되세요? 	 <b>Where are you? Or what's your address?</b><br>
+라스베이거스대로 3100번이에요. 맥스몰 옆이요. 	 <b>3100 Las Vegas Blvd. It's next to the Max Mall.</b><br>
+공항이요. 가방은 두 개 있어요. 	 <b>To the airport. I have two bags.</b><br>
+택시가 금방 그쪽으로 갈 거예요. 	 <b>A taxi will be there shortly.</b><br>
+안녕하세요. 위치를 말씀해주시겠어요? 	 <b>Hello, can you tell me your location?</b><br>
+네. 저는 지금 시내 교차로에 있어요. 	 <b>Okay. I'm now at the intersection downtown.</b><br>
+아, 여기서는 노란 택시가 한 대도 안 보여요. 	 <b>Oh, I can't see any yellow cab from here.</b><br>
+저는 손님 오른쪽에 있는 교차로 쪽에 있어요. 길 아래로 조금 걸어오세요. 	 <b>I am at the intersection to your right then. Please walk down the street.</b><br>
+아니요. 제거는 4512예요. 저 보이세요? 저 노란색 택시에 있어요. 	 <b>No. Mine is 4512. Can you see me? I'm in a yellow cab.</b><br>
+아! 이제 보여요. 델리 앞에 있으시네요. 	 <b>Oh! I see you now. You are in front of the deli.</b><br>
+요금이 정해져 있는지, 미터당인지, 아니면 협의 가능한지 궁금해서요. 	 <b>I just wonder if it is fixed, by meter or negotiable.</b><br>
+어디서 환승하면 되나요? 	 <b>Where do I transfer?</b><br>
+4호선 타려면 어디서 환승해요? 	 <b>Where can I transfer to line 4?</b><br>
+시청에 가려고요. 	 <b>I'd like to go to City Hall.</b><br>
+막차는 11시인가요 12시인가요? 	 <b>Is the last subway at 11 or 12?</b><br>
+열차는 몇 시에 도착해요? 	 <b>What time does the train get here?</b><br>
+가장 가까운 출구는 어디예요? 	 <b>Where is the nearest exit?</b><br>
+파란색 노선을 찾고 있어요. 	 <b>I am looking for the blue line.</b><br>
+지하철 노선도가 있나요? 	 <b>Is there a subway map?</b><br>
+열차 노선도 있으세요? 	 <b>Do you have a train map?</b><br>
+이 열차는 시청역에 정차하나요? 	 <b>Does this train stop at City Hall?</b><br>
+지하철 트랙은 어디예요? 	 <b>Where are the subway tracks?</b><br>
+반대쪽으로 돌아가세요. 	 <b>Go back the other way.</b><br>
+여기서 환승하세요. 	 <b>You can transfer here.</b><br>
+시청행 열차 맞아요. 	 <b>This is the right train for City Hall.</b><br>
+다음 열차가 곧 도착합니다. 	 <b>The next train will arrive shortly.</b><br>
+가장 가까운 출구가 보일 거예요. 	 <b>You can see the nearest exit.</b><br>
+지하철 노선도는 진열대에 있어요. 	 <b>A subway map is in the rack.</b><br>
+이 열차는 거기에 정차하지 않아요. 	 <b>This subway doesn't stop there.</b><br>
+회전문을 지나가면 돼요. 	 <b>Just walk through the turnstiles.</b><br>
+길 잃으셨어요? 도와드릴까요? 	 <b>Are you lost or do you need directions?</b><br>
+렌터카 때문에 전화하셨나요? 	 <b>Are you calling about your rental?</b><br>
+좋은 아침입니다. 저는 렌터카 회사 정비공입니다. 	 <b>Morning. I am the mechanic for the rental company.</b><br>
+렌트한 차량이 시동이 안 걸려요. 할 수 있는 건 다 해봤어요. 	 <b>My rental car will not start. I have tried everything.</b><br>
+버튼을 누르기 전에 브레이크를 밟은 채로 있어 보셨어요? 	 <b>Have you tried pressing and holding down the break before pressing the button?</b><br>
+그렇게 해도 시동이 안 걸리면요? 	 <b>What if that doesn't work?</b><br>
+제가 교환해드릴 렌터카로 계신 곳까지 운전해서 갈게요. 	 <b>I will drive out to you with another rental vehicle in exchange.</b><br>
+네. 이 근처에 주유소 있나요? 	 <b>Good. Is there a gas station nearby?</b><br>
+지하철 노선도는 진열대에 있어요. 	 <b>A subway map is in the rack.</b><br>
+실제로 그런 적이 있었거든요. 	 <b>Actually, that happened to me.</b><br>
+다른 분이 기름을 가져다주셨어요. 저 진짜 운이 좋았죠. 	 <b>Another driver brought me gas. I was very lucky.</b><br>

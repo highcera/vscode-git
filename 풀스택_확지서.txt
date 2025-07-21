@@ -1,3 +1,5 @@
+screen yarn dev
+
 ■ 성현 PC
 http://219.240.123.39:3000/
  
