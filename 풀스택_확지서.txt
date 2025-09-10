@@ -1,13 +1,31 @@
-screen yarn dev
+---------------------------------------------------------------------------------------------
+◆ 서버 원격 제어
+▶ AWS
+CMD > C:\Users\highc\Downloads> // "C:\Users\highc\Downloads\101key.pem"
+ssh -i "101key.pem" ubuntu@ec2-43-201-161-188.ap-northeast-2.compute.amazonaws.com
+탄력적 IP : 43.201.161.188
+http://43.201.161.188:3000/ ← react 확지자
 
-■ 성현 PC
-http://219.240.123.39:3000/
- 
+screen yarn dev
+(확인 및 제거 방법 확인 필요!)
+
+▶ 성현 PC
+http://219.240.123.39:3000/ ← react 확지자
 - ssh 접속
 ssh highcera@219.240.123.39
 
+▶ NAS
+https://shhome.synology.me:5001/
+ssh highcera@shhome.synology.me -p 10005
 
-https://jongsky.tistory.com/79
+Maria DB
+class101@shhome.synology.me -p 3307
+Class101!@
+---------------------------------------------------------------------------------------------
+
+
+
+◆ MySQL 설치 (https://jongsky.tistory.com/79)
 1. MySQL 설치
 sudo apt update
 sudo apt install mysql-server
@@ -67,8 +85,10 @@ MySQL
 root
 d***#*2***
 
+
+
 ---------------------------------------------------------------------------------------------
-https://mingg123.tistory.com/88
+◆ MySQL 재설치 https://mingg123.tistory.com/88)
 mySql을 로컬에 깔아야 할 일이 생겼다. 
 몇 번이나 삭제, 수정을 하면서 그냥 포스팅 하려고한다.
 
@@ -87,15 +107,9 @@ sudo apt-get autoclean
 설치를 시작한다.
 sudo apt-get update
 sudo apt-get install mysql-server
-
-■ NAS
-https://shhome.synology.me:5001/
-ssh highcera@shhome.synology.me -p 10005
 ---------------------------------------------------------------------------------------------
 
-Maria DB
-class101@shhome.synology.me -p 3307
-Class101!@
+
 
 ====================================
 [확인 필요]
@@ -211,29 +225,21 @@ code: 'ERR_OSSL_EVP_UNSUPPORTED'
 NODE_OPTIONS=--openssl-legacy-provider 환경 변수를 설정해서 실행하는 방식입니다.
 
 bash
-복사
-편집
 export NODE_OPTIONS=--openssl-legacy-provider
 yarn dev
 또는 한 줄로 실행:
 
 bash
-복사
-편집
 NODE_OPTIONS=--openssl-legacy-provider yarn dev
 ✅ 방법 2: Node.js 버전 다운그레이드
 Node 16 버전으로 변경하면 이 문제는 사라집니다.
 
 1. n 명령어 사용 (Node Version Manager)
 bash
-복사
-편집
 sudo npm install -g n
 sudo n 16.20.2
 2. 설치 확인
 bash
-복사
-편집
 node -v  # v16.20.2 등
 npm -v
 🔄 정리
@@ -245,8 +251,6 @@ npm -v
 package.json에 start 스크립트 또는 .env 파일에도 아래처럼 설정해둘 수 있습니다:
 
 json
-복사
-편집
 "scripts": {
   "start": "react-scripts start",
   "dev": "NODE_OPTIONS=--openssl-legacy-provider concurrently \"yarn server\" \"yarn client\""

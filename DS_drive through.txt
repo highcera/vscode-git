@@ -1,0 +1,243 @@
+주문하다 | <b>order</b><br>---
+
+주문을 받다 | <b>take an order</b><br>---
+
+세트 메뉴 | <b>set (=meal)</b><br>---
+
+탄산 음료 | <b>soda (=pop)</b><br>---
+
+탄산 음료 | <b>fizzy drink</b><br>---
+
+(차로) ~까지 가다 | <b>pull up to</b><br>---
+
+(차로)앞으로 이동하다 | <b>pull ahead</b><br>---
+
+여분의 냅킨 | <b>extra napkins</b><br>---
+
+추로스 | <b>churros</b><br>---
+
+영수증 | <b>receipt</b><br>---
+
+주문하시겠어요? | <b>Can I take your order?</b><br>---
+
+감자튀김도 같이 드릴까요? | <b>Would you like fries with that?</b><br>---
+
+세트 메뉴로 하시겠어요? | <b>Would you like the combo?</b><br>---
+
+음료는 어떤 걸로 드릴까요? | <b>What would you like to drink?</b><br>---
+
+소스는 어떤 걸로 드릴까요? | <b>What kind of sauce would you like?</b><br>---
+
+더 추가하고 싶으신 거 있으세요? | <b>Anything else you'd like to add?</b><br>---
+
+앞으로 이동해주세요. | <b>Please pull ahead.</b><br>---
+
+1번 창구로 이동해주세요. | <b>Please pull up to the first window.</b><br>---
+
+영수증 드릴까요? | <b>Would you like your receipt?</b><br>---
+
+감자튀김이랑 드실 케첩 드릴까요? | <b>Would you like some ketchup for your fries?</b><br>---
+
+치즈 버거랑 감자튀김 주세요. | <b>I'd like a cheeseburger and fries.</b><br>---
+
+버거랑 탄산음료 주시겠어요? | <b>Can I get a burger and a soda?</b><br>---
+
+7번 메뉴 세트로 주세요. | <b>I'll take a number 7 combo meal.</b><br>---
+
+스프라이트 주시겠어요? | <b>Can I get a Sprite?</b><br>---
+
+다이어트 탄산음료 미디엄 사이즈로 주세요. | <b>I'll take a medium diet pop.</b><br>---
+
+그것만 주시면 돼요. | <b>That's all for me.</b><br>---
+
+그거면 충분해요. | <b>That will be enough.</b><br>---
+
+케첩을 좀 더 주실 수 있어요? | <b>Could you give us extra ketchup?</b><br>---
+
+냅킨 좀 더 주시겠어요? | <b>Could we have some extra napkins?</b><br>---
+
+영수증 주시겠어요? | <b>Can I have the receipt?</b><br>---
+
+안녕하세요, 그레이트 버거입니다. | <b>Welcome to Great Burger.</b><br>---
+
+버거와 감자튀김 스몰 사이즈 주세요. | <b>I'd like a burger and small fries.</b><br>---
+
+음료수도 같이 주문하시겠어요? | <b>Would you like a drink with that?</b><br>---
+
+스프라이트 미디엄 사이즈로 주세요. | <b>I'll take a medium Sprite.</b><br>---
+
+총 4달러입니다. | <b>That will be $4.</b><br>---
+
+여기 20달러요. | <b>Here's a $20.</b><br>---
+
+잔돈 드릴게요. | <b>Here's your change.</b><br>---
+
+영수증 주실래요? | <b>Can I have the receipt, please?</b><br>---
+
+패스트 타코입니다. 주문하시겠어요? | <b>Welcome to Fast Taco. How may I help you?</b><br>---
+
+소프트 타코 3개와 라지 사이즈 펩시 하나 주세요. | <b>I'll take three soft tacos and a large Pepsi.</b><br>---
+
+알겠습니다. 주문은 다 하신 건가요? | <b>OK. Will that be all for you?</b><br>---
+
+추로스 추가되나요? | <b>Can I add some churros?</b><br>---
+
+그럼요. 다른 건 필요 없으시고요? | <b>Sure thing. Is that all?</b><br>---
+
+그것만 주시면 돼요. | <b>That will be all.</b><br>---
+
+앞으로 이동해주세요. | <b>Please pull ahead.</b><br>---
+
+타코 1개가 빠진 것 같은데요. | <b>I think we're missing a taco.</b><br>---
+
+죄송해요, 여기 있습니다. | <b>Oh, I'm sorry about that. Here it is.</b><br>---
+
+네. 좋은 하루 보내세요. | <b>Great. Have a nice day.</b><br>---
+
+치킨 헛입니다. 주문하시겠어요? | <b>Welcome to Chicken Hut. Can I take your order?</b><br>---
+
+치킨버거 2개와 라지 사이즈 감자튀김 하나 주세요. | <b>I'd like two chicken burgers and a large fries.</b><br>---
+
+버거 소스는 어떤 걸로 드릴까요? | <b>What kind of sauce would you like for the burgers?</b><br>---
+
+바비큐 소스로 주세요. | <b>We'll do barbecue sauce.</b><br>---
+
+주문하실 것 또 있나요? | <b>Anything else you'd like to add?</b><br>---
+
+감자튀김이랑 먹을 케첩 좀 주시겠어요? | <b>Can I add some ketchup for the fries?</b><br>---
+
+네. 다른 건 필요 없으시고요? | <b>Sure thing. Is that all?</b><br>---
+
+네. 그거면 충분해요. | <b>Yes. That will be enough.</b><br>---
+
+1번 창구로 이동해주세요. | <b>Please pull up to the first window.</b><br>---
+
+냅킨 좀 더 주실 수 있나요? | <b>Could we have some extra napkins?</b><br>---
+
+그럼요, 여기요. 좋은 하루 보내세요. | <b>Sure, here you are. Have a great day.</b><br>---
+
+감사합니다. | <b>Thank you.</b><br>---
+
+세트메뉴, 콤보 | <b>combo</b><br>---
+
+운전해서 가다 | <b>drive up</b><br>---
+
+창구 | <b>window</b><br>---
+
+처리하다 | <b>deal with</b><br>---
+
+영수증 | <b>receipt</b><br>---
+
+대신에 | <b>instead</b><br>---
+
+체크카드 | <b>debit card</b><br>---
+
+~로 가다, 이동하다 | <b>proceed to</b><br>---
+
+불편 | <b>inconvenience</b><br>---
+
+드라이브스루 | <b>drive-through</b><br>---
+
+무료의 | <b>complimentary</b><br>---
+
+~을 받다 | <b>pick up</b><br>---
+
+주문하시겠어요? | <b>What is your order?</b><br>---
+
+뭐 다른 거 필요한 건 없으세요? | <b>Anything else for you?</b><br>---
+
+다음 창구로 이동해주세요. | <b>Please proceed to the next window.</b><br>---
+
+첫 번째 창구로 가주세요. | <b>Please drive up to the first window.</b><br>---
+
+첫 번째 창구에서 처리해 드릴게요. | <b>I will deal with you at the first window.</b><br>---
+
+영수증 있으세요? | <b>Do you have your receipt?</b><br>---
+
+계산은 어떻게 하시겠어요? | <b>How would you like to pay?</b><br>---
+
+영수증 필요하세요? | <b>Do you want a receipt?</b><br>---
+
+불편을 끼쳐드려 죄송합니다. | <b>We are sorry for any inconvenience.</b><br>---
+
+영수증은 쇼핑백에 넣어 드릴게요. | <b>The receipt will be in your bag.</b><br>---
+
+주문하신 음식은 다음 창구에서 받으세요. | <b>Pick up your order at the next window.</b><br>---
+
+무료 커피 쿠폰 받으세요. | <b>Take this complimentary coupon for a free coffee.</b><br>---
+
+세트메뉴 1번이랑 2번 주세요. | <b>We want combo #1 and #2.</b><br>---
+
+커피를 주문한 건데 차를 받았어요. | <b>I ordered coffee but you gave me tea.</b><br>---
+
+세트 메뉴로 주세요. | <b>I'll take the combo.</b><br>---
+
+탄산음료를 커피로 바꿀 수 있나요? | <b>Can I change the soda for a coffee?</b><br>---
+
+저희 두 잔 다 커피로 주세요. | <b>We would like two coffees.</b><br>---
+
+냅킨도 조금 더 주시겠어요? | <b>Can I also get extra napkins?</b><br>---
+
+체크카드도 되죠? | <b>Do you accept a debit card?</b><br>---
+
+다시 와서 또 드라이브스루에서 기다려야 했어요. | <b>I had to wait in the drive-through again.</b><br>---
+
+무료 쿠폰을 사용할게요. | <b>I'll use the complimentary coupon.</b><br>---
+
+저는 차를 주문하지 않았어요. | <b>I didn't order tea.</b><br>---
+
+어서 오세요, 주문하시겠어요? | <b>Welcome! What is your order?</b><br>---
+
+세트메뉴 1번이랑 2번 주세요. | <b>We want combo #1 and #2.</b><br>---
+
+알겠습니다. 뭐 다른 거 필요한 건 없으세요? | <b>Got it. Anything else for you?</b><br>---
+
+탄산음료를 커피로 바꿀 수 있나요? | <b>Can I change the soda for a coffee?</b><br>---
+
+네. 그러면 한잔은탄산음료이고한잔은커피맞으세요? | <b>Yes. So that's one soda and one coffee, correct?</b><br>---
+
+아니요. 저희 두 잔 다 커피로 주세요. | <b>No. We would like two coffees instead.</b><br>---
+
+네. 다음 창구로 이동해주세요. | <b>Okay. Please proceed to the next window.</b><br>---
+
+합계가 얼마인가요? | <b>How much does that come to?</b><br>---
+
+좋은 아침 이예요. 어떤 걸로 주문하시겠어요? | <b>Good morning. What would you like to order?</b><br>---
+
+아이스 바닐라라떼 한 잔 주시겠어요? | <b>Can I get a vanilla iced latte?</b><br>---
+
+네, 알겠습니다. 더 필요한 건 없으신가요? | <b>Okay. Will that be all?</b><br>---
+
+글레이즈 도넛도 두 개 주시겠어요? | <b>Can I also get the two glazed doughnuts?</b><br>---
+
+네. 주문하신 금액은 7.25달러입니다. 계산은 어떻게 하시겠어요? | <b>Okay. Your order comes to $7.25. How would you like to pay?</b><br>---
+
+체크카드도 되죠? | <b>Do you accept a debit card?</b><br>---
+
+네, 그럼요. 영수증 필요하세요? | <b>Yes, of course. Do you want a receipt?</b><br>---
+
+네, 주세요. 냅킨도 조금 더 주시겠어요? | <b>Yes, please. Oh, can I also get extra napkins?</b><br>---
+
+쇼핑백에 넣어 드릴게요. 주문하신 음식은<br>다음 창구로 이동해서 받으세요. | <b>They will be in your bag. Please go to the next window to pick up your order.</b><br>---
+
+감사합니다. 그렇게 할게요. | <b>Thanks. I will do that.</b><br>---
+
+좋은 아침입니다. 주문 어떻게 해드릴까요? | <b>Good morning. How may I take your order?</b><br>---
+
+사실, 커피를 주문한 건데 차를 받았어요. | <b>Actually, I ordered coffee but you gave me tea.</b><br>---
+
+첫 번째 창구로 가주세요.<br>거기서 처리해 드릴게요. | <b>Please drive up to the first window. I will deal with you there.</b><br>---
+
+안녕하세요. 저는 차를 주문하지 않았어요. | <b>Hi, there. I didn't order tea.</b><br>---
+
+영수증 있으세요? | <b>Do you have your receipt?</b><br>---
+
+여기요. 보세요! 차가 아니죠. | <b>Here you go. See! No tea.</b><br>---
+
+불편을 끼쳐드려 죄송합니다. | <b>We are sorry for any inconvenience.</b><br>---
+
+다시와서 또드라이브스루에서 기다려야했어요. | <b>Well, I had to come back and wait in the drive-through again.</b><br>---
+
+무료 커피 쿠폰 받으세요. | <b>Please take this complementary coupon for a free coffee.</b><br>---
+
+감사합니다. 내일 커피 살 때 쓸게요. | <b>Thank you. I will use it for my coffee tomorrow.</b><br>---
