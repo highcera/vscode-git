@@ -1,0 +1,970 @@
+FastAPI 서버 실행하기 (백엔드 서버) 
+파이참 터미널 projects/myapi 디렉터리에서 uvicorn main:app --reload 명령어 실행
+
+[파이참 터미널] cmd → vscode
+(myapi) myapi % uvicorn main:app --reload
+http://localhost:8000/docs#
+
+Svelte 서버 실행하기 (프론트엔드 서버)
+VSCode 터미널 projects/myapi/frontend 디렉터리에서 npm run dev 명령어 실행
+[VSCode 터미널]
+frontend % npm run dev
+
+http://localhost:8000/docs#
+================================================================================================
+
+2-04-1 라우터
+
+라우터 만들기
+main.py에 질문 목록 API를 만들수 있다. 하지만 앞에서 언급했듯이 질문과 관련된 것들은 이제 질문(question) 도메인 디렉터리 하위에 만들기로 하자.
+
+[파일명: projects/myapi/domain/question/question_router.py]
+from fastapi import APIRouter
+
+from database import SessionLocal
+from models import Question
+
+router = APIRouter(
+    prefix="/api/question",
+)
+
+@router.get("/list")
+def question_list():
+    db = SessionLocal()
+    _question_list = db.query(Question).order_by(Question.create_date.desc()).all()
+    db.close()
+    return _question_list
+
+라우터 파일에 반드시 필요한 것은 APIRouter 클래스로 생성한 router 객체이다. router 객체를 생성하여 FastAPI 앱에 등록해야만 라우팅 기능이 동작한다.
+라우팅이란 FastAPI가 요청받은 URL을 해석하여 그에 맞는 함수를 실행하여 그 결과를 리턴하는 행위를 말한다.
+
+router 객체 생성시 사용한 prefix 속성은 요청 URL에 항상 포함되어야 하는 값이다. 
+이 말이 좀 애매할 수 있는데 question_list 함수에 적용된 @router.get("/list")를 연계하여 생각하면 이해가 쉽다. 
+즉, /api/question/list 라는 URL 요청이 발생하면 /api/question 이라는 prefix가 등록된 question_router.py 파일의 /list로 등록된 함수 question_list가 실행되는 것이다.
+
+question_list 함수는 db 세션을 생성하고 해당 세션을 이용하여 질문 목록을 조회하여 리턴하는 함수이다. 그리고 사용한 세션은 db.close()를 수행하여 사용한 세션을 반환했다.
+
+db.close() 함수는 사용한 세션을 컨넥션 풀에 반환하는 함수이다. (세션을 종료하는 것으로 착각하지 말자.)
+
+그리고 question_router.py 파일에 생성한 router 객체를 FastAPI 앱에 등록해야 한다. 다음과 같이 main.py 파일을 수정하자.
+
+[파일명: projects/myapi/main.py]
+
+from fastapi import FastAPI
+from starlette.middleware.cors import CORSMiddleware
+
+from domain.question import question_router
+
+app = FastAPI()
+
+origins = [
+    "http://127.0.0.1:5173",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+@app.get("/hello")
+def hello():
+    return {"message": "안녕하세요 파이보"}
+
+
+app.include_router(question_router.router)
+app 객체에 include_router 메서드를 사용하여 question_router.py 파일의 router 객체를 등록했다. 그리고 이전에 작성한 hello API는 더이상 필요하지 않으므로 삭제하자.
+
+질문 목록 API 테스트하기
+이제 작성한 질문 목록 API를 테스트해 보자. API를 테스트하는 가장 간단한 방법은 FastAPI의 docs 문서를 사용하는 것이다. http://127.0.0.1:8000/docs URL을 호출하여 질문 목록 API가 잘 동작하는 확인해 보자.
+
+[질문 목록 API가 등록된 화면]
+
+
+
+[질문 목록 API를 실행한 결과]
+
+
+
+질문 목록 API인 question_list 함수에서 응답으로 모델 객체를 요소로 하는 리스트를 리턴하더라도 실제 리턴되는 값은 json 문자열로 자동 변환된다.
+
+마지막 편집일시 : 2022년 10월 23일 10:41 오전
+
+
+
+
+
+2-04-2 의존성 주입
+
+
+[완성 소스] : https://github.com/pahkey/fastapi-book/tree/v2.04.2
+[변경 내역] : https://github.com/pahkey/fastapi-book/commit/8ac8908580766424f0fb9105cc6f49b603afd8db
+데이터베이스 세션의 생성과 반환을 자동화하기
+Depends 사용하기
+데이터베이스 세션의 생성과 반환을 자동화하기
+이제 질문 목록 API를 작성했으니 프론트엔드에서 질문 목록 API를 호출하여 결과값을 화면에 출력할 수 있을 것이다. 하지만 그 전에 생각해 봐야 할 것이 있다. question_list 함수를 보면 db 세션 객체를 생성하고 함수 종료 직전에 다시 db.close()를 호출한다.
+
+db 세션 객체를 생성한 후에 db.close()를 수행하지 않으면 SQLAlchemy가 사용하는 컨넥션 풀에 db 세션이 반환되지 않아 문제가 생긴다.
+
+앞으로 우리가 만들 대부분의 API는 데이터베이스를 사용해야 하기 때문에 이러한 패턴이 반복될 것이다. 이 부분을 자동화할 수는 없을까? FastAPI의 "Dependency Injection"을 사용하면 이 부분을 깔끔하게 처리할 수 있다.
+
+프로그래밍에서 "Dependency Injection(의존성 주입)"의 뜻은 필요한 기능을 선언하여 사용할 수 있다는 의미이다.
+
+db 세션 객체를 생성하고 종료하는 이런 반복적인 작업을 깔끔하게 처리하는 방법에 대해서 알아보자. 먼저 database.py 파일에 다음과 같은 함수를 만들어보자.
+
+[파일명: projects/myapi/database.py]
+
+import contextlib
+
+from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+
+SQLALCHEMY_DATABASE_URL = "sqlite:///./myapi.db"
+
+engine = create_engine(
+    SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
+)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+Base = declarative_base()
+
+
+@contextlib.contextmanager
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+db 세션 객체를 리턴하는 제너레이터인 get_db 함수를 추가했다.
+
+제너레이터란? - https://wikidocs.net/134909
+
+제너레이터 함수에 @contextlib.contextmanager 어노테이션을 적용했으므로 다음과 같이 with 문과 함께 사용할 수 있다.
+
+with get_db() as db:
+    # db 세션 객체를 사용한다.
+with 문을 벗어나는 순간 get_db 함수의 finally에 작성한 db.close() 함수가 자동으로 실행될 것이다.
+
+
+contextmanager - https://docs.python.org/ko/3/library/contextlib.html
+
+이제 question_list 함수도 다음과 같이 get_db를 사용하도록 변경할 수 있다.
+
+[파일명: projects/myapi/domain/question/question_router.py]
+
+from fastapi import APIRouter
+
+from database import get_db
+from models import Question
+
+router = APIRouter(
+    prefix="/api/question",
+)
+
+
+@router.get("/list")
+def question_list():
+    with get_db() as db:
+        _question_list = db.query(Question).order_by(Question.create_date.desc()).all()
+    return _question_list
+오류 여부에 상관없이 with문을 벗어나는 순간 db.close()가 실행되므로 보다 안전한 코드로 변경된 것이다.
+
+Depends 사용하기
+FastAPI의 Depends를 사용하면 with문을 사용하는 것 보다 더 간단하게 사용할수 있다.
+
+[파일명: projects/myapi/domain/question/question_router.py]
+
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+
+from database import get_db
+from models import Question
+
+router = APIRouter(
+    prefix="/api/question",
+)
+
+
+@router.get("/list")
+def question_list(db: Session = Depends(get_db)):
+    _question_list = db.query(Question).order_by(Question.create_date.desc()).all()
+    return _question_list
+get_db 함수를 with문과 함께 쓰는 대신에 question_list 함수의 매개변수로 db: Session = Depends(get_db) 객체를 주입받았다. db: Session 문장의 의미는 db 객체가 Session 타입임을 의미한다.
+
+파이썬 타입 어노테이션 - https://wikidocs.net/134883
+
+FastAPI의 Depends는 매개변수로 전달받은 함수를 호출하여 그 결과를 리턴한다. 따라서 db: Session = Depends(get_db)의 db 객체에는 get_db 제너레이터 함수가 yield를 통해 생성한 세션 객체가 주입된다.
+
+
+FastAPI는 제너레이터 기반 함수를 직접 지원하며, 자동으로 리소스 관리를 처리한다. 그러나 @contextlib.contextmanager를 사용하면 get_db 함수가 contextlib._GeneratorContextManager 객체를 반환하게 되어 FastAPI의 종속성 주입이 제대로 동작하지 않는다. 따라서 get_db 함수에서 @contextlib.contextmanager 어노테이션을 제거해야 한다.
+
+[파일명: projects/myapi/database.py]
+
+import contextlib
+
+(... 생략 ...)
+
+
+@contextlib.contextmanager
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+이렇게 수정하고 다시 질문 목록 API를 FastAPI의 docs 문서에서 테스트 해 보자. 이상 없이 잘 수행될 것이다.
+
+점프 투 FastAPI
+Depends의 활용 예
+
+Depends는 매우 다양한 방법으로 활용할 수 있다. FastAPI의 다음 문서를 꼭 한번 읽어 보기를 추천한다.
+
+https://fastapi.tiangolo.com/tutorial/dependencies/
+마지막 편집일시 : 2025년 1월 12일 10:18 오전
+
+
+
+2-04-3 스키마
+
+
+[완성 소스] : https://github.com/pahkey/fastapi-book/tree/v2.04.3
+[변경 내역] : https://github.com/pahkey/fastapi-book/commit/1b08cbe035d413e2a8421f385a41c12e628bffab
+다음으로 진행하기 전에 질문 목록 API의 출력 값에 대해서 잠시 고민해 보자. 현재 질문 목록 API의 출력은 다음과 같이 만들어 진다.
+
+_question_list = db.query(Question).order_by(Question.create_date.desc()).all()
+즉, Question 모델의 모든 항목이 출력으로 리턴되는 것이다. 하지만 외부로 공개되면 안되는 출력항목이 있을수도 있고 또 출력값이 정확한지 검증하고 싶을 수도 있을 것이다. 즉, 위와 같은 형태로는 이러한 조건을 충족할수 없다. 출력 부분에 대한 추가적인 코딩이 필요하다. 이러한 상황에 사용할 수 있는 라이브러리가 바로 Pydantic이다.
+
+Pydantic이란?
+Pydantic 스키마 작성하기
+라우터에 Pydantic 적용하기
+Pydantic이란?
+Pydantic은 FastAPI의 입출력 스펙을 정의하고 그 값을 검증하기 위해 사용하는 라이브러리이다. Pydantic은 FastAPI 설치시 함께 설치되기 때문에 따로 설치할 필요는 없다.
+
+Pydantic - https://pydantic-docs.helpmanual.io/
+
+Pydantic은 API의 입출력 항목을 다음과 같이 정의하고 검증할수 있다.
+
+입출력 항목의 갯수와 타입을 설정
+입출력 항목의 필수값 체크
+입출력 항목의 데이터 검증
+질문 목록 API에서 출력 부분에 Pydantic을 적용해 보자.
+
+Pydantic을 적용하기 위해서 가장 먼저 할 일은 질문 목록 API의 출력 스키마를 생성하는 것이다. 스키마란 용어가 생소할 것이다. 스키마는 프로그래밍 세계에서 보통 데이터의 구조와 명세를 의미한다. 즉, 출력 스키마라고 하면 출력 항목이 몇 개인지, 제약 조건은 어떤한 것이 있는지 등을 기술하는 것을 말한다.
+
+Pydantic 스키마 작성하기
+질문과 관련된 API의 스키마는 question 도메인 디렉터리에 question_schema.py 파일을 생성하여 관리하도록 하자. 다음과 같이 question_schema.py 파일을 작성하자.
+
+[파일명:projects/myapi/domain/question/question_schema.py]
+import datetime
+from pydantic import BaseModel
+
+class Question(BaseModel):
+    id: int
+    subject: str
+    content: str
+    create_date: datetime.datetime
+BaseModel을 상속한 Question 클래스를 만들었다. pydantic의 BaseModel을 상속한 Question 클래스를 앞으로 Question 스키마라 하겠다.
+
+models.py 파일에 정의한 Question 클래스는 Question 모델이라 하겠다.
+
+Question 스키마에는 총 4개의 출력항목을 정의하고 그 타입을 지정했다. id: int는 id 속성은 정수형 자료형만 대입이 가능하다는 의미이다. 마찬가지로 subject, content는 문자열만 가능하고 create_date는 datetime 자료형만 가능함을 의미한다. 정해진 타입이 아닌 다른 타입의 자료형이 대입되면 오류가 발생한다. 또한 4개 항목은 모두 디폴트 값이 없기 때문에 필수항목임을 나타낸다. 만약 subject 항목이 필수항목이 아니게 설정하려면 다음처럼 하면 된다.
+
+subject: str | None = None
+위 코드의 의미는 subject 항목은 문자열 또는 None을 가질 수 있고 디폴트 값은 None이라는 뜻이다.
+
+라우터에 Pydantic 적용하기
+이제 작성한 Question 스키마를 질문 목록 라우터 함수에 적용해 보자.
+
+[파일명: projects/myapi/domain/question/question_router.py]
+
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+
+from database import get_db
+from domain.question import question_schema
+from models import Question
+
+router = APIRouter(
+    prefix="/api/question",
+)
+
+
+@router.get("/list", response_model=list[question_schema.Question])
+def question_list(db: Session = Depends(get_db)):
+    _question_list = db.query(Question).order_by(Question.create_date.desc()).all()
+    return _question_list
+
+question_list 함수의 @router.get 어노테이션에 response_model 속성을 추가했다. 추가한 response_model=list[question_schema.Question]의 의미는 question_list 함수의 리턴값은 Question 스키마로 구성된 리스트임을 의미한다.
+
+만약 Question 스키마에서 content 항목을 제거한다면 질문 목록 API의 출력 항목에도 content 항목이 제거될 것이다. 이 때, 실제 리턴되는 _question_list를 수정할 필요가 없다. 단지 스키마에서만 제외하면 되니 편리하다.
+
+점프 투 FastAPI
+orm_mode
+
+
+구 버전인 pydantic V1 버전을 사용할 경우에는 이렇게 수정하고 FastAPI의 docs 문서에서 테스트해 보면 다음과 같은 오류가 발생한다. (최신 버전에서는 orm_mode가 필요없음)
+
+pydantic.error_wrappers.ValidationError: 1 validation error for Question
+response -> 0
+  value is not a valid dict (type=type_error.dict)
+왜냐하면 리턴값에 해당하는 _question_list의 요소값이 딕셔너리가 아닌 Question 모델이기 때문이다. Question 모델은 Question 스키마로 자동으로 변환되지 않는다. 하지만 Quesiton 스키마에 다음처럼 orm_mode 항목을 True로 설정하면 Question 모델의 항목들이 자동으로 Question 스키마로 매핑된다.
+
+[파일명: projects/myapi/domain/question/question_schema.py]
+
+import datetime
+
+from pydantic import BaseModel
+
+
+class Question(BaseModel):
+    id: int
+    subject: str
+    content: str
+    create_date: datetime.datetime
+
+    class Config:
+        orm_mode = True
+이렇게 수정하고 다시 테스트해보면 이제 정상적으로 출력되는 것을 확인할 수 있을 것이다.
+
+마지막 편집일시 : 2023년 11월 7일 1:15 오후
+
+2-04-4 CRUD
+
+
+[완성 소스] : https://github.com/pahkey/fastapi-book/tree/v2.04.4
+[변경 내역] : https://github.com/pahkey/fastapi-book/commit/0bff689d10cb4c9844f48b9a7fff1a24fa7bbcf9
+질문 목록 라우터 함수에는 데이터를 조회하는 다음의 부분이 포함되어 있다.
+
+_question_list = db.query(Question).order_by(Question.create_date.desc()).all()
+라우터에 위와 같이 데이터를 조회하는 부분을 포함해도 문제는 없다. 하지만 파이보 프로젝트는 데이터를 처리하는 부분을 quesiton_crud.py 파일에 분리하여 작성하겠다. 왜냐하면 서로 다른 라우터에서 데이터를 처리하는 부분이 동일하여 중복될수 있기 때문이다.
+
+이 부분은 프로젝트 성격에 맞게 구현하면 된다. question_crud.py와 같은 도메인_crud.py 파일을 만드는 것은 강제사항이 아니다.
+
+다음과 같은 question_crud.py 파일을 작성하자.
+
+[파일명: projects/myapi/domain/question/question_crud.py]
+
+from models import Question
+from sqlalchemy.orm import Session
+
+
+def get_question_list(db: Session):
+    question_list = db.query(Question)\
+        .order_by(Question.create_date.desc())\
+        .all()
+    return question_list
+질문 목록 라우터 함수에 있던 내용을 그대로 옮긴 것이다. 이제 작성한 get_question_list 함수를 사용할 수 있도록 질문 목록 라우터 함수를 수정하자.
+
+[파일명: projects/myapi/domain/question/question_router.py]
+
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+
+from database import get_db
+from domain.question import question_schema, question_crud
+from models import Question
+
+router = APIRouter(
+    prefix="/api/question",
+)
+
+
+@router.get("/list", response_model=list[question_schema.Question])
+def question_list(db: Session = Depends(get_db)):
+    _question_list = question_crud.get_question_list(db)
+    return _question_list
+점프 투 FastAPI
+비동기 방식의 질문 목록 조회
+
+FastAPI의 API 함수는 비동기 함수로 만들어 사용할수 있다. 다만, 이 책의 모든 예제는 설명의 편의상 비동기 방식이 아닌 동기 방식을 사용한다. 왜냐하면 비동기 방식으로 모든 예제를 만들어 설명하는 것은 "FastAPI 공부" 라는 주 목적에 적합하지 않기 때문이다. (비동기 방식으로 코드를 만들면 코드의 양이 많아지고 가독성도 떨어진다.)
+
+비동기 방식의 API 함수를 만드는 방법에 대해서는 다음 부록을 참고하자.
+
+부록 - 비동기 방식으로 질문 목록 조회하기 : https://wikidocs.net/177352
+모든 API가 비동기로 구현된 파이보는 다음 URL에서 확인할 수 있다.
+
+https://github.com/pahkey/fastapi-book/tree/async
+마지막 편집일시 : 2025년 1월 12일 1:34 오후
+
+
+
+
+
+================================================================================================
+
+
+2-04 질문 목록 API 만들기
+
+
+
+
+
+3-04 날짜 표시하기
+
+
+3-07 회원가입
+
+=================================================================================================
+1-06 Svelte 개발환경 준비하기
+
+FastAPI로 만든 백엔드 서버에 데이터를 요청하고 응답을 받아서 처리하는 프로그램을 개발하기 위해서는 프론트엔드 프레임워크가 필요하다. 
+이 책에서는 프론트엔드 프레임워크로 스벨트(Svelte)를 사용할 것이다. 이번장에서는 Svelte 개발에 필요한 환경을 구성해 보자.
+
+Svelte - https://svelte.dev/
+
+Svelte를 사용하려면 Node.js가 필요하다.
+c:\ > node -v
+
+다음의 사이트에서 Node.js를 다운받아 설치하자. 설치과정은 기본 설정을 그대로 두고 <Next> 버튼을 눌러 진행하면 되므로 생략한다.
+
+Node.js 공식 사이트 : https://nodejs.org
+
+
+Svelte 설치하기
+Node.js를 설치하면 노드 패키지 매니저(npm)도 함께 설치된다. Svelte는 npm 명령을 통해 설치할 수 있다.
+
+npm은 Node.js를 위한 패키지 매니저로 필요한 패키지들을 다운로드 할 때 사용하는 도구이다. 파이썬의 pip과 비슷한 역할을 한다.
+
+먼저 명령창을 열고 다음과 같이 myapi를 입력하여 myapi 가상환경으로 진입하자.
+
+[명령창]
+
+c: /> myapi
+(myapi) c:/projects/myapi>
+그리고 c:/projects/myapi 디렉터리에서 다음의 명령을 실행하자.
+
+[명령창]
+
+
+(myapi) c:/projects/myapi> npm create vite@latest frontend -- --template svelte
+Scaffolding project in ... 
+Done. Now run:
+
+  cd frontend
+  npm install
+  npm run dev
+그리고 다음과 같이 frontend 디렉터리로 이동한 후에 Svelte 애플리케이션을 설치하자.
+
+[명령창]
+
+(myapi) c:/projects/myapi> cd frontend
+(myapi) c:/projects/myapi/frontend> npm install
+added 27 packages, and audited 28 packages in 3s
+
+5 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+VSCode 설치하기
+Svelte 코드를 작성하는 도구로 비주얼 스튜디오 코드(Visual Studio Code, VSCode)를 사용할 것이다. VSCode는 다음의 사이트에서 설치 파일을 내려받아 설치하자.
+
+VSCode 공식 사이트 - https://code.visualstudio.com
+VSCode를 설치했다면 VSCode를 실행하여 [메뉴 -> 파일 -> 폴더열기]로 c:/projects/myapi/frontend 폴더를 선택하자. 그러면 다음과 같이 frontend 폴더를 기준으로 VSCode가 실행될 것이다.
+
+
+
+Svelte for VSCode 설치하기
+VSCode는 Svelte 에디팅을 위한 확장 프로그램을 지원한다. 다음 URL을 통해 Svelte for VSCode 확장 프로그램을 설치하자.
+
+https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode
+자바스크립트 타입 체크 설정 끄기
+스벨트는 자바스크립트의 타입을 체크하는 것이 디폴트로 설정되어 있다. 하지만 파이보 프로젝트는 타입스크립트(Typescript)를 사용하지 않기 때문에 해당 설정을 끄고 진행하도록 한다.
+
+
+VSCode에서 jsconfig.json 파일을 열고 다음과 같이 수정하자.
+
+[파일명: projects/myapi/frontend/jsconfig.json]
+
+{
+  "compilerOptions": {
+    (... 생략 ...)
+    /**
+     * Typecheck JS in `.svelte` and `.js` files by default.
+     * Disable this if you'd like to use dynamic types.
+     */
+    "checkJs": false
+  },
+  (... 생략 ...)
+}
+compilerOptions의 checkJs에 설정된 값을 true에서 false로 변경한다.
+
+Svelte 서버 실행하기
+[VSCode 터미널]
+frontend % npm run dev
+Svelte 서버가 로컬 PC에서 실행. 브라우저 http://127.0.0.1:5173/ 
+
+
+2-04-4 CRUD
+
+
+
+
+
+
+
+아래 이후 문제 발생 이력 있음!!
+
+※ table 추가, 변경 등 models.py 변경 후 아래 실행 필요
+alembic revision --autogenerate
+alembic upgrade head
+
+
+
+----------------------------------------------------------------------------------------------------------------------------
+2-05-1 질문 목록 화면 구현하기
+
+[파일명: projects/myapi/frontend/src/App.svelte]
+<script>
+  let question_list = []
+
+  function get_question_list() {
+    fetch("http://127.0.0.1:8000/api/question/list").then((response) => {
+      response.json().then((json) => {
+        question_list = json
+      })
+    })
+  }
+
+  get_question_list()
+</script>
+
+<ul>
+  {#each question_list as question}
+    <li>{question.subject}</li>
+  {/each}
+</ul>
+
+question_list 라는 변수를 생성하고 get_question_list() 함수를 호출하여 얻은 결과값을 question_list 변수에 대입하였다. get_question_list() 함수는 앞에서 작성했던 질문 목록 API(/api/question/list)를 호출하는 함수이다. 그리고 호출하여 얻은 question_list는 Svelte의 each문을 순회하며 제목을 표시하도록 했다.
+
+주의: 위에서 question_list를 최초 빈 리스트인 []으로 초깃값을 주었다. 만약 이렇게 초깃값을 주지 않을 경우, fetch 함수는 비동기 방식으로 실행되기 때문에, 요청하는 중에 HTML 영역의 each 문이 실행되고 question_list에 값이 없어 오류가 발생한다. 따라서 반복문과 함께 사용할 경우 해당 값을 빈 리스트로 초기화 하는 것이 좋다. (또는 해당 값이 있는지를 체크하는 로직을 each문 앞에 사용해도 된다.)
+
+리액트나 Vue.js에 익숙한 독자라면 이 코드에서 조금 놀랄수도 있다. 왜냐하면 question_list를 State 변수로 지정하지 않아도, question_list의 값이 변경되는 순간 그 값이 화면에 실시간으로 반영되기 때문이다. 이것이 Svelte가 자랑하는 특징 중의 하나인 "Truly reactive"이다.
+
+Svelte 필수 문법 알아보기
+Svelte에서 자주 사용하는 문법에는 다음 3가지 유형이 있다. 이 3가지 유형만 알아도 여러 기능을 충분히 만들 수 있다.
+
+1. 분기문
+
+분기문은 파이썬의 if, elif, else 문과 유사하게 사용한다. 단, 모든 분기문 태그는 {/if}로 닫아 주어야 한다.
+
+
+{#if 조건문1}
+    <p>조건문1에 해당하면 실행</p>
+{:else if 조건문2}
+    <p>조건문2에 해당하면 실행</p>
+{:else}
+    <p>조건문1, 2 모두 해당하지 않으면 실행</p>
+{/if}
+2. 반복문
+
+반복문은 파이썬의 for 문과 유사하다. 이 역시도 닫는 태그(/each)는 필수다.
+
+{#each list as item, index}
+    <p>순서: {index} </p>
+    <p>{item}</p>
+{/each}
+index는 반복순서를 의미하고 0부터 1씩 증가한다. (index는 each문에서 생략 가능하다.)
+
+3. 객체 표시
+
+객체의 값은 중괄호를 좌우로 감싸서 표시할수 있다.
+
+{객체}
+객체의 속성은 점(.)으로 이어서 출력할 수 있다.
+
+{객체.속성}
+질문 목록 확인하기
+이제 VSCode에서 프론트엔드 서버를 실행하여 화면이 잘 출력되는지 확인해 보자. VSCode에서 터미널을 열고 npm run dev를 입력하여 프론트엔드 서버를 실행하자.
+
+
+
+그리고 브라우저를 열고 다음 주소에 접속하자.
+
+
+http://127.0.0.1:5173
+그러면 다음과 같은 화면을 볼수 있을 것이다.
+
+
+
+질문 목록 API를 통해 조회한 결과가 잘 표시된다.
+
+
+
+
+2-05-2 스벨트 라우터
+
+SPA(Single Page Application)란 웹 사이트의 전체 페이지를 하나의 페이지에 담아 동적으로 화면을 바꿔가며 표현하는 것을 말한다.
+하나의 페이지에서 위와 같은 화면들을 바꾸어가며 만들려면 코드가 복잡해진다. 이런 경우 Svelte의 svelte-spa-router를 사용하면 간단히 해결할 수 있다.
+npm install svelte-spa-router
+
+파이보는 각각의 화면에 다음과 같은 URL 규칙을 지정할 것이다.
+URL명	                            파일명                       화면명
+/	                                    Home.svelte                질문 목록
+/detail/:question_id	            Detail.svelte                질문 상세
+/question-create	                    QuestionCreate.svelte   질문 작성
+/question-modify/:question_id   QuestionModify.svelte  질문 수정
+/user-login	                            UserLogin.svelte	     로그인
+/user-create	                    UserCreate.svelte          회원가입
+/answer-modify/:answer_id	    AnswerModify.svelte	     답변 수정
+
+해당 URL을 호출하면 그에 매핑되는 svelte 파일이 화면을 렌더링하도록 설계. 이러한 URL 규칙은 App.svelte 파일에 작성해야 한다.
+src 디렉터리 하위에 routes 디렉터리 생성
+
+[파일명: projects/myapi/frontend/src/routes/Home.svelte]
+<script>
+    let question_list = []
+
+    function get_question_list() {
+        fetch("http://127.0.0.1:8000/api/question/list").then((response) => {
+            response.json().then((json) => {
+                question_list = json
+            })
+        })
+    }
+
+    get_question_list()
+</script>
+
+<ul>
+    {#each question_list as question}
+        <li>{question.subject}</li>
+    {/each}
+</ul>
+
+[파일명: projects/myapi/frontend/src/App.svelte]
+<script>
+  import Router from 'svelte-spa-router'
+  import Home from "./routes/Home.svelte"
+
+  const routes = {
+    '/': Home,
+  }
+</script>
+
+<Router {routes}/>
+
+
+
+
+2-05-3 API 호출 라이브러리
+
+
+[완성 소스] : https://github.com/pahkey/fastapi-book/tree/v2.05.3
+[변경 내역] : https://github.com/pahkey/fastapi-book/commit/e2e07ce03b2bbf4810631075cbae6c9c7b2d0ee2
+질문 목록처럼 데이터를 조회하기 위해서는 항상 백엔드 서버에 요청하여 데이터를 가져와야 한다. Home.svelte 파일을 보면 다음과 같이 데이터를 조회하는 부분이 있다.
+
+fetch("http://127.0.0.1:8000/api/question/list").then((response) => {
+    response.json().then((json) => {
+        question_list = json
+    })
+})
+앞으로 만들 대부분의 기능들도 데이터 처리를 위해서는 위처럼 fetch 함수를 사용해야 한다. fetch 함수에는 요청하는 URL 주소의 호스트명 처럼 공통적으로 사용할 수 있는 부분이 많다. 따라서 데이터를 요청하는 함수를 공통 라이브러리로 만들어 사용하면 편리할 것이다.
+
+fastapi 라이브러리 만들기
+호스트명 환경 파일에서 불러오기
+fastapi 함수 사용하기
+fastapi 라이브러리 만들기
+데이터 송수신을 위한 fastapi 함수를 작성해 보자. src/lib 폴더에 다음처럼 api.js 파일을 만들자.
+
+src/lib/Counter.svelte 파일은 필요치 않으므로 삭제하자.
+
+
+
+[파일명: projects/myapi/frontend/src/lib/api.js]
+
+const fastapi = (operation, url, params, success_callback, failure_callback) => {
+    let method = operation
+    let content_type = 'application/json'
+    let body = JSON.stringify(params)
+
+    let _url = 'http://127.0.0.1:8000'+url
+    if(method === 'get') {
+        _url += "?" + new URLSearchParams(params)
+    }
+
+    let options = {
+        method: method,
+        headers: {
+            "Content-Type": content_type
+        }
+    }
+
+    if (method !== 'get') {
+        options['body'] = body
+    }
+
+    fetch(_url, options)
+        .then(response => {
+            response.json()
+                .then(json => {
+                    if(response.status >= 200 && response.status < 300) {  // 200 ~ 299
+                        if(success_callback) {
+                            success_callback(json)
+                        }
+                    }else {
+                        if (failure_callback) {
+                            failure_callback(json)
+                        }else {
+                            alert(JSON.stringify(json))
+                        }
+                    }
+                })
+                .catch(error => {
+                    alert(JSON.stringify(error))
+                })
+        })
+}
+
+export default fastapi
+api.js 파일안에 fastapi라는 함수를 생성하였다. fastapi 함수에 대해서 자세히 살펴보자.
+
+fastapi 함수의 매개변수는 다음과 같다.
+
+매개변수	설명	예
+operation	데이터를 처리하는 방법, 소문자만 사용한다.	get, post, put, delete
+url	요청 URL, 단 백엔드 서버의 호스트명 이후의 URL만 전달	/api/question/list
+params	요청 데이터	{page: 1, keyword: "마크다운" }
+success_callback	API 호출 성공시 수행할 함수, 전달된 함수에는 API 호출시 리턴되는 json이 입력으로 주어진다.	생략
+failure_callback	API 호출 실패시 수행할 함수, 전달된 함수에는 오류 값이 입력으로 주어진다.	생략
+fastapi 함수의 내용을 찬찬히 살펴보자. 그리 어려운 내용은 없다. operation이 'get'인 경우에는 파라미터를 GET 방식에 맞게끔 URLSearchParams를 사용하여 파라미터를 조립하도록 했고 'get'이 아닌 경우에만 options['body'] 항목에 전달 받은 파라미터 값을 설정하게 했다. body 항목에 값을 설정할 때는 JSON.stringify(params) 처럼 params를 JSON 문자열로 변경해야 한다.
+
+그리고 API 호출 주소는 호스트명(예: http://127.0.0.1:8000)에 전달받은 url 값을 더하여 만들게 했다. 즉, fastapi 함수를 사용할 때는 호스트명을 생략하고 그 뒷 부분만 전달해야 한다.
+
+
+API를 호출하면 성공할 수도 있고 실패할 수도 있다. 성공은 HTTP 프로토콜의 응답코드가 200 ~ 299 까지인 경우이므로 이를 체크하여 성공인 경우 매개변수로 전달받은 success_callback을 실행하게 하였다. 이 때 success_callback 함수에는 호출한 API의 리턴값을 입력으로 전달하여 호출한다. 실패일 경우도 마찬가지 방법으로 failure_callback 함수를 호출한다.
+
+호스트명 환경 파일에서 불러오기
+fastapi 함수에는 현재 http://127.0.0.1:8000과 같은 호스트명이 하드코딩되어 있다. 호스트명은 개발, 운영등 상황에 따라 변하는 값이므로 이렇게 하드코딩된 상태로 사용하는 것은 좋지 않다. 호스트명을 환경파일에 저장하고 그 값을 불러와 사용할수 있도록 수정해 보자.
+
+projects/myapi/frontend 디렉터리 하위에 다음처럼 .env라는 파일을 생성하자.
+
+
+
+[파일명: projects/myapi/frontend/.env]
+
+VITE_SERVER_URL=http://127.0.0.1:8000
+.env 파일에 호스트명에 해당하는 VITE_SERVER_URL 환경변수를 추가했다. 스벨트 파일에서 .env 파일의 항목을 읽기 위해서는 반드시 VITE_로 시작하도록 환경변수명을 등록해야 한다.
+
+그리고 등록한 환경변수를 사용하도록 api.js 파일을 다음과 같이 수정하자.
+
+[파일명: projects/myapi/frontend/src/lib/api.js]
+
+const fastapi = (operation, url, params, success_callback, failure_callback) => {
+    let method = operation
+    let content_type = 'application/json'
+    let body = JSON.stringify(params)
+
+    let _url = import.meta.env.VITE_SERVER_URL+url
+    if(method === 'get') {
+        _url += "?" + new URLSearchParams(params)
+    }
+
+    (... 생략 ...)
+
+.env 파일에 등록한 VITE_SERVER_URL 변수는 import.meta.env.VITE_SERVER_URL처럼 불러올 수 있다.
+
+자세히 알아보기
+API
+lib
+svelte
+api
+스벨트
+버전 관리
+서버
+파이썬
+SERVER
+Svelte
+운영 환경에서는 .env 대신 .env.production 파일을 작성하여 사용한다. 이 부분에 대해서는 뒤에서 다시 한번 알아볼 것이다.
+
+fastapi 함수 사용하기
+이제 Home.svelte 파일에서 fastapi 함수를 사용하도록 변경해 보자.
+
+[파일명: projects/myapi/frontend/src/routes/Home.svelte]
+
+<script>
+    import fastapi from "../lib/api"
+    let question_list = []
+
+    function get_question_list() {
+        fastapi('get', '/api/question/list', {}, (json) => {
+            question_list = json
+        })
+    }
+
+    get_question_list()
+</script>
+
+<ul>
+    {#each question_list as question}
+        <li>{question.subject}</li>
+    {/each}
+</ul>
+fastapi 함수를 사용할수 있게 import문을 추가했다. 질문 목록 API는 GET방식이므로 operation 항목에 'get'을 전달했고, 추가로 전달할 파라미터 값은 아직 없기 때문에 params 항목은 빈 값인 {}을 전달했다. 그리고 success_callback 함수는 다음과 같이 화살표 함수로 작성하여 전달했다.
+
+(json) => {
+    question_list = json
+}
+화살표 함수 : https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Functions/Arrow_functions
+화살표 함수의 내용은 응답으로 받은 json 데이터를 question_list에 대입하라는 내용이다.
+
+그리고 failure_callback 함수는 전달하지 않았다. failure_callback 함수를 전달하지 않더라도 fastapi 함수는 오류 발생시 오류의 내용을 alert로 표시하게 되어 있다.
+
+이렇게 Home.svelte 파일을 수정하고 다시 질문 목록 화면을 조회해 보자. 여전히 동일한 결과가 나타나는 것을 확인할 수 있을 것이다.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2-07 답변 등록
+
+답변 표시하기
+이제 등록한 답변을 표시하는 기능을 추가해 보자.
+
+질문 상세의 출력 스키마 수정하기
+
+
+
+import datetime
+
+from pydantic import BaseModel
+
+from domain.answer.answer_schema import Answer
+
+
+class Question(BaseModel):
+    id: int
+    subject: str
+    content: str
+    create_date: datetime.datetime
+    answers: list[Answer] = []
+
+
+
+
+=========================================
+3장 파이보 서비스 개발!
+3-01 내비게이션바 ~~~~
+
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+■ 점프 투 FastAPI
+
+0장 들어가기 전에
+0-01 머리말
+0-02 저자소개
+0-03 주요변경이력
+0-04 이 책을 읽기 전에
+
+1장 FastAPI 개발준비!
+1-01 필자가 생각하는 FastAPI란?
+1-02 파이썬 설치하기
+1-03 FastAPI 개발 환경 준비하기
+1-04 FastAPI 프로젝트 생성하기
+1-05 파이참 설치하고 사용하기
+1-06 Svelte 개발환경 준비하기
+1-07 안녕하세요 파이보
+
+2장 개발 기초 공사!
+2-01 FastAPI 기초 다지기
+2-02 모델로 데이터베이스 관리하기
+2-03 모델로 데이터 처리하기
+       파이썬으로 데이터 처리
+       (초기 데이터는 SQLit데서 직접 추가해도 됨)
+2-04 질문 목록 API 만들기
+2-04-1 라우터
+2-04-2 의존성 주입
+2-04-3 스키마
+2-04-4 CRUD
+2-05 질문 목록 화면 만들기
+2-05-1 질문 목록 화면 구현하기
+2-05-2 스벨트 라우터
+2-05-3 API 호출 라이브러리
+2-06 질문 상세
+2-07 답변 등록
+2-08 화면 예쁘게 꾸미기
+2-09 부트스트랩으로 더 쉽게 화면 꾸미기
+2-10 질문 등록
+
+3장 파이보 서비스 개발!
+3-01 내비게이션바
+3-02 게시판 페이징
+3-03 스토어
+3-04 날짜 표시하기
+3-05 게시물에 일련번호 추가하기
+3-06 질문에 달린 답변 개수 표시하기
+3-07 회원가입
+3-08 로그인과 로그아웃
+3-09 글쓴이 저장하기
+3-10 글쓴이 표시하기
+3-11 게시물 수정과 삭제
+3-12 추천
+3-13 마크다운
+3-14 검색
+3-15 프론트엔드 빌드
+3-16 도전! 저자 추천 파이보 추가 기능
+
+4장 세상에 선보이는 파이보 서비스!
+4-01 깃으로 버전 관리하기
+4-02 깃허브 사용해 보기
+4-03 파이보를 위한 서버 운영 방법 알아보기
+4-04 AWS 라이트세일 사용해 보기
+4-05 서버 접속 설정
+4-06 서버 접속 프로그램
+4-07 파이보 세상에 공개하기
+4-08 서버·개발 환경 분리하기
+4-09 Gunicorn 사용하기
+4-10 웹 서버, Nginx 사용해서 파이보에 접속하기
+4-11 서버에 로깅 적용하기
+4-12 파이보에 도메인 적용하기
+4-13 SSL 적용하기
+4-14 PostgreSQL 데이터베이스 적용하기
+
+A. 부록
+A-01 비동기 방식의 질문 목록 조회
+A-02 AWS 라이트세일 사용 취소
+B. 마치며
+
+
+
+
+
+
+========================================================================================================================
+WordPress로 만들 수 있는 웹사이트 유형
+포럼을 시작하든, 소규모 비즈니스 웹사이트를 제작하든, WordPress는 다양한 유형의 웹사이트를 구축하는 데 필요한 도구와 유연성을 제공합니다. 다음은 몇 가지 그의 몇 가지 예시입니다.
+
+개인 블로그: 여러분의 개성과 관심사, 창의적인 활동을 보여주는 블로그 포스트를 작성하세요.
+회원 웹사이트: 온라인 강좌와 유료 회원 전용 콘텐츠를 제공하여 커뮤니티를 구축하고 반복 수익을 창출하세요.
+소규모 비즈니스 웹사이트: 비즈니스를 홍보하고 새로운 고객을 유치하기 위해 제공하는 서비스와 전문성을 강조하세요.
+전자상거래 스토어: 결제 게이트웨이와 전자상거래 결제 기능을 갖춘 웹사이트를 만들어 전 세계에서 제품이나 서비스를 판매하세요.
+포트폴리오 웹사이트: 여러분만의 창의적인 작업, 프로젝트 및 성과를 보여주는 포트폴리오를 만들어 자신의 기술과 전문성을 강조하세요.
+이벤트 웹사이트: 이벤트, 컨퍼런스 또는 축제를 홍보하고 관리하며, 이벤트 세부정보, 일정, 발표자 프로필 및 티켓 판매를 포함하세요.
+포럼 웹사이트: 사용자가 질문하고, 아이디어를 공유하며, 특정 주제에 대해 대화를 시작할 수 있는 온라인 포럼을 만드세요.

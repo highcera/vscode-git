@@ -1,10 +1,10 @@
 https://pybo.kr
 
 질문과 답변 서비스 "디스코드" - https://discord.gg/ZwqRRYRYkR
-
-
 https://github.com/pahkey/jump2flask
 
+h*******
+d***#*****
 
 [파일명: C:/venvs/myproject.cmd]
 @echo off
@@ -2157,62 +2157,16 @@ form_errors.html 템플릿 파일은 다음과 같이 "필드에서 발생한 �
 [<User 1>]
 >>> User.query.first().username
 'pahkey'
-
 축하한다. 이제 파이보에 회원가입 기능이 추가되었다.
-
-마지막 편집일시 : 2022년 8월 14일 11:25 오후
--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 3-07 로그인과 로그아웃
-
-
 [완성 소스] : github.com/pahkey/jump2flask/tree/3-07
 [실습 영상] : https://youtu.be/QwMW-wt7CK8
-파이보는 여러 사람이 사용하는 게시판 서비스다. 그러므로 로그인, 로그아웃은 필수 기능이다.
 
+파이보는 여러 사람이 사용하는 게시판 서비스다. 그러므로 로그인, 로그아웃은 필수 기능이다.
 로그인 정보가 있어야 질문한 사람, 답변한 사람이 누구인지 알수 있다.
 
-로그인
-로그인 폼
-로그인 라우팅 함수
-로그인 템플릿
-로그인 링크
-로그아웃
-로그인 여부 확인
-로그인 로그아웃 표시하기
-로그아웃 라우팅 함수
-로그아웃 링크
 로그인
 로그인 폼
 다음과 같이 로그인시 사용할 UserLoginForm을 만들자.
@@ -2249,15 +2203,15 @@ def login():
         if not user:
             error = "존재하지 않는 사용자입니다."
         elif not check_password_hash(user.password, form.password.data):
-            error = "비밀번호가 올바르지 않습니다."
+l
         if error is None:
             session.clear()
             session['user_id'] = user.id
             return redirect(url_for('main.index'))
         flash(error)
     return render_template('auth/login.html', form=form)
-/login/ URL과 매핑되는 login 함수를 생성했다. login 함수는 signup 함수와 비슷하게 동작한다. POST 방식에는 로그인을 수행하고, GET 요청에는 로그인 화면을 보여준다.
 
+/login/ URL과 매핑되는 login 함수를 생성했다. login 함수는 signup 함수와 비슷하게 동작한다. POST 방식에는 로그인을 수행하고, GET 요청에는 로그인 화면을 보여준다.
 
 POST 요청에 의해 로그인 하는 과정을 알아보자. 우선 폼 입력으로 받은 username으로 데이터베이스에 해당 사용자가 있는지를 검사한다. 만약 사용자가 없으면 "존재하지 않는 사용자입니다."라는 오류를 발생시킨다. 사용자가 존재한다면 폼 입력으로 받은 password와 check_password_hash 함수를 사용하여 데이터베이스의 비밀번호와 일치하는지를 비교한다.
 
@@ -2331,17 +2285,11 @@ POST 요청에 의해 로그인 하는 과정을 알아보자. 우선 폼 입력
         </div>
     </div>
 </nav>
+
 내비게이션 바의 "로그인" 링크를 누르면 /auth/login으로 이동하며, 다음과 같은 로그인 화면이 나타난다.
-
-
-
 만약 데이터베이스에 없는 username 또는 password를 입력하면 다음처럼 오류 메시지가 나타난다.
 
-
-
-
 username과 password를 제대로 입력하면 로그인을 수행한 다음 메인 화면으로 이동한다.
-
 로그인에 성공했다. 축하한다!
 
 로그아웃
@@ -2454,35 +2402,11 @@ logout 함수에는 세션의 모든 값을 삭제할 수 있도록 session.clea
 마지막 편집일시 : 2022년 8월 14일 10:59 오전
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+
 3-08 모델 수정하기
-
-
 [완성 소스] : github.com/pahkey/jump2flask/tree/3-08
 [실습 영상] : https://youtu.be/6qsz0ACb4rs
 회원가입, 로그인, 로그아웃 기능이 완성되어 질문, 답변을 "누가" 작성했는지 알 수 있게 되었다. 이제 기능을 조금씩 다듬어서 파이보를 완벽하게 만들어 보자. 여기서는 Question, Answer 모델을 수정하여 "글쓴이"에 해당하는 user 속성을 추가할 것이다.
-
-SQLite 설정 수정하기
-Question 모델에 글쓴이 추가하기
-리비전 파일 생성하기
-리비전 파일 적용하기
-flask db upgrade 명령 오류 해결하기
-nullable=True
-리비전 오류 확인하기
-최종 리비전
-현재 리비전
-현재 리비전을 최종 리비전으로 변경하기
-migrate, upgrade 다시 수행하기
-nullable=False
-Answer 모델에 글쓴이 추가하기
-질문, 답변 등록시 글쓴이 저장하기
-답변 등록
-질문 등록
-login_required
-@login_required 데코레이터
-@login_required 적용하기
-로그아웃 상태에서 답변 등록 불가능하게 만들기
-
-
 
 SQLite 설정 수정하기
 SQLite 데이터베이스는 ORM을 사용할 때 몇 가지 문제점이 있다. 이것은 SQLite 데이터베이스에만 해당하고 PostgreSQL이나 MySQL 등의 다른 데이터베이스와는 상관없는 내용이다. 
@@ -2899,10 +2823,6 @@ def create(question_id):
     (... 생략 ...)
 이제 로그아웃 상태에서 질문 또는 답변 등록을 시도하면 로그인 화면으로 리다이렉트될 것이다.
 
-
-
-
-
 로그아웃 상태에서 답변 등록 불가능하게 만들기
 한가지 더 생각해 봐야 할 것이 있다. 현재 질문 등록은 로그아웃 상태에서는 아예 글을 작성할 수 없어서 만족스럽다. 하지만 답변 등록은 로그아웃 상태에서도 글을 작성할 수 있다. 물론 답변 작성 후 <저장하기>를 누르면 자동으로 로그인 화면으로 이동되므로 큰 문제는 아니지만 작성한 답변이 사라지는 문제가 있다.
 
@@ -2925,10 +2845,587 @@ def create(question_id):
 </div>
 {% endblock %}
 이제 disabled 설정으로 textarea 엘리먼트가 비활성화될 것이다.
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+3-09 글쓴이 표시하기
+[완성 소스] : github.com/pahkey/jump2flask/tree/3-09
+[실습 영상] : https://youtu.be/jdNC0M6L3zI
+앞서 질문과 답변 등록시 글쓴이 정보를 저장했다. 게시판의 게시물에는 "글쓴이"를 표시하는 것이 일반적이다. 질문 목록, 질문 상세 화면에 user 속성을 이용하여 글쓴이를 표시해 보자.
+
+질문 목록에 글쓴이 표시하기
+글쓴이를 표시하기 위해 테이블에 글쓴이 항목을 추가하자.
+
+[파일명: projects/myproject/pybo/templates/question/question_list.html]
+(... 생략 ...)
+<tr class="text-center table-dark">
+    <th>번호</th>
+    <th style="width:50%">제목</th>
+    <th>글쓴이</th>
+    <th>작성일시</th>
+</tr>
+(... 생략 ...)
+<th>글쓴이</th>를 추가했다. 그리고 th 엘리먼트를 가운데 정렬하도록 tr 엘리먼트에 text-center 클래스를 추가하고 제목의 너비가 전체에서 50%를 차지하도록 style="width:50%"도 지정해 주었다.
+
+이어서 for 문에도 글쓴이를 적용하자.
+
+[파일명: projects/myproject/pybo/templates/question/question_list.html]
+(... 생략 ...)
+{% for question in question_list.items %}
+<tr class="text-center">
+    <td>{{ question_list.total - ((question_list.page-1) * question_list.per_page) - loop.index0 }}</td>
+    <td class="text-start">
+        <a href="{{ url_for('question.detail', question_id=question.id) }}">{{ question.subject }}</a>
+        {% if question.answer_set|length > 0 %}
+        <span class="text-danger small mx-2">{{ question.answer_set|length }}</span>
+        {% endif %}
+    </td>
+    <td>{{ question.user.username }}</td>  <!-- 글쓴이 추가 -->
+    <td>{{ question.create_date|datetime }}</td>
+</tr>
+{% endfor %}
+(... 생략 ...)
+<td>{{ question.user.username }}</td>를 삽입하여 질문의 글쓴이를 표시했다. 그리고 테이블 내용을 가운데 정렬하도록 tr 엘리먼트에 text-center 클래스를 추가하고, 제목을 왼쪽 정렬하도록 text-start 클래스를 추가했다.
+질문 목록 화면에 글쓴이가 추가되었다.
+
+질문 상세에 글쓴이 표시하기
+질문 상세 화면에도 질문 작성일시 바로 위에 글쓴이를 추가하자.
+
+[파일명: projects/myproject/pybo/templates/question/question_detail.html]
+(... 생략 ...)
+<div class="card-body">
+    <div class="card-text" style="white-space: pre-line;">{{ question.content }}</div>
+    <div class="d-flex justify-content-end">
+        <div class="badge bg-light text-dark p-2 text-start">
+            <div class="mb-2">{{ question.user.username }}</div>
+            <div>{{ question.create_date|datetime }}</div>
+        </div>
+    </div>
+</div>
+(... 생략 ...)
+글쓴이와 작성일시를 함께 보여 주도록 부트스트랩을 이용하여 여백과 정렬 등의 디자인도 살짝 변경했다.
+
+답변에도 글쓴이를 추가하자. 질문과 마찬가지로 작성일시 바로 위에 글쓴이를 표시하면 된다.
+
+[파일명: projects/myproject/pybo/templates/question/question_detail.html]
+(... 생략 ...)
+<!-- 답변 목록 -->
+<h5 class="border-bottom my-3 py-2">{{ question.answer_set|length }}개의 답변이 있습니다.</h5>
+{% for answer in question.answer_set %}
+<div class="card my-3">
+  <div class="card-body">
+      <div class="card-text" style="white-space: pre-line;">{{ answer.content }}</div>
+      <div class="d-flex justify-content-end">
+          <div class="badge bg-light text-dark p-2 text-start">
+              <div class="mb-2">{{ answer.user.username }}</div>
+              <div>{{ answer.create_date|datetime }}</div>
+          </div>
+      </div>
+  </div>
+(... 생략 ...)
+
+질문 상세 화면의 질문과 답변에 글쓴이가 추가되었다.
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 
-마지막 편집일시 : 2022년 8월 17일 8:20 오전
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+3-10 게시물 수정 & 삭제
+[완성 소스] : github.com/pahkey/jump2flask/tree/3-10
+[실습 영상] : https://youtu.be/oOqSB0o2y74
+
+이번에는 작성한 게시물을 수정 & 삭제할 수 있는 기능을 추가할 것이다. 실습을 진행하다 보면 "비슷한 기능을 반복해서 구현한다는 느낌"을 받아 조금 지루할 수 있다. 하지만 게시물 수정 & 삭제 기능은 게시물 작성만큼 중요하다. 플라스크 개발 패턴을 연습할 수 있는 좋은 기회이므로 실습을 이해하며 따라가 보자.
+
+
+수정 일시
+질문, 답변을 언제 수정했는지 확인할 수 있도록 Question 모델과 Answer 모델에 modify_date 속성을 추가하자.
+
+[파일명: projects/myproject/pybo/models.py]
+from pybo import db
+
+class Question(db.Model):
+    (... 생략 ...)
+    modify_date = db.Column(db.DateTime(), nullable=True)
+
+
+class Answer(db.Model):
+    (... 생략 ...)
+    modify_date = db.Column(db.DateTime(), nullable=True)
+
+(... 생략 ...)
+modify_date 속성에는 nullable=True로 null을 허용하도록 했다. 수정일시는 수정이 발생할 경우에만 생성되므로 null을 허용해야 한다.
+
+모델이 변경되었으므로 migrate, upgrade 명령을 수행하자.
+
+(myproject) c:\projects\myproject>flask db migrate
+INFO [alembic.runtime.migration] Context impl SQLiteImpl.
+INFO [alembic.runtime.migration] Will assume non-transactional DDL.
+INFO [alembic.autogenerate.compare] Detected added column 'answer.modify_date'
+INFO [alembic.autogenerate.compare] Detected added column 'question. modify_date'
+Generating c:\projects\myproject\migrations\versions\f4949234d626_.py ... done
+
+(myproject) c:\projects\myproject>flask db upgrade
+INFO [alembic.runtime.migration] Context impl SQLiteImpl.
+INFO [alembic.runtime.migration] Will assume non-transactional DDL.
+INFO [alembic.runtime.migration] Running upgrade 0fbf53a8e0af -> f4949234d626, empty message
+질문 수정
+작성한 질문을 수정하려면 질문 상세 화면에서 "수정" 버튼을 클릭하여 수정 화면으로 진입해야 한다.
+
+질문 수정 버튼
+질문 상세 화면에 다음과 같이 질문 수정 버튼을 추가하자.
+
+[파일명: projects/myproject/pybo/templates/question/question_detail.html]
+(... 생략 ...)
+<!-- 질문 -->
+<h2 class="border-bottom py-2">{{ question.subject }}</h2>
+<div class="card my-3">
+    <div class="card-body">
+        <div class="card-text" style="white-space: pre-line;">{{ question.content }}</div>
+        <div class="d-flex justify-content-end">
+            <div class="badge bg-light text-dark p-2 text-start">
+                <div class="mb-2">{{ question.user.username }}</div>
+                <div>{{ question.create_date|datetime }}</div>
+            </div>
+        </div>
+        <div class="my-3">
+            {% if g.user == question.user %}
+            <a href="{{ url_for('question.modify', question_id=question.id) }}"
+               class="btn btn-sm btn-outline-secondary">수정</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+(... 생략 ...)
+
+질문 수정 버튼은 로그인한 사용자와 글쓴이가 같은 경우에만 보여야 하므로 {% if g.user == question.user %}를 사용했다.
+
+로그인한 사용자와 글쓴이가 다르면 수정 버튼은 보이지 않는다.
+
+질문 수정 라우팅 함수
+질문 상세 템플릿에 url_for('question.modify', question_id=question.id) URL이 추가되었으니 다음과 같은 modify 함수를 작성해야 한다.
+
+[파일명: projects/myproject/pybo/views/question_views.py]
+(... 생략 ...)
+from flask import Blueprint, render_template, request, url_for, g, flash
+
+(... 생략 ...)
+
+@bp.route('/modify/<int:question_id>', methods=('GET', 'POST'))
+@login_required
+def modify(question_id):
+    question = Question.query.get_or_404(question_id)
+    if g.user != question.user:
+        flash('수정권한이 없습니다')
+        return redirect(url_for('question.detail', question_id=question_id))
+    if request.method == 'POST':  # POST 요청
+        form = QuestionForm()
+        if form.validate_on_submit():
+            form.populate_obj(question)
+            question.modify_date = datetime.now()  # 수정일시 저장
+            db.session.commit()
+            return redirect(url_for('question.detail', question_id=question_id))
+    else:  # GET 요청
+        form = QuestionForm(obj=question)
+    return render_template('question/question_form.html', form=form)
+질문 수정은 로그인이 필요하므로 @login_required 애너테이션을 추가했다. 만약 로그인한 사용자와 질문의 작성자가 다르면 수정할 수 없도록 flash 오류를 발생시키는 코드도 추가했다.
+
+flash 함수는 강제로 오류를 발생시키는 함수로, 로직에 오류가 있을 경우 사용한다.
+
+modify 함수가 GET 방식으로 요청되는 경우는 <질문수정> 버튼을 눌렀을 때이다. 이때 수정할 질문에 해당하는 "제목", "내용" 등의 데이터가 화면에 보여야 한다. 데이터베이스에서 조회한 데이터를 템플릿에 적용하는 가장 간단한 방법은 QuestionForm(obj=question)과 같이 조회한 데이터를 obj 매개변수에 전달하여 폼을 생성하는 것이다. 이렇게 하면 QuestionForm의 subject, content 속성에 question 객체의 subject, content 값이 저장되어 화면에도 표시된다.
+
+modify 함수가 POST 방식으로 요청되는 경우는 질문 수정 화면에서 데이터를 수정한 다음 <저장하기> 버튼을 눌렀을 경우이다. form.validate_on_submit 함수에서 QuestionForm을 검증하고 아무 이상이 없으면 변경된 데이터를 저장한다. 데이터 변경을 위해 입력한 form.populate_obj(question)는 form 변수에 들어 있는 데이터(화면에서 입력한 데이터)를 question 객체에 업데이트 하는 역할을 한다.
+
+오류 표시
+
+그리고 flash 에 의해 발생되는 "수정권한이 없습니다"라는 오류가 표시될수 있도록 질문 상세 화면 위쪽에 오류 영역을 추가하자.
+
+[파일명: projects/myproject/pybo/templates/question/question_detail.html]
+
+{% extends 'base.html' %}
+{% block content %}
+<div class="container my-3">
+    <!-- flash 오류 -->
+    {% for message in get_flashed_messages() %}
+    <div class="alert alert-danger" role="alert">
+        {{ message }}
+    </div>
+    {% endfor %}
+    <!-- 질문 -->
+    <h2 class="border-bottom py-2">{{ question.subject }}</h2>
+(... 생략 ...)
+물론 수정은 로그인 한 사용자와 글 작성자가 동일한 경우에만 가능하기 때문에 이 오류가 표시될 일은 없을 것이다. 하지만 비 정상적인 방법으로 질문을 수정할 경우 오류를 보여주어야 하므로 필요한 부분이다.
+
+질문 수정 확인
+이제 로그인한 후에 질문을 수정해 보자. 이때 로그인한 사용자와 글쓴이가 같아야 한다. 그렇지 않으면 <수정> 버튼이 보이지 않는다.
+
+
+
+질문 삭제
+작성한 질문을 삭제하려면 질문 상세 화면에서 "삭제" 버튼을 눌러 삭제해야 한다.
+
+질문 삭제 버튼
+이번에는 작성한 글을 삭제할 수 있는 버튼을 다음처럼 추가해 보자.
+
+
+[파일명: projects/myproject/pybo/templates/question/question_detail.html]
+(... 생략 ...)
+<!-- 질문 -->
+<h2 class="border-bottom py-2">{{ question.subject }}</h2>
+<div class="card my-3">
+    <div class="card-body">
+        (... 생략 ...)
+        <div class="my-3">
+            {% if g.user == question.user %}
+            <a href="{{ url_for('question.modify', question_id=question.id) }}"
+               class="btn btn-sm btn-outline-secondary">수정</a>
+            <a href="javascript:void(0)" class="delete btn btn-sm btn-outline-secondary"
+               data-uri="{{ url_for('question.delete', question_id=question.id) }}">삭제</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+(... 생략 ...)
+
+<삭제> 버튼은 <수정> 버튼과는 달리 href 속성값을 "javascript:void(0)"로 설정했다.
+
+href 속성값을 javascript:void(0)로 설정하면 해당 링크를 클릭해도 아무런 동작도 하지 않는다.
+
+그리고 삭제를 실행할 URL을 얻기 위해 data-uri 속성을 추가하고, <삭제> 버튼이 눌리는 이벤트를 확인할 수 있도록 class 속성에 "delete" 항목을 추가해 주었다.
+
+data-uri 속성은 자바스크립트에서 클릭 이벤트 발생시 this.dataset.uri와 같이 사용하여 그 값을 얻을 수 있다.
+
+href에 삭제 URL을 직접 사용하지 않고 이러한 방식을 사용하는 이유는 삭제 버튼을 클릭했을때 "정말로 삭제하시겠습니까?" 와 같은 확인창이 필요하기 때문이다.
+
+자바스크립트
+삭제 버튼을 눌렀을때 확인창을 호출하기 위해서는 다음과 같은 자바스크립트 코드가 필요하다.
+
+아래 코드를 아직 추가하지 말자. 지금은 눈으로만 보자.
+
+<script type='text/javascript'>
+const delete_elements = document.getElementsByClassName("delete");
+Array.from(delete_elements).forEach(function(element) {
+    element.addEventListener('click', function() {
+        if(confirm("정말로 삭제하시겠습니까?")) {
+            location.href = this.dataset.uri;
+        };
+    });
+});
+</script>
+이 자바스크립트의 의미는 delete라는 클래스를 포함하는 컴포넌트(예:버튼이나 링크)를 클릭하면 "정말로 삭제하시겠습니까?" 라는 질문을 하고 "확인"을 선택했을때 해당 컴포넌트의 data-uri 값으로 URL 호출을 하라는 의미이다. "확인" 대신 "취소"를 선택하면 아무런 일도 발생하지 않을 것이다.
+
+
+※ delete 클래스는 답변 삭제에도 사용된다.
+
+따라서 이와 같은 스크립트를 추가하면 "삭제" 버튼을 클릭하고 "확인"을 선택하면 data-uri 속성에 해당하는 {% url 'pybo:question_delete' question.id %} URL이 호출될 것이다.
+
+자바스크립트 블록
+자바스크립트는 HTML 구조에서 다음과 같이 </body> 태그 바로 위에 삽입하는 것을 추천한다.
+
+<html>
+<head>
+(... 생략 ...)
+</head>
+<body>
+(... 생략 ...)
+<!-- 이곳에 추가 -->
+</body>
+</html>
+왜냐하면 이렇게 해야 화면 렌더링이 완료된 후에 자바스크립트가 실행되기 때문이다. 화면 렌더링이 완료되지 않은 상태에서 자바스크립트를 실행하면 화면의 값을 읽지 못하는 오류가 발생할수도 있고 화면 로딩이 지연되는 문제가 발생할 수도 있다. 따라서 자바스크립트는 </body> 태그 바로 위에 삽입하는 것이 좋다.
+
+자바스크립트를 </body> 태그 바로 위에 삽입하기 위해 다음처럼 base.html을 수정하자.
+
+[파일명: projects/myproject/pybo/templates/base.html]
+
+(... 생략 ...)
+<!-- Bootstrap JS -->
+<script src="{{ url_for('static', filename='bootstrap.min.js') }}"></script>
+<!-- 자바스크립트 Start -->
+{% block script %}
+{% endblock %}
+<!-- 자바스크립트 End -->
+</body>
+</html>
+base.html 을 상속하는 템플릿들에서 content 블록을 구현하게 했던것과 마찬가지 방법으로 script 블록을 구현할수 있도록 했다. </body> 태그 바로 위에 {% block script %}{% endblock %} 블록을 추가했다. 이렇게 하면 이제 base.html을 상속하는 템플릿은 자바스크립트의 삽입 위치를 신경쓸 필요없이 스크립트 블록을 사용하여 자바스크립트를 작성하면 된다.
+
+question_detail.html 하단에 {% block script %}{% endblock %} 블록을 다음처럼 추가하자.
+
+[파일명: projects/myproject/pybo/templates/question/question_detail.html]
+
+
+(... 생략 ...)
+{% endblock %}
+{% block script %}
+<script type='text/javascript'>
+const delete_elements = document.getElementsByClassName("delete");
+Array.from(delete_elements).forEach(function(element) {
+    element.addEventListener('click', function() {
+        if(confirm("정말로 삭제하시겠습니까?")) {
+            location.href = this.dataset.uri;
+        };
+    });
+});
+</script>
+{% endblock %}
+{% block script %}과 {% endblock %} 사이에 질문을 삭제할 수 있는 자바스크립트를 작성하였다.
+
+질문 삭제 라우팅 함수
+앞서 질문 상세 템플릿에 작성한 data-uri 속성에 url_for('question.delete', question_id=question.id) URL이 추가되었으므로 질문을 삭제할 수 있도록 라우팅 함수 delete를 추가해야 한다.
+
+[파일명: projects/myproject/pybo/views/question_views.py]
+
+(... 생략 ...)
+@bp.route('/delete/<int:question_id>')
+@login_required
+def delete(question_id):
+    question = Question.query.get_or_404(question_id)
+    if g.user != question.user:
+        flash('삭제권한이 없습니다')
+        return redirect(url_for('question.detail', question_id=question_id))
+    db.session.delete(question)
+    db.session.commit()
+    return redirect(url_for('question._list'))
+delete 함수 역시 로그인이 필요하므로 @login_required 애너테이션을 적용하고, 로그인한 사용자와 글쓴이가 같은 경우에만 질문을 삭제할 수 있도록 했다.
+
+질문 삭제 확인
+이제 질문 작성자와 로그인 사용자가 같으면 질문 상세 화면에 <삭제> 버튼이 나타날 것이다. 버튼을 눌러 기능을 확인해 보자.
+
+
+
+답변 수정
+이번에는 답변 수정 기능을 추가하자. 질문 수정과 거의 비슷한 방법으로 진행할 것이다. 다만 답변 수정은 답변 등록 템플릿이 따로 없으므로 답변 수정에 사용할 템플릿이 추가로 필요하다. 답변 등록은 질문 상세 화면 아래쪽에 텍스트 입력 창을 추가하여 만든 것이므로 질문 상세 템플릿을 답변 수정용으로 사용하는 데는 적합하지 않다.
+
+
+답변 수정 기능은 질문 수정과 크게 차이 나지 않으므로 간단히 설명하고 넘어가겠다.
+
+답변 수정 버튼
+답변 목록이 출력되는 부분에 답변 수정 버튼을 추가하자.
+
+[파일명: projects/myproject/pybo/templates/question/question_detail.html]
+
+(... 생략 ...)
+<!-- 답변 목록 -->
+<h5 class="border-bottom my-3 py-2">{{ question.answer_set|length }}개의 답변이 있습니다.</h5>
+{% for answer in question.answer_set %}
+<div class="card my-3">
+    <div class="card-body">
+        <div class="card-text" style="white-space: pre-line;">{{ answer.content }}</div>
+        <div class="d-flex justify-content-end">
+            <div class="badge bg-light text-dark p-2 text-start">
+                <div class="mb-2">{{ answer.user.username }}</div>
+                <div>{{ answer.create_date|datetime }}</div>
+            </div>
+        </div>
+        <div class="my-3">
+            {% if g.user == answer.user %}
+            <a href="{{ url_for('answer.modify', answer_id=answer.id) }}"
+               class="btn btn-sm btn-outline-secondary">수정</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endfor %}
+(... 생략 ...)
+답변 수정 라우팅 함수
+url_for('answer.modify', answer_id=answer.id) URL을 추가했으므로 answer_views.py 파일에 modify 함수를 추가하자.
+
+[파일명: projects/myproject/pybo/views/answer_views.py]
+
+(... 생략 ...)
+from flask import Blueprint, url_for, request, render_template, g, flash
+
+(... 생략 ...)
+
+@bp.route('/modify/<int:answer_id>', methods=('GET', 'POST'))
+@login_required
+def modify(answer_id):
+    answer = Answer.query.get_or_404(answer_id)
+    if g.user != answer.user:
+        flash('수정권한이 없습니다')
+        return redirect(url_for('question.detail', question_id=answer.question.id))
+    if request.method == "POST":
+        form = AnswerForm()
+        if form.validate_on_submit():
+            form.populate_obj(answer)
+            answer.modify_date = datetime.now()  # 수정일시 저장
+            db.session.commit()
+            return redirect(url_for('question.detail', question_id=answer.question.id))
+    else:
+        form = AnswerForm(obj=answer)
+    return render_template('answer/answer_form.html', form=form)
+답변 수정 템플릿
+답변 수정에 사용할 answer_form.html 파일은 다음처럼 작성하자.
+
+[파일명: projects/myproject/pybo/templates/answer/answer_form.html]
+
+
+<!-- 답변 수정 -->
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    <h5 class="my-3 border-bottom pb-2">답변 수정</h5>
+    <form method="post">
+        {{ form.csrf_token }}
+        {% include "form_errors.html" %}
+        <div class="mb-3">
+            <label for="content">답변내용</label>
+            <textarea class="form-control" name="content" id="content"
+                      rows="10">{{ form.content.data or '' }}</textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">저장하기</button>
+    </form>
+</div>
+{% endblock %}
+답변 내용을 확인하고 수정할 수 있는 간단한 템플릿이다.
+
+답변수정 확인
+질문과 마찬가지로 답변도 등록한 사용자와 로그인한 사용자가 같아야 <수정> 버튼이 나타난다. 답변을 작성한 뒤 <수정> 버튼을 누르면 답변 수정화면으로 이동한다. 정상적으로 동작하는지 확인해보자.
+
+
+
+답변 삭제
+이번에는 답변을 삭제하는 기능을 추가해 보자. 답변 삭제도 질문 삭제와 동일한 방법이므로 빠르게 알아보자.
+
+답변 삭제 버튼
+질문 상세 템플릿에서 답변을 삭제할 수 있는 버튼을 다음과 같이 추가하자.
+
+[파일명: projects/myproject/pybo/templates/question/question_detail.html]
+
+(... 생략 ...)
+<!-- 답변 목록 -->
+<h5 class="border-bottom my-3 py-2">{{ question.answer_set|length }}개의 답변이 있습니다.</h5>
+{% for answer in question.answer_set %}
+<div class="card my-3">
+    <div class="card-body">
+        (... 생략 ...)
+        <div class="my-3">
+            {% if g.user == answer.user %}
+            <a href="{{ url_for('answer.modify', answer_id=answer.id) }}"
+               class="btn btn-sm btn-outline-secondary">수정</a>
+            <a href="#" class="delete btn btn-sm btn-outline-secondary "
+               data-uri="{{ url_for('answer.delete', answer_id=answer.id) }}">삭제</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endfor %}
+(... 생략 ...)
+<수정> 버튼 옆에 <삭제> 버튼을 추가했다. 질문의 <삭제> 버튼과 마찬가지로 <삭제> 버튼에 delete 클래스를 적용했으므로 <삭제> 버튼을 누르면 data-uri 속성에 설정한 url이 실행될 것이다.
+
+답변 삭제 라우팅 함수
+url_for('answer.delete', answer_id=answer.id) URL을 추가했으므로 answer_views.py 파일에 delete 함수를 작성하자.
+
+[파일명: projects/myproject/pybo/views/answer_views.py]
+
+(... 생략 ...)
+@bp.route('/delete/<int:answer_id>')
+@login_required
+def delete(answer_id):
+    answer = Answer.query.get_or_404(answer_id)
+    question_id = answer.question.id
+    if g.user != answer.user:
+        flash('삭제권한이 없습니다')
+    else:
+        db.session.delete(answer)
+        db.session.commit()
+    return redirect(url_for('question.detail', question_id=question_id))
+delete 함수 역시 로그인이 필요하므로 @login_required 애너테이션을 추가했다.
+
+답변 삭제 확인
+이제 질문 상세 화면에서 답변을 작성한 사용자와 로그인한 사용자가 같으면 <삭제> 버튼이 나타날 것이다. 삭제 기능이 잘 동작하는지 확인해 보자.
+
+
+
+수정일시 표시하기
+마지막으로 질문 상세 화면에서 수정일시를 확인할 수 있도록 템플릿을 수정해 보자. 질문과 답변에는 이미 작성일시를 표시하고 있다. 작성일시 바로 왼쪽에 수정일시를 추가하자.
+
+[파일명: projects/myproject/pybo/templates/question/question_detail.html]
+
+(... 생략 ...)
+<!-- 질문 -->
+<h2 class="border-bottom py-2">{{ question.subject }}</h2>
+<div class="card my-3">
+    <div class="card-body">
+        <div class="card-text" style="white-space: pre-line;">{{ question.content }}</div>
+        <div class="d-flex justify-content-end">
+            {% if question.modify_date %}
+            <div class="badge bg-light text-dark p-2 text-start mx-3">
+                <div class="mb-2">modified at</div>
+                <div>{{ question.modify_date|datetime }}</div>
+            </div>
+            {% endif %}
+            <div class="badge bg-light text-dark p-2 text-start">
+                <div class="mb-2">{{ question.user.username }}</div>
+                <div>{{ question.create_date|datetime }}</div>
+            </div>
+        </div>
+(... 생략 ...)
+<!-- 답변 목록 -->
+<h5 class="border-bottom my-3 py-2">{{ question.answer_set|length }}개의 답변이 있습니다.</h5>
+{% for answer in question.answer_set %}
+<div class="card my-3">
+    <div class="card-body">
+        <div class="card-text" style="white-space: pre-line;">{{ answer.content }}</div>
+        <div class="d-flex justify-content-end">
+            {% if answer.modify_date %}
+            <div class="badge bg-light text-dark p-2 text-start mx-3">
+                <div class="mb-2">modified at</div>
+                <div>{{ answer.modify_date|datetime }}</div>
+            </div>
+            {% endif %}
+            <div class="badge bg-light text-dark p-2 text-start">
+                <div class="mb-2">{{ answer.user.username }}</div>
+                <div>{{ answer.create_date|datetime }}</div>
+            </div>
+        </div>
+(... 생략 ...)
+이제 질문이나 답변을 수정하면 다음처럼 수정일시가 표시될 것이다.
+
+
+
+마지막 편집일시 : 2022년 8월 16일 9:49 오전
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -3005,7 +3502,6 @@ pip 최신 버전으로 설치하기
 즉, 프로젝트 P-1을 위해 가상 환경 V-1을 만들어 플라스크 2.1 버전을 설치하고, 프로젝트 P-2를 위해 가상 환경 V-2를 만들어 플라스크 1.2 버전을 설치해서 사용할 수 있다.
 
 이처럼 가상2-09 표준 HTML과 템플릿 상속 사용해 보기
-
 
 [완성 소스] : github.com/pahkey/jump2flask/tree/2-09
 [실습 영상] : https://youtu.be/RMAv052dcSM
@@ -3274,26 +3770,17 @@ question_form.html 템플릿에 전달하는 QuestionForm의 객체(form)는 템
 {% endblock %}
 질문 등록을 위해서는 질문의 제목과 내용이라는 입력항목이 필요하다. 위의 템플릿에서는 질문의 제목과 내용에 해당하는 입력 항목을 form 객체를 사용해서 만들었다. QuestionForm에서 작성한 두개의 필드 subject와 content가 템플릿에서 사용되었다. {{ form.subject.label }} 는 라벨을 표시하고 {{ form.subject() }}는 입력폼을 표시한다.
 
-
 질문 등록 기능 사용해 보기
 웹 브라우저에서 질문 등록 기능을 확인해 보자.
 
 http://localhost:5000/question/list에 접속해 보면 질문 목록 화면에 <질문 등록하기> 버튼이 추가되었다.
 
-
-
 여기서 <질문 등록하기> 버튼을 누르면 다음처럼 질문 등록 화면이 나타난다.
 
-
-
 QuestonForm 객체가 자동으로 만들어 준 입력 항목(제목과 내용)이 보인다. 각 항목에 값을 입력하고 <저장하기> 버튼을 눌러 보자.
-
 하지만 다음처럼 ‘Method NotAllowed’ 오류 화면이 나타날 것이다.
 
-
-
 위와 같은 오류 화면이 나타난 이유는 현재 폼이 POST 방식으로 데이터를 전송하기 때문이다. 다음은 위에서 작성한 질문 등록을 위한 question_form.html 템플릿의 폼 태그이다.
-
 
 <form method="post" class="my-3">
 코드에서 보듯 form 태그의 method 속성이 “post”이므로 폼에 입력한 데이터는 POST 방식로 전송된다. 그런데 현재 create 라우팅 함수에는 별도의 method 속성을 지정하지 않았으므로 기본 처리 방식인 GET 방식만 처리할 수 있다. 즉, POST 방식으로 데이터를 처리하게 하려면 create 함수의 라우팅 정보를 수정해야 한다.
@@ -3313,7 +3800,6 @@ form에 action을 사용하지 않는 이유에 대해서는 질문 수정시에
 create 함수가 GET과 POST 방식을 모두 처리할수 있도록 라우팅 애너테이션에 methods 속성을 추가하자.
 
 [파일명: projects/myproject/pybo/views/question_views.py]
-
 (... 생략 ...)
 
 @bp.route('/create/', methods=('GET', 'POST'))
@@ -3508,19 +3994,6 @@ class QuestionForm(FlaskForm):
     subject = StringField('제목', validators=[DataRequired('제목은 필수입력 항목입니다.')])
     content = TextAreaField('내용', validators=[DataRequired('내용은 필수입력 항목입니다.')])
 이제 필수 입력 항목을 빠뜨리고 질문을 등록하면 오류 메시지가 한글로 나타난다.
-
-
-
-
-
-
-
-
-
-
-
-
-
 
  환경을 이용하면 하나의 PC에 서로 다른 버전의 파이썬과 라이브러리를 쉽게 설치해 사용할 수 있다. 물론 이 책에서는 "파이보"라는 하나의 프로젝트만 진행할 것이므로 가상 환경이 필수는 아니다. 
 하지만 앞으로 웹 프로그래밍을 계속하고 싶다면 가상 환경의 개념을 익히고 실제로 사용해 보는 것이 좋다.
@@ -5934,26 +6407,6 @@ db.session.commit()은 데이터를 모두 추가한 이후 마지막에 1번만
 
 플라스크 셸로 등록한 테스트 데이터가 보일 것이다. 그리고 300개 이상의 데이터가 한 페이지 보여지는 것을 확인할 수 있다. 이러한 이유로 페이징은 반드시 필요하다.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 페이징 구현하기
 views/question_views.py 파일을 열어 _list 함수에 다음처럼 페이징을 적용하자. 페이징은 paginate 함수를 사용하여 쉽게 구현할 수 있다.
 
@@ -6197,10 +6650,7 @@ format_datetime 함수를 임포트한 다음 app.jinja_env.filters['datetime']�
 {% endblock %}
 {{ question.create_date|datetime }}과 같이 파이프라인 문자와 함께 datetime 필터를 적용했다. datetime 필터가 적용되었으므로 format_datetime 필터 함수가 실행된다. 이때 format_datetime의 매개변수 value에 question.create_date가 전달된다.
 
-
 질문 목록 페이지로 이동해 보면 필터가 적용된 작성일시를 확인할 수 있다.
-
-
 
 질문 상세 화면에 필터 적용하기
 이어서 질문 상세 템플릿에도 같은 필터를 적용하자.
@@ -6241,17 +6691,12 @@ format_datetime 함수를 임포트한 다음 app.jinja_env.filters['datetime']�
 
 질문 상세 페이지로 이동해 보면 필터가 적용된 화면을 확인할 수 있다.
 
-
-
 여기서는 템플릿 필터를 직접 작성하고, 이 필터를 템플릿에 적용하는 방법을 알아보았다. 물론 플라스크는 이미 만들어진 템플릿 필터가 많으므로 그냥 사용해도 되지만 가끔은 나한테 필요한 필터가 없는 경우도 있다. 그런 경우에는 이 과정에 따라 필터를 직접 만들어 적용하면 된다.
 
 플라스크 필터 공식 문서: https://jinja.palletsprojects.com/en/2.11.x/templates/#builtin-filters
 마지막 편집일시 : 2022년 8월 11일 10:39 오전
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 3-04 게시물에 일련번호 추가하기
-
-
 [완성 소스] : github.com/pahkey/jump2flask/tree/3-04
 [실습 영상] : https://youtu.be/519TCvFMaXU
 게시물 번호 문제
@@ -6260,11 +6705,7 @@ format_datetime 함수를 임포트한 다음 app.jinja_env.filters['datetime']�
 게시물 번호 문제
 계속해서 파이보 서비스를 개선해 보자. 현재 파이보 질문 목록 화면을 유심히 보면 페이지마다 게시물 번호가 항상 1부터 시작되는 문제가 있다. 페이지를 이리저리 이동해 봐도 게시물 번호는 1부터 시작한다. 이 문제를 해결해 보자.
 
-
-
 두번째 페이지로 이동하더라도 여전히 게시물 번호가 1부터 시작된다.
-
-
 
 게시물 번호 공식 만들기
 만약 질문 게시물이 12개라면 1페이지에는 12번째~3번째 게시물이, 2페이지에는 2번째~1번째 게시물이 역순으로 표시되어야 한다. 질문 게시물의 번호를 역순으로 정렬하려면 다음과 같은 공식을 적용해야 한다.
@@ -6312,8 +6753,6 @@ question_list.per_page	페이지당 게시물 개수
 loop.index0	나열 인덱스(0부터 시작)
 이제 게시물 번호가 우리가 의도한 대로 출력된다.
 
-
-
 성공이다! 페이지를 이리저리 이동하며 게시물 번호를 확인해 보자.
 
 마지막 편집일시 : 2022년 8월 11일 11:07 오전
@@ -6354,14 +6793,9 @@ loop.index0	나열 인덱스(0부터 시작)
 
 이제 질문 목록 페이지로 이동하면 답변이 있는 질문은 제목 오른쪽에 빨간색 숫자가 표시될 것이다.
 
-
-
 마지막 편집일시 : 2022년 8월 11일 11:20 오전
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 3-06 회원가입
-
-
 [완성 소스] : github.com/pahkey/jump2flask/tree/3-06
 [실습 영상] : https://youtu.be/iCsHsnPoSyw
 이번에는 파이보에 회원가입 기능을 구현해 보자. 회원가입을 만들어 보았다면 웹 프로그래밍은 거의 마스터했다고 할 수 있다. 그만큼 회원가입 기능은 웹 사이트에서 핵심 중의 핵심이라 할 수 있다.
@@ -6592,12 +7026,7 @@ form_errors.html 템플릿 파일은 다음과 같이 "필드에서 발생한 �
 </nav>
 이제 내비게이션 바의 ‘계정생성’ 링크를 누르면 다음과 같은 회원가입 화면이 나온다.
 
-
-
-
 입력값 중에서 "비밀번호"와 "비밀번호 확인"을 서로 다르게 입력하고 <생성하기>를 누르면 validator 오류가 발생하여 화면에 다음과 같은 오류 메시지가 나타날 것이다.
-
-
 
 이처럼 우리가 만든 회원가입 기능에는 필숫값 검증, 이메일 규칙 검증 등이 적용되어 있다. 올바른 입력값으로 회원가입을 완료하면 메인 페이지로 리다이렉트될 것이다.
 
@@ -6614,10 +7043,7 @@ form_errors.html 템플릿 파일은 다음과 같이 "필드에서 발생한 �
 
 마지막 편집일시 : 2022년 8월 14일 11:25 오후
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 3-07 로그인과 로그아웃
-
-
 [완성 소스] : github.com/pahkey/jump2flask/tree/3-07
 [실습 영상] : https://youtu.be/QwMW-wt7CK8
 파이보는 여러 사람이 사용하는 게시판 서비스다. 그러므로 로그인, 로그아웃은 필수 기능이다.
@@ -6754,12 +7180,7 @@ POST 요청에 의해 로그인 하는 과정을 알아보자. 우선 폼 입력
 </nav>
 내비게이션 바의 "로그인" 링크를 누르면 /auth/login으로 이동하며, 다음과 같은 로그인 화면이 나타난다.
 
-
-
 만약 데이터베이스에 없는 username 또는 password를 입력하면 다음처럼 오류 메시지가 나타난다.
-
-
-
 
 username과 password를 제대로 입력하면 로그인을 수행한 다음 메인 화면으로 이동한다.
 
@@ -6833,20 +7254,17 @@ g.user에는 User 객체가 저장된다.
 
 g.user는 앞 단계에서 구현한 load_logged_in_user 함수로 생성한 사용자 정보값이다. 로그인 했다면 g.user가 만들어진 상태이므로 username을 표시하고 "로그아웃" 링크를 보여 줄 것이다. 반대로 로그인을 하지 않았다면 "로그인"과 "계정생성" 링크를 보여 줄 것이다.
 
-
-
-
 로그아웃 라우팅 함수
 그리고 로그아웃을 구현하기 위해 auth_views.py 파일을 열어 /logout/ URL에 매핑되는 logout 함수를 다음과 같이 작성하자.
 
 [파일명: projects/myproject/pybo/views/auth_views.py]
-
 (... 생략 ...)
 
 @bp.route('/logout/')
 def logout():
     session.clear()
     return redirect(url_for('main.index'))
+
 logout 함수에는 세션의 모든 값을 삭제할 수 있도록 session.clear()를 추가했다. 따라서 session에 저장된 user_id는 삭제될 것이며, 앞서 작성한 load_logged_in_user 함수에서 session의 값을 읽을 수 없으므로 g.user도 None이 될 것이다.
 
 로그아웃 링크
@@ -6868,16 +7286,14 @@ logout 함수에는 세션의 모든 값을 삭제할 수 있도록 session.clea
         (... 생략 ...)
     </div>
 </nav>
-이제 로그인, 로그아웃 기능이 잘 실행되는지 확인해 보자.
 
+이제 로그인, 로그아웃 기능이 잘 실행되는지 확인해 보자.
 로그아웃을 누르면 네비게이션 바에는 다시 계정생성, 로그인 링크가 나타날 것이다.
 
 마지막 편집일시 : 2022년 8월 14일 10:59 오전
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 3-08 모델 수정하기
-
-
 [완성 소스] : github.com/pahkey/jump2flask/tree/3-08
 [실습 영상] : https://youtu.be/6qsz0ACb4rs
 회원가입, 로그인, 로그아웃 기능이 완성되어 질문, 답변을 "누가" 작성했는지 알 수 있게 되었다. 이제 기능을 조금씩 다듬어서 파이보를 완벽하게 만들어 보자. 여기서는 Question, Answer 모델을 수정하여 "글쓴이"에 해당하는 user 속성을 추가할 것이다.
@@ -7315,17 +7731,12 @@ def create(question_id):
     (... 생략 ...)
 이제 로그아웃 상태에서 질문 또는 답변 등록을 시도하면 로그인 화면으로 리다이렉트될 것이다.
 
-
-
-
-
 로그아웃 상태에서 답변 등록 불가능하게 만들기
 한가지 더 생각해 봐야 할 것이 있다. 현재 질문 등록은 로그아웃 상태에서는 아예 글을 작성할 수 없어서 만족스럽다. 하지만 답변 등록은 로그아웃 상태에서도 글을 작성할 수 있다. 물론 답변 작성 후 <저장하기>를 누르면 자동으로 로그인 화면으로 이동되므로 큰 문제는 아니지만 작성한 답변이 사라지는 문제가 있다.
 
 작성한 글이 사라지는 문제를 해결하려면 로그아웃 상태에서는 아예 답변 작성을 못하게 막는 것이 좋을 것이다. 답변 작성 템플릿에서 textarea 엘리먼트가 로그인 상태가 아닌 경우 disabled를 지정하여 입력 자체를 하지 못하도록 다음과 같이 수정하자.
 
 [파일명: projects/myproject/pybo/templates/question/question_detail.html]
-
 {% extends 'base.html' %}
 {% block content %}
 <div class="container my-3">
@@ -7342,10 +7753,22 @@ def create(question_id):
 {% endblock %}
 이제 disabled 설정으로 textarea 엘리먼트가 비활성화될 것이다.
 
-
-
 마지막 편집일시 : 2022년 8월 17일 8:20 오전
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 3-09 글쓴이 표시하기
 

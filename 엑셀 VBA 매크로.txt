@@ -1,0 +1,46 @@
+Alt F8
+
+Sub test1()
+    Range("b2,c3").Select
+End Sub
+
+Sub test2()
+    Range("b2,c3,d4").Select
+End Sub
+
+Sub test3()
+    Range("b2", "d4").Select
+End Sub
+
+Sub test4()
+    Cells(2, "b").Select
+End Sub
+
+Sub test5()
+    Cells(3, 3).Select
+End Sub
+
+Sub test6()
+    Range(Cells(2, 2), Cells(4, 4)).Select
+End Sub
+
+Sub test7()
+    Range("b2").End(xlDown).Select
+End Sub
+
+Sub test8()
+    Range("b2").End(xlToRight).Select
+End Sub
+
+Sub test9()
+    Range("b2").CurrentRegion.Select
+End Sub
+
+Sub test10()
+    Range(Range("b2"), Range("b2").End(xlToRight)).Select
+End Sub
+
+-----------------------------------------------------------------------------------------------------
+
+
+
