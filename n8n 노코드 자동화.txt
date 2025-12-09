@@ -1,0 +1,903 @@
+<< n8n 노코드 자동화 한글 가이드북 >>
+
+09 n8n 커뮤니티 노드
+n8n 커뮤니티 노드는 개발자들이 만든 확장 기능으로, 기본 노드로는 구현할 수 없는 특수한 기능들을 제공합니다. 
+현재 2,800개 이상의 커뮤니티 노드가 있으며, 지속적으로 증가하고 있습니다.
+
+커뮤니티 노드 개요
+주요 특징
+확장성: 기본 n8n 기능을 크게 확장
+다양성: AI, 데이터 처리, 통신, 자동화 등 다양한 분야
+오픈소스: 대부분 MIT 라이선스로 무료 사용 가능
+커뮤니티 기반: 개발자들의 실제 필요에 의해 제작
+
+설치 방법
+# 커뮤니티 노드 설치
+npm install n8n-nodes-[노드명]
+
+# 예시: Backup Credentials 노드 설치
+npm install n8n-nodes-backup-credentials
+n8n 인터페이스에서 설치 1. Settings → Community Nodes 2. 노드 패키지명 입력 3. Install 버튼 클릭
+
+카테고리별 추천 노드
+🤖 AI, LLM & Voice 노드
+현재 가장 인기 있는 카테고리로, AI 기능을 n8n에 통합할 수 있습니다.
+
+n8n-nodes-zep-stemx-memory
+기능: AI 메모리 서비스 통합
+다운로드: 30일간 253회
+용도: 대화형 AI의 컨텍스트 유지
+설치: npm install n8n-nodes-zep-stemx-memory
+사용 예시:
+- 챗봇 대화 컨텍스트 저장
+- AI 어시스턴트 메모리 관리
+- 사용자별 개인화된 AI 응답
+n8n-nodes-openai-assistant
+
+기능: OpenAI Assistant API 통합
+특징: GPT-4 기반 어시스턴트 생성
+활용: 고급 AI 자동화 워크플로우
+n8n-nodes-elevenlabs
+기능: ElevenLabs TTS(Text-to-Speech) 통합
+특징: 자연스러운 음성 합성
+활용: 음성 알림, 팟캐스트 자동화
+📊 데이터 처리 & 유틸리티
+데이터 변환, 검증, 분석을 위한 강력한 도구들입니다.
+
+n8n-nodes-backup-credentials
+기능: 인증 정보 백업 및 복원
+인기도: 30일간 1,006 다운로드 (1위)
+중요성: 워크플로우 마이그레이션 필수 도구
+// 사용 시나리오
+const backupConfig = {
+  includeCredentials: true,
+  includeWorkflows: true,
+  outputFormat: 'json',
+  encryptionKey: process.env.BACKUP_KEY
+};
+n8n-nodes-pdf-parser
+기능: PDF 파싱 및 텍스트 추출
+특징: 구조화된 데이터 추출
+활용: 문서 자동화, 데이터 마이닝
+n8n-nodes-base64
+기능: Base64 인코딩/디코딩
+특징: 이미지, 파일 변환
+활용: API 데이터 전송, 파일 처리
+💬 통신 & 메시징
+다양한 플랫폼과의 통신을 확장하는 노드들입니다.
+
+n8n-nodes-whatsapp-business
+기능: WhatsApp Business API 통합
+특징: 대량 메시지 발송, 자동 응답
+활용: 고객 서비스, 마케팅 자동화
+n8n-nodes-discord-advanced
+
+기능: Discord 고급 기능 지원
+특징: 임베드 메시지, 역할 관리
+활용: 커뮤니티 관리, 게임 봇
+n8n-nodes-telegram-advanced
+기능: Telegram 확장 기능
+특징: 인라인 키보드, 미디어 처리
+활용: 봇 개발, 알림 시스템
+🌐 브라우저 자동화 & 웹 스크래핑
+웹 자동화를 위한 전문 도구들입니다.
+
+n8n-nodes-puppeteer
+기능: Puppeteer 기반 브라우저 자동화
+특징: 스크린샷, 폼 작성, 클릭 자동화
+활용: E2E 테스트, 웹 스크래핑
+// Puppeteer 노드 설정 예시
+const automationConfig = {
+  url: 'https://example.com',
+  actions: [
+    { type: 'click', selector: '#login-button' },
+    { type: 'type', selector: '#username', text: 'user@example.com' },
+    { type: 'screenshot', path: 'result.png' }
+  ]
+};
+n8n-nodes-playwright
+기능: Playwright 기반 크로스 브라우저 자동화
+특징: Chrome, Firefox, Safari 지원
+활용: 크로스 브라우저 테스트
+n8n-nodes-selenium
+기능: Selenium WebDriver 통합
+특징: 복잡한 웹 자동화
+활용: 레거시 시스템 통합
+📄 문서 & 콘텐츠 생성
+문서 작업과 콘텐츠 생성을 위한 도구들입니다.
+
+n8n-nodes-docx-generator
+기능: Word 문서 자동 생성
+특징: 템플릿 기반 문서 작성
+활용: 보고서 자동화, 계약서 생성
+n8n-nodes-excel-advanced
+
+기능: Excel 고급 처리
+특징: 복잡한 수식, 차트 생성
+활용: 데이터 분석, 리포팅
+n8n-nodes-markdown-processor
+기능: 마크다운 처리 및 변환
+특징: HTML, PDF 변환
+활용: 문서화, 블로그 자동화
+실무 활용 시나리오
+1. AI 기반 고객 서비스 자동화
+graph LR
+    A[고객 문의] --> B[Telegram/Discord]
+    B --> C[AI Memory Node]
+    C --> D[OpenAI Assistant]
+    D --> E[TTS Node]
+    E --> F[음성 응답]
+    D --> G[텍스트 응답]
+필요한 커뮤니티 노드 - n8n-nodes-zep-stemx-memory - n8n-nodes-openai-assistant - n8n-nodes-elevenlabs - n8n-nodes-telegram-advanced
+
+2. 자동 문서 처리 파이프라인
+graph TD
+    A[PDF 업로드] --> B[PDF Parser]
+    B --> C[AI 텍스트 분석]
+    C --> D[Excel 리포트 생성]
+    D --> E[WhatsApp 알림]
+    E --> F[백업 저장]
+워크플로우 구현
+
+{
+  "nodes": [
+    {
+      "name": "PDF Parser",
+      "type": "n8n-nodes-pdf-parser"
+    },
+    {
+      "name": "OpenAI Analysis", 
+      "type": "n8n-nodes-openai-assistant"
+    },
+    {
+      "name": "Excel Generator",
+      "type": "n8n-nodes-excel-advanced"
+    },
+    {
+      "name": "WhatsApp Notification",
+      "type": "n8n-nodes-whatsapp-business"
+    }
+  ]
+}
+3. E-commerce 자동화 시스템
+// 상품 모니터링 워크플로우
+const ecommerceAutomation = {
+  monitoring: {
+    node: 'n8n-nodes-puppeteer',
+    target: 'competitor-websites',
+    frequency: 'hourly'
+  },
+
+  analysis: {
+    node: 'n8n-nodes-openai-assistant',
+    task: 'price-comparison',
+    output: 'recommendations'
+  },
+
+  notification: {
+    node: 'n8n-nodes-discord-advanced',
+    channel: 'price-alerts',
+    format: 'embed-message'
+  }
+};
+노드 개발 가이드
+커뮤니티 노드 만들기
+1. 기본 구조 설정
+
+# 노드 프로젝트 생성
+mkdir n8n-nodes-my-custom
+cd n8n-nodes-my-custom
+npm init -y
+
+# 필요한 패키지 설치
+npm install n8n-workflow n8n-core
+npm install -D @types/node typescript
+2. 노드 클래스 구현
+import { IExecuteFunctions } from 'n8n-core';
+import {
+  INodeExecutionData,
+  INodeType,
+  INodeTypeDescription,
+} from 'n8n-workflow';
+
+export class MyCustomNode implements INodeType {
+  description: INodeTypeDescription = {
+    displayName: 'My Custom Node',
+    name: 'myCustomNode',
+    group: ['transform'],
+    version: 1,
+    description: '사용자 정의 노드',
+    defaults: {
+      name: 'My Custom Node',
+    },
+    inputs: ['main'],
+    outputs: ['main'],
+    properties: [
+      {
+        displayName: 'API Key',
+        name: 'apiKey',
+        type: 'string',
+        default: '',
+        required: true,
+      },
+    ],
+  };
+
+  async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
+    const items = this.getInputData();
+    const returnData: INodeExecutionData[] = [];
+
+    for (let i = 0; i < items.length; i++) {
+      const apiKey = this.getNodeParameter('apiKey', i) as string;
+
+      // 커스텀 로직 구현
+      const result = await this.processData(items[i].json, apiKey);
+
+      returnData.push({
+        json: result,
+      });
+    }
+
+    return [returnData];
+  }
+
+  private async processData(data: any, apiKey: string) {
+    // 실제 처리 로직
+    return {
+      processed: true,
+      data: data,
+      timestamp: new Date().toISOString()
+    };
+  }
+}
+3. 패키지 설정
+{
+  "name": "n8n-nodes-my-custom",
+  "version": "1.0.0",
+  "description": "Custom n8n node",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "nodes": [
+      "dist/MyCustomNode.node.js"
+    ]
+  },
+  "keywords": [
+    "n8n-community-node-package"
+  ]
+}
+노드 배포하기
+# 빌드
+npm run build
+
+# npm에 배포
+npm publish
+
+# 또는 로컬 설치
+npm pack
+npm install n8n-nodes-my-custom-1.0.0.tgz
+보안 및 모범 사례
+보안 고려사항
+1. 인증 정보 보호
+// 안전한 인증 정보 처리
+const credentials = await this.getCredentials('myCustomApi');
+const apiKey = credentials?.apiKey;
+
+// 로그에 민감 정보 노출 방지
+console.log('API 요청 시작', { 
+  endpoint: url,
+  // apiKey는 로깅하지 않음
+});
+2. 입력 데이터 검증
+// 입력 검증 함수
+private validateInput(data: any): boolean {
+  if (!data || typeof data !== 'object') {
+    throw new Error('Invalid input data');
+  }
+
+  // 필수 필드 검증
+  const requiredFields = ['id', 'name'];
+  for (const field of requiredFields) {
+    if (!data[field]) {
+      throw new Error(`Missing required field: ${field}`);
+    }
+  }
+
+  return true;
+}
+3. 에러 처리
+async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
+  try {
+    // 노드 로직
+    return await this.processItems();
+  } catch (error) {
+    // 에러 로깅 (민감 정보 제외)
+    console.error('Node execution failed:', {
+      message: error.message,
+      stack: error.stack
+    });
+
+    // 사용자 친화적 에러 메시지
+    throw new Error(`Processing failed: ${error.message}`);
+  }
+}
+성능 최적화
+1. 배치 처리
+
+// 개별 처리 대신 배치 처리
+async processBatch(items: INodeExecutionData[]): Promise<any[]> {
+  const batchSize = 100;
+  const results = [];
+
+  for (let i = 0; i < items.length; i += batchSize) {
+    const batch = items.slice(i, i + batchSize);
+    const batchResults = await this.apiCall(batch);
+    results.push(...batchResults);
+  }
+
+  return results;
+}
+2. 캐싱 전략
+// 간단한 메모리 캐싱
+private cache = new Map<string, any>();
+
+async getDataWithCache(key: string): Promise<any> {
+  if (this.cache.has(key)) {
+    return this.cache.get(key);
+  }
+
+  const data = await this.fetchData(key);
+  this.cache.set(key, data);
+
+  // 5분 후 캐시 만료
+  setTimeout(() => this.cache.delete(key), 5 * 60 * 1000);
+
+  return data;
+}
+추천 노드 모음
+생산성 향상
+노드명	기능	추천도
+n8n-nodes-backup-credentials	인증정보 백업	⭐⭐⭐⭐⭐
+n8n-nodes-excel-advanced	Excel 고급처리	⭐⭐⭐⭐
+n8n-nodes-docx-generator	Word 문서생성	⭐⭐⭐⭐
+AI & 머신러닝
+노드명	기능	추천도
+n8n-nodes-zep-stemx-memory	AI 메모리	⭐⭐⭐⭐⭐
+n8n-nodes-openai-assistant	OpenAI 어시스턴트	⭐⭐⭐⭐⭐
+n8n-nodes-elevenlabs	음성합성	⭐⭐⭐⭐
+자동화 & 스크래핑
+노드명	기능	추천도
+n8n-nodes-puppeteer	브라우저 자동화	⭐⭐⭐⭐⭐
+n8n-nodes-playwright	크로스브라우저	⭐⭐⭐⭐
+n8n-nodes-selenium	Selenium 통합	⭐⭐⭐
+통신 & 메시징
+노드명	기능	추천도
+n8n-nodes-whatsapp-business	WhatsApp API	⭐⭐⭐⭐
+n8n-nodes-discord-advanced	Discord 고급기능	⭐⭐⭐⭐
+n8n-nodes-telegram-advanced	Telegram 확장	⭐⭐⭐⭐
+
+문제 해결
+설치 오류
+# 권한 문제 해결
+sudo npm install -g n8n-nodes-[노드명]
+
+# 캐시 정리 후 재설치
+npm cache clean --force
+npm install n8n-nodes-[노드명]
+
+# 특정 버전 설치
+npm install n8n-nodes-[노드명]@1.0.0
+
+노드 인식 오류
+# n8n 재시작
+pm2 restart n8n
+
+# 노드 캐시 정리
+rm -rf ~/.n8n/nodes_modules
+npm install
+의존성 충돌
+# peer dependencies 확인
+npm ls --depth=0
+
+# 호환 버전으로 다운그레이드
+npm install n8n-nodes-[노드명]@[호환버전]
+마지막 편집일시 : 2025년 7월 21일 1:20 오전
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+99 놓치면 후회하는 꿀팁 모음
+
+🌟 먼저 알아두면 좋은 사이트
+워크플로우 템플릿 찾기
+n8n Workflows: https://n8nworkflows.xyz/
+다른 사람들이 만든 워크플로우를 복사해서 쓸 수 있어요
+카테고리별로 찾기 쉽게 정리되어 있어요
+언제 유용한가요? 처음부터 만들기 어려울 때, 비슷한 걸 찾아서 수정하면 훨씬 빨라요!
+
+워크플로우를 그림으로 보기
+Mermaid 변환기: https://n8nmermaid.janwillemaltink.com/
+내가 만든 워크플로우를 흐름도로 바꿔줘요
+언제 유용한가요? 동료에게 설명할 때, 보고서에 넣을 때 유용해요
+🎯 기본 꿀팁 (바로 써먹기)
+📝 1. 노드 이름 잘 짓기
+왜 중요한가요? - 나중에 봤을 때 "이게 뭐 하는 노드지?" 안 헷갈려요 - 다른 사람이 봐도 이해하기 쉬워요
+
+어떻게 하나요?
+
+노드를 더블클릭해서 열기
+맨 위에 있는 노드 이름 클릭
+아래 규칙으로 이름 바꾸기:
+✅ 좋은 이름 예시:
+- "고객_정보_가져오기"
+- "이메일_보내기_환영메시지"
+- "데이터_필터링_활성고객만"
+
+❌ 안 좋은 이름 예시:
+- "HTTP Request" (뭘 요청하는지 모름)
+- "Function" (무슨 기능인지 모름)
+- "노드1" (아무 의미 없음)
+팁! 한글로 써도 되고, 영어로 써도 돼요. 중요한 건 "무슨 일을 하는지" 명확하게!
+
+🎨 2. 색깔로 구분하기
+
+왜 중요한가요? - 워크플로우가 길어지면 어디가 어딘지 헷갈려요 - 색으로 구분하면 한눈에 파악돼요!
+
+어떻게 하나요?
+
+노드를 선택 (클릭)
+오른쪽 패널에서 "Node" 탭 보기
+맨 아래 "Note" 옆에 색상 팔레트 클릭
+색 선택!
+추천 색상 규칙: - 🔵 파란색: 데이터 가져오는 노드 (HTTP Request, Google Sheets 등) - 🟢 초록색: 데이터 가공/변환 노드 (Set, Code 등) - 🟡 노란색: 조건/판단 노드 (IF, Switch 등) - 🔴 빨간색: 결과 보내는 노드 (Gmail, Slack 등)
+
+📌 3. 메모 활용하기
+왜 중요한가요? - 한 달 후에 봤을 때 "이거 왜 이렇게 만들었지?" 기억 안 나요 - 메모 남겨두면 미래의 나에게 큰 도움!
+
+어떻게 하나요?
+
+노드 선택
+오른쪽 패널 "Node" 탭
+"Note" 칸에 메모 작성
+메모 예시:
+
+목적: 신규 고객에게 환영 이메일 발송
+실행 시간: 매일 오전 9시
+주의사항: 테스트 계정은 제외
+마지막 수정: 2025-11-26 (김철수)
+⚡ 자주 쓰는 패턴 따라하기
+📧 패턴 1: 이메일 자동 발송
+어떤 상황에 유용한가요? - 매일 같은 시간에 리포트 보낼 때 - 고객이 가입하면 환영 메일 보낼 때 - 중요한 알림을 이메일로 받고 싶을 때
+
+
+따라하기:
+
+트리거 설정 (언제 실행할지)
+왼쪽 패널에서 "Schedule Trigger" 찾기
+캔버스에 드래그
+더블클릭해서 열기
+"Trigger Times" → "Add Trigger Time" 클릭
+원하는 시간 설정 (예: 매일 09:00)
+
+내용 준비 (무엇을 보낼지)
+
+"Set" 노드 추가 (왼쪽에서 검색)
+"Add Field" 클릭
+이메일 제목, 내용 입력
+예시: 제목: 일일 리포트 - {{ $now.format('YYYY-MM-DD') }} 내용: 오늘의 주요 지표를 정리했습니다...
+
+이메일 보내기
+"Gmail" 노드 추가 (또는 다른 이메일 서비스)
+"Send Message" 선택
+To: 받는 사람 이메일
+Subject: {{ $json.제목 }}
+Message: {{ $json.내용 }}
+
+연결하기
+
+Schedule Trigger → Set → Gmail 순서로 화살표로 연결
+완성! 이제 매일 설정한 시간에 자동으로 이메일이 발송돼요.
+
+📊 패턴 2: 데이터 정리하기
+어떤 상황에 유용한가요? - 여러 곳에서 가져온 데이터를 하나로 합칠 때 - 필요한 정보만 골라낼 때 - 중복된 데이터 제거할 때
+
+따라하기: 엑셀 데이터에서 이메일만 추출
+
+
+데이터 가져오기
+"Google Sheets" 노드 추가
+Credential 연결 (처음이면 "Create New" 클릭해서 구글 계정 연결)
+스프레드시트 선택
+"Get All Rows" 선택
+
+필요한 것만 골라내기
+
+"Set" 노드 추가
+"Add Field" 클릭
+Type: String
+Name: email
+Value: {{ $json.이메일 }} (시트의 컬럼명)
+
+중복 제거 (선택사항)
+
+"Remove Duplicates" 노드 추가
+"Compare" → "All Fields" 선택
+팁! Set 노드는 데이터를 "깔끔하게 정리"할 때 항상 사용해요. 복잡한 데이터에서 필요한 것만 뽑아낼 수 있어요!
+
+🔀 패턴 3: 조건에 따라 다르게 처리하기
+어떤 상황에 유용한가요? - VIP 고객과 일반 고객에게 다른 메시지 보낼 때 - 주문 금액에 따라 할인율 다르게 적용할 때 - 긴급/일반 문의를 다르게 처리할 때
+
+따라하기: 금액에 따라 다른 처리
+
+IF 노드 추가
+좌측에서 "IF" 검색해서 추가
+더블클릭해서 열기
+
+조건 설정
+
+
+"Add Condition" 클릭
+Type: Number
+Value 1: {{ $json.금액 }}
+Operation: "Larger"
+Value 2: 100000
+
+결과에 따라 다른 노드 연결
+
+IF 노드 아래 보면 "true"와 "false" 출구가 있어요
+true (10만원 이상): 프리미엄 서비스 노드 연결
+false (10만원 미만): 일반 서비스 노드 연결
+이렇게 쓰면 돼요:
+
+고객 데이터
+    ↓
+[IF: 금액 > 100,000원?]
+    ↓               ↓
+  true           false
+    ↓               ↓
+프리미엄        일반 처리
+🤖 AI 200% 활용하기 (2025 신기능)
+🎯 AI Agent 기본 사용법
+AI Agent가 뭔가요? - 혼자서 생각하고 결정할 수 있는 똑똑한 AI예요 - 예: "경쟁사 가격 조사해줘" 하면 알아서 웹 검색하고 정리해줘요
+
+어떻게 쓰나요?
+
+AI Agent 노드 추가
+좌측에서 "AI Agent" 검색
+캔버스에 드래그
+
+AI 모델 선택
+
+"Chat Model" → "OpenAI Chat Model" (또는 Claude)
+Credential 연결 (API 키 필요 - OpenAI 사이트에서 발급)
+Model: "gpt-4" 선택 (성능 좋음, 약간 비쌈) 또는 "gpt-3.5-turbo" (빠르고 저렴)
+
+
+무엇을 시킬지 설명
+
+"System Message" (AI의 역할): 당신은 고객 응대 전문가입니다. 친절하고 정확하게 답변해주세요.
+
+"User Message" (실제 질문): {{ $json.고객문의 }}
+
+도구 주기 (선택사항)
+
+"Tools" → "Web Search (Tavily)" 켜기
+그럼 AI가 인터넷 검색도 할 수 있어요!
+실전 예시: 고객 문의 자동 답변
+
+Webhook (고객 문의 받기)
+    ↓
+AI Agent (답변 생성)
+    ↓
+Gmail (이메일로 답변 보내기)
+👥 여러 AI를 팀처럼 사용하기 (멀티 에이전트)
+왜 여러 AI를 쓰나요? - 한 명이 모든 걸 하는 것보다, 전문가 여럿이 협업하면 더 좋아요! - 예: 조사 전문 AI + 분석 전문 AI + 글쓰기 전문 AI
+
+쉬운 예시: 시장 조사 보고서 만들기
+
+1단계: 정보 수집 AI - AI Agent 노드 추가 - 이름: "정보 수집 AI" - System Message: 당신은 정보 수집 전문가입니다. 주제에 대한 최신 정보와 통계를 찾아주세요. - Tools: Web Search 켜기 - 색상: 파란색
+
+2단계: 분석 AI - AI Agent 노드 하나 더 추가 - 이름: "분석 AI" - System Message: 당신은 데이터 분석가입니다. 정보를 분석하여 핵심 인사이트를 찾아주세요. - User Message: 다음 정보를 분석해주세요: {{ $('정보 수집 AI').first().json.output }} - 색상: 초록색
+
+
+3단계: 보고서 작성 AI - AI Agent 노드 하나 더 - 이름: "보고서 작성 AI" - System Message: 당신은 전문 리포터입니다. 분석 결과를 읽기 쉬운 보고서로 만들어주세요. - User Message: 다음 분석 결과를 보고서로 작성해주세요: {{ $('분석 AI').first().json.output }} - 색상: 빨간색
+
+연결하기:
+
+Manual Trigger (주제 입력)
+    ↓
+정보 수집 AI (조사)
+    ↓
+분석 AI (인사이트 도출)
+    ↓
+보고서 작성 AI (최종 정리)
+    ↓
+결과 저장/전송
+언제 유용한가요? - 복잡한 리서치 보고서 - 고객 피드백 분석 및 요약 - 경쟁사 분석 리포트 - 뉴스레터 자동 생성
+
+🔧 문제 해결 꿀팁
+❗ 자주 하는 실수 TOP 5
+1. "노드가 실행이 안 돼요!"
+확인해보세요: - ✅ 워크플로우가 "Active" 상태인가요? (우측 상단 토글 켜기) - ✅ 모든 노드가 화살표로 연결되어 있나요? - ✅ 필수 입력값에 빨간 표시 없나요?
+
+해결법: 1. 노드 하나씩 "Test Step" 버튼으로 테스트 2. 에러 메시지 읽어보기 (대부분 뭐가 문제인지 알려줘요) 3. 노드 설정에서 빨간색 테두리 찾기 → 거기 값 입력
+
+2. "Credential 연결이 안 돼요!"
+확인해보세요: - ✅ API 키나 비밀번호를 정확히 복사했나요? (공백 주의!) - ✅ 외부 서비스에서 API 접근을 허용했나요? - ✅ Credential 만료되지 않았나요?
+
+
+해결법: 1. Settings → Credentials 가기 2. 해당 Credential 클릭 → Delete 3. 다시 새로 만들기 4. 복사-붙여넣기할 때 앞뒤 공백 확인
+
+3. "데이터가 이상하게 나와요!"
+확인해보세요: - ✅ 이전 노드의 출력 형태를 봤나요? (노드 클릭 → 우측에서 OUTPUT 탭 확인) - ✅ {{ $json.필드명 }} 에서 필드명이 정확한가요?
+
+해결법: 1. 문제되는 노드 앞에 "Set" 노드 추가 2. Set 노드에서 데이터 구조 확인 3. 필요한 필드만 골라서 깔끔하게 정리
+
+팁! 데이터가 배열인지 객체인지 헷갈리면: - 배열: [{}, {}, {}] 여러 개 - 객체: {} 하나
+
+4. "워크플로우가 너무 느려요!"
+원인과 해결: 1. API 호출이 많을 때 - 해결: 꼭 필요한 데이터만 가져오기 - 불필요한 필드는 제외
+
+대용량 데이터 처리
+해결: "Split In Batches" 노드로 나눠서 처리
+한 번에 100개씩만 처리하도록
+
+복잡한 코드
+
+해결: Code 노드 대신 기본 노드 활용
+예: IF 노드, Filter 노드가 더 빠름
+5. "테스트는 되는데 실제론 안 돼요!"
+
+확인해보세요: - ✅ Webhook URL이 HTTPS인가요? (HTTP는 안 됨) - ✅ 트리거 조건이 맞나요? (시간, 조건 등) - ✅ 실행 기록을 봤나요? (Executions 탭에서 확인)
+
+해결법: 1. 우측 상단 "Executions" 클릭 2. 실패한 실행 찾기 3. 에러 메시지 확인 4. 해당 노드 더블클릭 → 설정 수정
+
+💡 실전 활용 사례
+📧 사례 1: 매일 아침 날씨 + 일정 이메일 받기
+무엇을 만드나요? 매일 오전 7시에 오늘의 날씨와 구글 캘린더 일정을 이메일로 받아요.
+
+따라하기:
+
+Schedule Trigger
+Trigger Times → 매일 07:00
+
+HTTP Request (날씨 정보)
+
+Method: GET
+URL: https://api.openweathermap.org/data/2.5/weather?q=Seoul&appid=YOUR_API_KEY
+(OpenWeatherMap에서 무료 API 키 발급 필요)
+
+Google Calendar
+
+
+Operation: Get All
+Calendar: 내 캘린더 선택
+오늘 일정만 가져오기
+
+Set (내용 정리)
+
+날씨, 일정을 읽기 좋게 정리
+
+Gmail
+
+자신의 이메일로 발송
+활용 팁: - Slack이나 카카오톡으로 보내도 돼요! - 뉴스 헤드라인, 주식 시세 등도 추가 가능
+
+📊 사례 2: 구글 폼 응답을 슬랙으로 즉시 알림
+무엇을 만드나요? 구글 폼에 새 응답이 오면 바로 슬랙으로 알림이 와요.
+
+따라하기:
+
+Google Sheets Trigger
+Trigger On: Row Added
+Sheet: 구글 폼 응답 시트 선택
+
+Set (알림 내용 만들기)
+
+
+제목: {{ $json.이름 }}님의 새 응답
+내용: 주요 내용 정리
+
+Slack
+
+Channel: 원하는 채널
+Text: {{ $json.알림내용 }}
+언제 유용한가요? - 고객 문의 폼 - 이벤트 신청 폼 - 설문조사 응답 - 버그 리포트
+
+🤖 사례 3: AI 챗봇으로 FAQ 자동 답변
+무엇을 만드나요? 슬랙이나 디스코드에서 질문하면 AI가 자동으로 답변해요.
+
+따라하기:
+
+Slack Trigger (또는 Discord Trigger)
+Event: Message Posted
+Channel: 특정 채널 선택
+
+IF (봇 멘션 확인)
+
+{{ $json.text }} contains "@봇이름"
+
+AI Agent
+
+
+System Message: ``` 당신은 우리 회사의 고객 지원 봇입니다. 다음 FAQ를 참고하여 정확하게 답변하세요:
+
+Q: 환불은 어떻게 하나요? A: 구매 후 7일 이내 가능합니다...
+
+Q: 배송은 얼마나 걸리나요? A: 2-3일 소요됩니다... `` - User Message:`}
+
+Slack (답변 보내기)
+
+Channel: 같은 채널
+Text: {{ $('AI Agent').first().json.output }}
+업그레이드 팁: - Vector Store를 연결하면 회사 문서 전체를 학습시킬 수 있어요 - 답변 못 하는 건 사람에게 에스컬레이션
+
+🚀 Raycast로 n8n 생산성 10배 높이기
+Raycast가 뭔가요? Mac용 런처 앱으로, n8n 작업을 훨씬 빠르고 편하게 만들어줍니다.
+
+💡 1. Snippets로 템플릿 즉시 적용
+어떻게 유용한가요? - n8n에서 자주 쓰는 Expression을 매번 타이핑하지 않아도 돼요 - 복잡한 JSON 스키마를 단축키로 바로 입력 - 실수 없이 정확한 코드 삽입
+
+설정 방법:
+
+
+Raycast 열기 (Cmd + Space 또는 설정한 단축키)
+"Create Snippet" 검색
+자주 쓰는 코드 저장
+n8n 필수 Snippets 추천:
+
+Snippet 1: 현재 시간 Expression
+Keyword: ;now
+Content: {{$now.toFormat('yyyy-MM-dd HH:mm:ss')}}
+언제 쓰나요? 로그 기록, 타임스탬프 추가할 때
+
+Snippet 2: 조건부 값
+Keyword: ;ifelse
+Content: {{$json.field ? $json.field : 'default'}}
+언제 쓰나요? 값이 없을 때 기본값 설정할 때
+
+Snippet 3: JSON 파싱
+Keyword: ;parse
+Content: {{JSON.parse($json.rawData)}}
+언제 쓰나요? 문자열을 JSON으로 변환할 때
+
+Snippet 4: 배열 필터
+Keyword: ;filter
+Content: {{$json.items.filter(item => item.status === 'active')}}
+언제 쓰나요? 배열에서 특정 조건 데이터만 추출할 때
+
+Snippet 5: Code 노드 템플릿
+
+Keyword: ;code
+Content:
+const items = $input.all();
+
+return items.map(item => {
+  return {
+    json: {
+      // 여기에 로직 작성
+      result: item.json.data
+    }
+  };
+});
+언제 쓰나요? Code 노드에서 데이터 변환할 때
+
+Snippet 6: 에러 핸들링
+Keyword: ;try
+Content:
+try {
+  // 실행할 코드
+  const result = $json.data;
+  return [{ json: { result } }];
+} catch (error) {
+  return [{ json: { error: error.message } }];
+}
+언제 쓰나요? Code 노드에서 안전하게 에러 처리할 때
+
+팁! Keyword는 ;로 시작하면 실수로 실행될 일이 없어요!
+
+🔌 2. MCP (Model Context Protocol) 통합
+MCP가 뭔가요? Raycast AI가 외부 도구(n8n 포함)와 소통할 수 있게 해주는 프로토콜입니다.
+
+n8n과 어떻게 활용하나요?
+
+활용 1: AI로 워크플로우 설명 요청
+Raycast AI Chat 열기 (Cmd + Space → "AI Chat")
+n8n 워크플로우 JSON 복사
+AI에게 물어보기: 이 n8n 워크플로우가 뭘 하는지 설명해줘: [JSON 붙여넣기]
+결과: AI가 워크플로우를 한국어로 쉽게 설명해줘요!
+
+활용 2: Expression 자동 생성
+
+Raycast AI에서:
+
+n8n Expression으로 변환해줘:
+- 오늘부터 7일 전 날짜를 YYYY-MM-DD 형식으로
+AI 응답:
+
+{{$now.minus({days: 7}).toFormat('yyyy-MM-dd')}}
+활용 3: 에러 디버깅
+에러 메시지 복사 → Raycast AI:
+
+n8n에서 이런 에러가 났어:
+"Cannot read property 'data' of undefined"
+
+어떻게 해결하지?
+AI가 해결책 제시: - 원인 설명 - 수정 방법 - 예방 팁
+
+⚡ 3. Quick Actions로 n8n 빠르게 열기
+설정: 1. Raycast → Extensions → Browse Extensions 2. "Quicklinks" 설치 3. n8n URL 추가: - Name: "n8n" - Link: https://your-n8n-instance.com
+
+사용: - Cmd + Space → "n8n" 입력 → Enter - 바로 n8n 대시보드 오픈!
+
+📝 4. Window Management로 효율성 극대화
+n8n 작업 시 화면 배치:
+
+Raycast Window Management 사용
+Cmd + Alt + →: 브라우저(n8n) 오른쪽 절반
+Cmd + Alt + ←: 문서/참고자료 왼쪽 절반
+Cmd + Alt + F: 전체화면
+
+추천 레이아웃: ┌─────────────────┬─────────────────┐ │ n8n 캔버스 │ 참고 문서 │ │ │ (공식 문서, │ │ 워크플로우 │ 노션 메모 등) │ └─────────────────┴─────────────────┘
+
+🎯 실전 활용 시나리오
+시나리오 1: 새 워크플로우 빠르게 시작
+Cmd + Space → "n8n" (n8n 열기)
+새 워크플로우 생성
+Code 노드 추가 → ;code (템플릿 자동 삽입)
+필요하면 Raycast AI에 "이 데이터를 변환하는 코드 작성해줘" 요청
+시나리오 2: 디버깅 워크플로우
+n8n 에러 발생
+에러 메시지 복사 (Cmd + C)
+Cmd + Space → "AI Chat"
+"n8n 에러 해결법: {붙여넣기}"
+해결책 받아서 즉시 적용
+시나리오 3: Expression 헷갈릴 때
+n8n Expression 필드 클릭
+;now 또는 ;filter (Snippet 자동 완성)
+필요하면 Raycast AI로 "이 Expression 설명해줘" 요청
+💎 Pro Tips
+Dynamic Snippets 활용 Keyword: ;log Content: console.log('🔍 {cursor}:', {cursor}); {cursor}는 커서 위치를 표시해요!
+
+Date Snippets Keyword: ;today Content: {date format="yyyy-MM-dd"} Raycast가 오늘 날짜를 자동으로 넣어줘요!
+
+Team Snippets 공유
+
+Raycast for Teams 사용 시
+팀원들과 n8n Snippets 공유 가능
+모두가 같은 Expression 패턴 사용 → 일관성 UP!
+🎓 더 배우고 싶다면?
+공식 리소스
+n8n 공식 문서: https://docs.n8n.io/
+YouTube 튜토리얼: https://www.youtube.com/@n8n-io
+커뮤니티
+Discord: https://discord.gg/n8n (한국어 채널 있음!)
+포럼: https://community.n8n.io/
+학습 순서 추천
+기본 워크플로우 3-5개 직접 만들어보기
+템플릿 복사해서 수정해보기
+AI Agent 활용해보기
+커뮤니티에서 다른 사람 질문/답변 읽기
+🎯 마무리: 이것만은 기억하세요!
+Top 3 황금 팁
+작게 시작하기
+처음부터 복잡하게 만들지 마세요
+노드 2-3개로 시작해서 점점 추가하기
+
+자주 테스트하기
+
+노드 하나 추가할 때마다 "Test Step" 눌러보기
+전체 다 만들고 테스트하면 어디가 문제인지 찾기 어려워요
+
+템플릿 활용하기
+
+바퀴를 다시 발명하지 마세요
+비슷한 템플릿 찾아서 수정하는 게 훨씬 빨라요
+막힐 때는?
+에러 메시지를 구글에 검색
+n8n Discord에 질문 (친절하게 답해줘요!)
+비슷한 워크플로우 템플릿 참고
+이 가이드가 도움이 되었나요? 🚀
+
+실전에서 직접 만들어보면서 배우는 게 가장 빠릅니다. 작은 자동화부터 시작해보세요!
+
+마지막 편집일시 : 2025년 12월 4일 8:21 오후

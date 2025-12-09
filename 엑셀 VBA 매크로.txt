@@ -1,4 +1,6 @@
-Alt F8
+Alt F11
+Microsoft Excel 개체
+sheet1(Sheet1) > 오른쪽 마우스 > 삽입 > 모듈
 
 Sub test1()
     Range("b2,c3").Select
@@ -44,3 +46,194 @@ End Sub
 
 
 
+4강
+
+Sub TEST1()
+     MsgBox ("안녕하세요?")
+End Sub
+
+Sub TEST2()
+    MsgBox "나이가 만 20세 이상입니까?", vbYesNo
+End Sub
+
+Sub TEST3()
+    MsgBox "나이가 만 20세 이상입니까?", vbOKCancel, "질문"
+End Sub
+
+Sub TEST4()
+    MsgBox "나이가 만 20세 이상입니까?", vbYesNoCancel, "질문"
+End Sub
+
+Sub TEST5()
+    InputBox "당신이 다니는 회사명을 입력하세요"
+End Sub
+
+Sub TEST6()
+    InputBox "당신이 다니는 회사명을 입력하세요", "질문"
+End Sub
+
+Sub TEST7()
+    Company = InputBox("당신이 다니는 회사명을 입력하세요", "질문", "해커스 HRD")
+    MsgBox (Company)
+End Sub
+
+Sub TEST8()
+    Company = InputBox("당신이 다니는 회사명을 입력하세요", "질문", "해커스 HRD")
+    Range("P3").Value = Company
+End Sub
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+22강
+
+Sub RESET_COLOR()
+
+Set aa = Range(Range("b4"), Range("b4").Offset(0, 3).End(xlDown))
+aa.Interior.ColorIndex = 0
+
+End Sub
+Sub FIND_COMPANY()
+
+'색상 초기화
+Call RESET_COLOR
+
+'b4부터 b4의 맨 아래범위까지 aa변수에 저장.
+Set aa = Range(Range("b4"), Range("b4").Offset(0, 0).End(xlDown))
+
+'인풋박스를 열어서 nation에 국적 변수 저장하시오
+nation = InputBox("회사의 국적을 입력하시오")
+
+'nation이 공란이 아니라면
+If nation <> "" Then
+
+'각각의 셀에 대해서
+    For Each cell In aa
+        
+        'cell의 오른쪽 1칸 즉, C열의 값이 natio과 같다면 색상바꾸시오
+        If cell.Offset(0, 1).Value = nation Then
+        
+            cell.Offset(0, 0).Interior.ColorIndex = 6
+            cell.Offset(0, 1).Interior.ColorIndex = 6
+            cell.Offset(0, 2).Interior.ColorIndex = 6
+            cell.Offset(0, 3).Interior.ColorIndex = 6
+        
+        End If
+    
+    Next
+
+End If
+
+'i10셀에 선택 국가 입력
+Range("i10").Value = nation
+
+End Sub
+
+
+------------------------------------------------------------------------------------------------------------------------------------
+ 
+23강
+
+Sub TOTAL()
+
+'기존 데이터 삭제 (B3~맨 아래까지)
+Call CLEAN
+
+'각각의 시트에 대해서
+For Each sht In Worksheets
+
+'시트 이름이 "취합"이 아니라면
+    If sht.Name <> "취합" Then
+    
+        '각 시트 데이터에서 b3부터 오른쪽 아래로 끝까지 내려서 복사
+        sht.Range(sht.Range("b3"), sht.Range("b2").Offset(0, 2).End(xlDown)).Copy
+        
+            '취합시트의 B3셀이 없다면, B3셀에 복사붙이기를하고
+            If Worksheets("취합").Range("b3").Value = "" Then
+            
+                Worksheets("취합").Range("b3").PasteSpecial
+            
+            '취합시트이 B3셀에 값이 있다면, B2부터 아래로 맨끝의 한칸 아래에  복사붙이기하시오
+            Else
+                
+                Worksheets("취합").Range("b2").End(xlDown).Offset(1, 0).PasteSpecial
+            
+            End If
+        
+    End If
+
+Next
+
+End Sub
+
+Sub CLEAN()
+
+'b3부터~ b2에서 오른쪽에서 맨아래로 즉 모든데이터 초기화
+Set aa = Range(Range("b3"), Range("b2").Offset(0, 2).End(xlDown))
+
+aa.ClearContents
+
+End Sub
+
+
+-----------------------------------------------------------------------------------------------------------------------------------
+24강
+
+Sub TOTAL()
+
+answer = MsgBox("시트를 모두 삭제하시겠습니까?", vbYesNo)
+
+If answer = vbYes Then
+
+    'B3셀부터 B3셀 아래로 끝까지의 범위를 aa 변수로 저장하시오
+    Set aa = Range(Range("b3"), Range("b3").End(xlDown))
+
+    '각각의 aa범위 안에 있는 셀 에 대해서
+    For Each cell In aa
+    
+        If cell.Value <> "" Then
+        
+            Worksheets("양식").Copy after:=Worksheets(Worksheets.Count)
+            
+            ActiveSheet.Name = cell.Value
+            
+        End If
+        
+        Worksheets("취합").Activate
+    
+    Next
+
+End If
+
+End Sub
+
+Sub CLEAN()
+
+answer = MsgBox("시트를 모두 삭제하시겠습니까?", vbYesNo)
+
+Application.DisplayAlerts = False
+
+If answer = vbYes Then
+
+    For Each sht In Worksheets
+    
+        If sht.Name <> "취합" And sht.Name <> "양식" Then
+        
+        sht.Delete
+        
+        End If
+    
+    Next
+    
+End If
+
+
+---------------------------------------------------------------------------------------------------------------------------------------
+25강
+
+Sub 매크로3()
+'
+    Range(Range("j9"), Range("m10").End(xlDown)).Clear
+
+    Range(Range("b8"), Range("e8").End(xlDown)).AdvancedFilter Action:=xlFilterCopy, CriteriaRange:=Range( _
+        "B3:E4"), CopyToRange:=Range("J8:M8"), Unique:=False
+ 
+End Sub
