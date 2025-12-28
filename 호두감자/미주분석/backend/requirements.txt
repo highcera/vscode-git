@@ -1,0 +1,26 @@
+# US Market Backend - Required Packages
+# Install: pip install -r requirements.txt
+
+# Core Data Processing
+pandas>=2.0.0
+numpy>=1.24.0
+
+# Stock Data Collection
+yfinance>=0.2.30
+
+# Progress Bars
+tqdm>=4.65.0
+
+# HTTP Requests
+requests>=2.31.0
+
+# Environment Variables
+python-dotenv>=1.0.0
+
+# AI Integration (Optional - for AI analysis features)
+google-generativeai>=0.3.0
+openai>=1.0.0
+
+# Visualization (Optional - for local charts)
+seaborn>=0.12.0
+matplotlib>=3.7.0

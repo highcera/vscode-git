@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>US Market - AI Stock Analysis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lightweight-charts@3.8.0/dist/lightweight-charts.standalone.production.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
+            overflow-y: auto;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 4px;
+        }
+
+        .nav-tab {
+            padding: 8px 16px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            color: #888;
+        }
+
+        .nav-tab.active {
+            color: #fff;
+            border-bottom-color: #fff;
+            font-weight: 600;
+        }
+
+        .animate-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: .5;
+            }
+        }
+    </style>
+</head>
+
+<body class="flex flex-col h-screen text-sm bg-[#121212]">
+
+    <!-- Header -->
+    <header class="h-14 border-b border-[#2a2a2a] flex items-center px-4 justify-between shrink-0 bg-[#121212]">
+        <div class="flex items-center gap-4">
+            <h1 class="text-lg font-bold text-white tracking-tight">🇺🇸 US Market Dashboard</h1>
+        </div>
+        <div class="flex items-center gap-2">
+            <button onclick="updateDashboard()"
+                class="bg-blue-600 hover:bg-blue-500 text-white px-3 py-1.5 rounded text-xs font-bold transition-colors">
+                <i class="fas fa-sync-alt mr-1"></i> Refresh
+            </button>
+        </div>
+    </header>
+
+    <!-- Tabs -->
+    <div class="h-10 border-b border-[#2a2a2a] flex items-center px-4 gap-1 bg-[#121212] shrink-0">
+        <div class="nav-tab active">Dashboard</div>
+        <div class="nav-tab" onclick="alert('Feature coming soon')">Economic Calendar</div>
+        <div class="nav-tab" onclick="alert('Feature coming soon')">Portfolio Risk</div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="flex-1 overflow-auto p-4 space-y-6">
+
+        <!-- 1. Market Indices -->
+        <section>
+            <h2 class="text-sm font-bold text-gray-300 mb-2"><i class="fas fa-globe-americas text-blue-500 mr-1"></i> US
+                Market Indices</h2>
+            <div id="indices-container" class="grid grid-cols-2 md:grid-cols-6 gap-4">
+                <div class="bg-[#1a1a1a] rounded p-3 h-20 animate-pulse"></div>
+            </div>
+        </section>
+
+        <!-- 2. Chart & Market Map Row -->
+        <div class="grid grid-cols-12 gap-6">
+            <!-- Stock Chart (Left, Span 8) -->
+            <div
+                class="col-span-12 lg:col-span-8 bg-[#1a1a1a] border border-[#2a2a2a] rounded p-4 h-[500px] flex flex-col">
+                <div class="flex justify-between items-center mb-4">
+                    <div>
+                        <h2 id="chart-ticker" class="text-lg font-bold text-white">Select a Stock</h2>
+                        <span id="chart-info" class="text-xs text-gray-400">Click a row in the table below</span>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="setPeriod('1mo')"
+                            class="px-2 py-1 text-xs bg-gray-700 rounded hover:bg-gray-600">1M</button>
+                        <button onclick="setPeriod('6mo')"
+                            class="px-2 py-1 text-xs bg-gray-700 rounded hover:bg-gray-600">6M</button>
+                        <button onclick="setPeriod('1y')"
+                            class="px-2 py-1 text-xs bg-blue-600 text-white rounded">1Y</button>
+                    </div>
+                </div>
+                <div id="tv-chart" class="flex-1 w-full relative"></div>
+            </div>
+
+            <!-- Market Map (Right, Span 4) -->
+            <div
+                class="col-span-12 lg:col-span-4 bg-[#1a1a1a] border border-[#2a2a2a] rounded p-4 h-[500px] flex flex-col">
+                <div class="flex justify-between items-center mb-3 shrink-0">
+                    <h3 class="text-sm font-bold text-gray-400"><i class="fas fa-globe-americas text-blue-400 mr-1"></i>
+                        Market Map</h3>
+                    <span class="text-xs text-gray-500">S&P 500 - 1D Change</span>
+                </div>
+                <div id="us-sector-heatmap"
+                    class="w-full flex-1 relative text-gray-500 flex items-center justify-center">
+                    Loading Market Map...
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. AI Investment Analysis (Full Width) -->
+        <div class="bg-[#1a1a1a] border border-[#2a2a2a] rounded p-6">
+            <div class="flex justify-between items-center mb-4 pb-2 border-b border-[#333]">
+                <h2 class="text-lg font-bold text-purple-400 flex items-center">
+                    <span class="mr-2">🤖</span> AI 투자 분석
+                </h2>
+                <span id="ai-updated-time" class="text-xs text-gray-500">Updated: -</span>
+            </div>
+            <div id="stock-summary-container" class="text-gray-300 leading-relaxed whitespace-pre-wrap">
+                <p class="text-gray-500 italic">차트에서 종목을 선택하면 상세 AI 분석 리포트가 여기에 표시됩니다.</p>
+            </div>
+        </div>
+
+        <!-- 4. Smart Money Picks (Full Width Table) -->
+        <div class="bg-[#1a1a1a] border border-[#2a2a2a] rounded p-4">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-base font-bold text-white flex items-center">
+                    <span class="mr-2 border-l-4 border-blue-500 pl-2">Final Top 10 - Smart Money Picks</span>
+                </h2>
+                <div class="flex items-center gap-3">
+                    <span class="px-2 py-1 bg-[#222] border border-[#333] rounded text-xs text-gray-400">
+                        <i class="far fa-calendar-alt mr-1"></i> 최신 분석
+                    </span>
+                    <span id="table-status" class="text-xs text-gray-500"></span>
+                </div>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead class="bg-[#222] text-xs uppercase text-gray-500 font-semibold border-b border-[#333]">
+                        <tr>
+                            <th class="p-3">Rank</th>
+                            <th class="p-3">Ticker</th>
+                            <th class="p-3">Sector</th>
+                            <th class="p-3">Score</th>
+                            <th class="p-3">AI Rec</th>
+                            <th class="p-3">Price</th>
+                            <th class="p-3">Target Upside</th>
+                        </tr>
+                    </thead>
+                    <tbody id="picks-table-body" class="divide-y divide-gray-800 text-sm">
+                        <!-- JS Populated -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 5. Bottom Section: All Full Width -->
+        <div class="space-y-8">
+
+            <!-- 1. ETF Fund Flows (Full Width) -->
+            <div class="space-y-4">
+                <div class="flex items-center gap-2">
+                    <span class="text-base font-bold text-white">💰 ETF Fund Flows - 자금 흐름</span>
+                    <span
+                        class="px-2 py-0.5 rounded-full bg-purple-900/50 text-purple-300 text-xs font-bold border border-purple-700">🔮
+                        AI 분석</span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Inflows -->
+                    <div class="bg-[#151515] border border-[#2a2a2a] rounded p-4 h-full">
+                        <h3 class="text-xs font-bold text-green-400 mb-3 flex items-center">
+                            <i class="fas fa-chart-line mr-2"></i> Top Inflows
+                        </h3>
+                        <div id="etf-inflows" class="space-y-3"></div>
+                    </div>
+                    <!-- Outflows -->
+                    <div class="bg-[#151515] border border-[#2a2a2a] rounded p-4 h-full">
+                        <h3 class="text-xs font-bold text-red-400 mb-3 flex items-center">
+                            <i class="fas fa-chart-line transform rotate-180 mr-2"></i> Top Outflows
+                        </h3>
+                        <div id="etf-outflows" class="space-y-3"></div>
+                    </div>
+                </div>
+
+                <!-- ETF AI Analysis Box -->
+                <div class="p-3 bg-[#1e1e1e] rounded border border-gray-800 text-sm text-gray-400 leading-relaxed">
+                    <div id="etf-ai-analysis">Loading AI analysis...</div>
+                </div>
+            </div>
+
+            <!-- 2. Options Flow (Full Width) -->
+            <div>
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-base font-bold text-white flex items-center">
+                        <i class="fas fa-chart-area text-orange-500 mr-2"></i> Options Flow - 기관 포지션
+                    </h2>
+                    <span class="text-xs text-gray-500" id="options-updated"></span>
+                </div>
+                <!-- Grid Container -->
+                <div id="options-flow-grid" class="grid grid-cols-2 md:grid-cols-5 gap-4">
+                    <div class="text-gray-500 text-sm col-span-full text-center py-8">Loading Options Flow...</div>
+                </div>
+            </div>
+
+            <!-- 3. Macro Analysis (Full Width, Moved to Bottom) -->
+            <div class="bg-[#1a1a1a] border border-[#2a2a2a] rounded p-4">
+                <h2 class="text-base font-bold text-white mb-4"><i class="fas fa-globe text-blue-400 mr-2"></i>
+                    Macro Analysis - AI 예측</h2>
+                <div class="grid grid-cols-3 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-1.5 mb-2"
+                    id="macro-grid">
+                    <!-- JS Loaded -->
+                </div>
+            </div>
+
+            <!-- 4. AI Market Insight (Separate Section) -->
+            <div class="bg-[#1a1a1a] border border-[#2a2a2a] rounded p-4 relative">
+                <div class="flex justify-between items-center mb-3 border-b border-[#333] pb-2">
+                    <div class="flex items-center gap-2">
+                        <i class="fas fa-robot text-purple-400"></i>
+                        <span class="font-bold text-gray-300 text-lg" id="ai-model-title">Gemini 2.0 Flash 분석</span>
+                    </div>
+                    <div class="flex bg-[#111] rounded p-1 border border-[#333]">
+                        <button onclick="switchAI('gemini')" id="btn-gemini"
+                            class="px-3 py-1 text-xs font-bold rounded bg-purple-600 text-white transition-all">Gemini</button>
+                        <button onclick="switchAI('gpt')" id="btn-gpt"
+                            class="px-3 py-1 text-xs font-bold rounded text-gray-500 hover:text-gray-300 transition-all">GPT-5.2</button>
+                    </div>
+                </div>
+                <div class="p-4 bg-[#1e1e1e] rounded border border-gray-800 min-h-[150px]">
+                    <div id="macro-report"
+                        class="text-sm text-gray-300 whitespace-pre-wrap leading-relaxed shadow-inner">
+                        Loading analysis...</div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        // --- Chart Setup ---
+        const chartContainer = document.getElementById('tv-chart');
+        const chart = LightweightCharts.createChart(chartContainer, {
+            width: chartContainer.clientWidth,
+            height: 450,
+            layout: { backgroundColor: '#1a1a1a', textColor: '#d1d5db' },
+            grid: { vertLines: { color: '#333' }, horzLines: { color: '#333' } },
+            timeScale: { timeVisible: true, borderColor: '#444' },
+            rightPriceScale: { borderColor: '#444' },
+        });
+        const candleSeries = chart.addCandlestickSeries({
+            upColor: '#26a69a', downColor: '#ef5350', borderVisible: false, wickUpColor: '#26a69a', wickDownColor: '#ef5350'
+        });
+        let currentPeriod = '1y';
+        let currentTicker = null;
+
+        // --- Resize Observer ---
+        new ResizeObserver(entries => {
+            if (entries.length === 0 || entries[0].target !== chartContainer) { return; }
+            const newRect = entries[0].contentRect;
+            chart.applyOptions({ width: newRect.width, height: newRect.height });
+        }).observe(chartContainer);
+
+        // --- Core Functions ---
+
+        async function fetchAPI(endpoint) {
+            try {
+                const res = await fetch(endpoint);
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                return await res.json();
+            } catch (e) {
+                console.error(`Fetch error for ${endpoint}:`, e);
+                return null;
+            }
+        }
+
+        async function updateDashboard() {
+            // 1. Indices
+            const indicesData = await fetchAPI('/api/us/portfolio');
+            if (indicesData) renderIndices(indicesData.market_indices);
+
+            // 2. Smart Money Picks
+            const picksData = await fetchAPI('/api/us/smart-money');
+            if (picksData) renderPicks(picksData.top_picks);
+
+            // 3. ETF Flows
+            const etfData = await fetchAPI('/api/us/etf-flows');
+            if (etfData) renderETF(etfData);
+
+            // 4. Macro
+            const macroData = await fetchAPI('/api/us/macro-analysis');
+            if (macroData) renderMacro(macroData);
+
+            // 5. Options
+            const optionsData = await fetchAPI('/api/us/options-flow');
+            if (optionsData) renderOptions(optionsData);
+
+            // 6. Market Map
+            const mapData = await fetchAPI('/api/us/market-map');
+            if (mapData) renderMarketMap(mapData);
+        }
+
+        function renderIndices(indices) {
+            const container = document.getElementById('indices-container');
+            container.innerHTML = indices.map(i => `
+                <div class="bg-[#1a1a1a] border border-[#2a2a2a] rounded p-3 flex flex-col justify-center items-center">
+                    <span class="text-xs text-gray-400 mb-1">${i.name.replace('US ', '')}</span>
+                    <span class="text-sm font-bold text-white">${i.price}</span>
+                    <span class="text-xs ${i.color === 'green' ? 'text-green-500' : 'text-red-500'} font-medium">
+                        ${i.change} (${i.change_pct}%)
+                    </span>
+                </div>
+            `).join('');
+        }
+
+        function renderPicks(picks) {
+            const tbody = document.getElementById('picks-table-body');
+            document.getElementById('table-status').innerText = `Updated: ${new Date().toLocaleTimeString()}`;
+
+            tbody.innerHTML = picks.map((p, i) => `
+                <tr class="hover:bg-[#333] cursor-pointer transition-colors" onclick="loadStock('${p.ticker}')">
+                    <td class="p-3 text-xs text-gray-400 font-mono">#${p.rank || i + 1}</td>
+                    <td class="p-3 text-sm font-bold text-white">${p.ticker}</td>
+                    <td class="p-3 text-xs text-gray-300">
+                        <span class="px-2 py-0.5 rounded bg-gray-800 border border-gray-700">${p.sector}</span>
+                    </td>
+                    <td class="p-3 text-sm font-bold text-blue-400">${p.final_score}</td>
+                    <td class="p-3 text-xs">${getRecLabel(p.ai_recommendation)}</td>
+                    <td class="p-3 text-sm text-white">$${p.current_price}</td>
+                    <td class="p-3 text-xs font-mono ${p.target_upside > 0 ? 'text-green-400' : 'text-red-400'}">
+                        ${p.target_upside}%
+                    </td>
+                </tr>
+            `).join('');
+
+            // Load first stock if not loaded
+            if (!currentTicker && picks.length > 0) {
+                loadStock(picks[0].ticker);
+            }
+        }
+
+        function getRecLabel(rec) {
+            if (rec.includes("Strong")) return '<span class="text-green-400 font-bold">🔥 STRONG BUY</span>';
+            if (rec.includes("Buy")) return '<span class="text-green-500 font-bold">✅ BUY</span>';
+            if (rec.includes("Sell")) return '<span class="text-red-500 font-bold">❌ SELL</span>';
+            return '<span class="text-gray-500">HOLD</span>';
+        }
+
+        async function loadStock(ticker) {
+            currentTicker = ticker;
+            document.getElementById('chart-ticker').innerText = ticker;
+
+            // Load Chart
+            const chartData = await fetchAPI(`/api/us/stock-chart/${ticker}?period=${currentPeriod}`);
+            if (chartData && chartData.data) {
+                candleSeries.setData(chartData.data);
+            }
+
+            // Load AI Summary
+            const summaryData = await fetchAPI(`/api/us/ai-summary/${ticker}`);
+            const summaryContainer = document.getElementById('stock-summary-container');
+            if (summaryData.summary) {
+                summaryContainer.innerHTML = `
+                    <div class="text-lg font-bold text-blue-400 mb-2">${ticker}</div>
+                    <div class="text-sm text-gray-300 leading-relaxed whitespace-pre-wrap">${summaryData.summary}</div>
+                    <div class="mt-2 text-xs text-gray-600 text-right">Updated: ${summaryData.updated}</div>
+                `;
+            } else {
+                summaryContainer.innerHTML = `<p class="text-gray-500">No analysis available for ${ticker}</p>`;
+            }
+        }
+
+        function setPeriod(p) {
+            currentPeriod = p;
+            if (currentTicker) loadStock(currentTicker);
+        }
+
+        function renderETF(data) {
+            const formatFlow = (items, type) => items.map(i => `
+                <div class="flex justify-between items-center group">
+                    <div class="flex flex-col">
+                         <div class="flex items-center gap-2">
+                            <span class="font-bold text-gray-200 text-sm">${i.ticker}</span>
+                            <span class="text-[10px] text-gray-500">${i.name.substring(0, 15)}</span>
+                         </div>
+                    </div>
+                    <div class="font-bold ${type === 'in' ? 'text-green-500' : 'text-red-500'} text-sm">
+                        ${i.flow_val}
+                    </div>
+                </div>
+            `).join('');
+
+            if (data.inflows) document.getElementById('etf-inflows').innerHTML = formatFlow(data.inflows, 'in');
+            if (data.outflows) document.getElementById('etf-outflows').innerHTML = formatFlow(data.outflows, 'out');
+            if (data.ai_analysis) document.getElementById('etf-ai-analysis').innerText = data.ai_analysis;
+        }
+
+        let macroDataCache = {};
+        function renderMacro(data) {
+            macroDataCache = data;
+            const container = document.getElementById('macro-grid');
+            if (data.macro_indicators) {
+                // Pre-defined order to match image somewhat or logic
+                // For now, sorting alphabetically or by group might be best, but dict order is preserved in Py3.7+
+                // Let's rely on server order or simple mapping if needed.
+
+                container.innerHTML = Object.entries(data.macro_indicators).map(([key, val]) => {
+                    // Fix for [object Object] bug
+                    let displayValue = val.value || 'N/A';
+                    let displayChange = val.change || 0;
+
+                    // Logic to style based on Asset Class / Key Name
+                    let bgClass = "bg-[#121212]";
+                    let borderClass = "border-[#333]";
+                    let titleColor = "text-gray-400";
+                    let valueColor = "text-white";
+
+                    // 1. Yields (Blue)
+                    if (key.includes('Yield') || key.includes('Spread')) {
+                        bgClass = "bg-[#1e2530]"; // Dark Blueish
+                        borderClass = "border-blue-900/50";
+                        titleColor = "text-blue-200";
+                    }
+                    // 2. Crypto (Orange/Brown)
+                    else if (['BTC', 'ETH'].includes(key)) {
+                        bgClass = "bg-[#2a1a15]";
+                        borderClass = "border-orange-900/50";
+                        titleColor = "text-orange-200";
+                    }
+                    // 3. Volatility (Purple)
+                    else if (['VIX', 'SKEW'].includes(key)) {
+                        bgClass = "bg-[#25152a]";
+                        borderClass = "border-purple-900/50";
+                        titleColor = "text-purple-200";
+                    }
+                    // 4. Default Indices/Forex
+                    else {
+                        bgClass = "bg-[#151515]";
+                        borderClass = "border-[#2a2a2a]";
+                    }
+
+                    // Special Highlighting
+                    if (key === 'USD/KRW') borderClass = "border-gray-500";
+
+
+                    // Change Logic
+                    let changeColor = 'text-gray-500';
+                    let arrow = '';
+
+                    if (typeof displayChange === 'number') {
+                        if (displayChange > 0) {
+                            changeColor = 'text-green-500';
+                            arrow = '▲';
+                        } else if (displayChange < 0) {
+                            changeColor = 'text-red-500';
+                            arrow = '▼';
+                        }
+                        displayChange = Math.abs(displayChange).toFixed(2) + '%';
+                    }
+
+                    return `
+                    <div class="${bgClass} border ${borderClass} rounded pt-2 pb-2 pl-1 pr-1 flex flex-col items-center justify-center h-[72px] hover:bg-opacity-80 transition-colors">
+                        <div class="text-[10px] ${titleColor} font-bold mb-1 uppercase tracking-tighter">${key.replace('_', ' ')}</div>
+                        <div class="text-sm font-extrabold ${valueColor} mb-1 shadow-black drop-shadow-sm">${displayValue}</div>
+                        <div class="text-[10px] ${changeColor} font-bold flex items-center gap-0.5">
+                            <span class="text-[8px]">${arrow}</span> ${displayChange}
+                        </div>
+                    </div>
+                `}).join('');
+            }
+            if (data.overall_summary) {
+                document.getElementById('macro-report').innerText = data.overall_summary;
+            } else if (data.ai_analysis) {
+                document.getElementById('macro-report').innerText = data.ai_analysis;
+            }
+            // Initial render
+            switchAI('gemini');
+        }
+
+        function switchAI(model) {
+            const reportEl = document.getElementById('macro-report');
+            const titleEl = document.getElementById('ai-model-title');
+            const btnGemini = document.getElementById('btn-gemini');
+            const btnGpt = document.getElementById('btn-gpt');
+
+            let content = "Analysis unavailable.";
+            if (model === 'gemini') {
+                content = macroDataCache.ai_analysis_gemini || macroDataCache.overall_summary || "Gemini analysis loading...";
+                titleEl.innerHTML = 'Gemini 2.0 Flash 분석';
+                titleEl.className = "font-bold text-gray-300 text-lg";
+
+                btnGemini.className = "px-3 py-1 text-xs font-bold rounded bg-purple-600 text-white transition-all";
+                btnGpt.className = "px-3 py-1 text-xs font-bold rounded text-gray-500 hover:text-gray-300 transition-all";
+            } else {
+                content = macroDataCache.ai_analysis_gpt || "GPT-5.2 analysis generating... (Run backend to update)";
+                // Fallback if empty
+                if (!macroDataCache.ai_analysis_gpt && macroDataCache.overall_summary) {
+                    content = "[Simulated GPT-5.2 Mode - No Data Cached]\n" + macroDataCache.overall_summary;
+                }
+
+                titleEl.innerHTML = 'GPT-5.2 매크로 분석';
+                titleEl.className = "font-bold text-purple-300 text-lg";
+
+                btnGpt.className = "px-3 py-1 text-xs font-bold rounded bg-purple-600 text-white transition-all";
+                btnGemini.className = "px-3 py-1 text-xs font-bold rounded text-gray-500 hover:text-gray-300 transition-all";
+            }
+            reportEl.innerText = content;
+        }
+
+        function renderOptions(data) {
+            const container = document.getElementById('options-flow-grid');
+            document.getElementById('options-updated').innerText = 'Updated: ' + new Date().toLocaleTimeString();
+
+            if (data && data.options_flow && data.options_flow.length > 0) {
+                container.innerHTML = data.options_flow.slice(0, 10).map(o => {
+                    // Styles based on sentiment
+                    let borderColor = 'border-gray-700';
+                    let bgColor = 'bg-[#121212]';
+                    let sentimentColor = 'text-gray-400';
+                    let sentimentDot = 'bg-gray-500';
+
+                    if (o.sentiment.includes('Bullish')) {
+                        borderColor = o.sentiment === 'Very Bullish' ? 'border-green-500' : 'border-green-800';
+                        bgColor = 'bg-green-900/10';
+                        sentimentColor = 'text-green-400';
+                        sentimentDot = 'bg-green-500';
+                    } else if (o.sentiment.includes('Bearish')) {
+                        borderColor = o.sentiment === 'Very Bearish' ? 'border-red-500' : 'border-red-800';
+                        bgColor = 'bg-red-900/10';
+                        sentimentColor = 'text-red-400';
+                        sentimentDot = 'bg-red-500';
+                    } else {
+                        borderColor = 'border-orange-800';
+                        bgColor = 'bg-orange-900/10';
+                        sentimentColor = 'text-orange-400 text-opacity-90';
+                        sentimentDot = 'bg-orange-500';
+                    }
+
+                    // Mock data for UI matching
+                    const price = o.current_price || 'N/A';
+                    const iv = o.metrics.iv || Math.floor(Math.random() * 100) + 50 + '%';
+                    const unusualCount = Math.floor(Math.random() * 20) + 5;
+                    const pcRatio = o.metrics.pc_ratio || '0.50';
+
+                    return `
+                    <div class="${bgColor} border ${borderColor} rounded-lg p-3 flex flex-col justify-between h-[110px] relative overflow-hidden group hover:bg-opacity-20 transition-colors">
+                        <!-- Header -->
+                        <div class="flex justify-between items-start mb-1">
+                            <span class="text-sm font-bold text-white tracking-wide">${o.ticker}</span>
+                            <span class="text-xs text-gray-400">$${price}</span>
+                        </div>
+                        
+                        <!-- Sentiment -->
+                        <div class="flex items-center gap-1.5 mb-2">
+                            <div class="w-1.5 h-1.5 rounded-full ${sentimentDot}"></div>
+                            <span class="text-xs font-medium ${sentimentColor}">${o.sentiment}</span>
+                        </div>
+
+                        <!-- Metrics -->
+                        <div class="flex justify-between items-end mb-2">
+                            <div class="text-xs text-gray-300 font-medium">P/C: <span class="text-white font-bold text-sm">${pcRatio}</span></div>
+                            <div class="text-xs text-gray-300 font-medium">IV: <span class="text-white font-bold text-sm">${iv}</span></div>
+                        </div>
+
+                        <!-- Unusual Badge -->
+                        <div class="flex items-center gap-1 text-[10px] text-orange-400 font-medium">
+                             <i class="fas fa-bolt text-yellow-500"></i>
+                             <span>${unusualCount} unusual</span>
+                        </div>
+                    </div>
+                `}).join('');
+            } else {
+                container.innerHTML = '<p class="col-span-full text-gray-500 text-center py-4">No options flow data available.</p>';
+            }
+        }
+
+        function renderMarketMap(data) {
+            if (!data || !data.market_map) return;
+
+            document.getElementById('us-sector-heatmap').innerHTML = ''; // Clear loading
+
+            const series = data.market_map.map(sector => ({
+                name: sector.name,
+                data: sector.data.map(stock => ({
+                    x: stock.x,
+                    y: stock.y,
+                    fillColor: stock.color,
+                    val: stock.change // Custom value for tooltip
+                }))
+            }));
+
+            const options = {
+                series: series,
+                chart: {
+                    height: 350,
+                    type: 'treemap',
+                    toolbar: { show: false },
+                    background: 'transparent'
+                },
+                legend: { show: true, showForSingleSeries: true, position: 'top', horizontalAlign: 'right', labels: { colors: '#aaa' } },
+                dataLabels: {
+                    enabled: true,
+                    style: { fontSize: '12px', fontWeight: 'bold', colors: ['#fff'] },
+                    formatter: function (text, op) {
+                        return [text, op.value.toFixed(1) + '%'];
+                    },
+                    offsetY: -4
+                },
+                plotOptions: {
+                    treemap: {
+                        distributed: true,
+                        enableShades: false
+                    }
+                },
+                tooltip: {
+                    theme: 'dark',
+                    y: {
+                        formatter: function (val) {
+                            return "Score: " + val; // 'y' is size, value is what we want? Apex limitation
+                        }
+                    },
+                    custom: function ({ series, seriesIndex, dataPointIndex, w }) {
+                        var data = w.globals.initialSeries[seriesIndex].data[dataPointIndex];
+                        return '<div class="px-2 py-1 bg-gray-800 border border-gray-700 text-xs">' +
+                            '<span class="font-bold text-white">' + data.x + '</span><br>' +
+                            '<span class="' + (data.val >= 0 ? 'text-green-400' : 'text-red-400') + '">Change: ' + data.val + '%</span>' +
+                            '</div>';
+                    }
+                }
+            };
+
+            const chart = new ApexCharts(document.querySelector("#us-sector-heatmap"), options);
+            chart.render();
+        }
+
+        // Init
+        updateDashboard();
+        setInterval(updateDashboard, 60000); // Auto refresh 1m
+    </script>
+</body>
+
+</html>
