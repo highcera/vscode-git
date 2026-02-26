@@ -1,3 +1,62 @@
+업무 효율 UP! 실무에 바로 활용하는 엑셀 VBA & 매크로
+
+1. 엑셀 매크로, VBA 코딩이란?
+2. 매크로 환경설정 (1)- 매크로보안설정, 개발도구 탭
+3. 매크로 환경설정 (2) - VB편집기, 프로시저 사용하기
+4. 메시지, 인풋박스, 매크로 버튼 만들기
+5. 매크로 기록기 사용하기 
+
+
+6. 셀(1)-범위 자유롭게 선택하기
+7. 셀(2)-속성(글자크기, 글자색상, 셀색상) 변경하기
+8. 셀(3)-복사, 잘라내기, 붙이기, 내용 삭제하기
+9. 시트 – 추가, 삭제, 이름바꾸기
+10. 엑셀 파일 불러오기, 다른 이름으로 저장하기
+11. 개체, 메서드, 속성 이해하기
+12. 상대참조, OFFSET 사용법 익히기
+13. 변수 선언 이해하기 ( Dim ~ As ~ )
+
+
+14. VBA 내장함수 사용하기
+
+
+15. 사용자 정의 함수 만들기
+
+
+16. IF 조건문 (IF, ELSEIF, ELSE)
+
+
+17. For ~ Next 반복문
+
+
+18. For Each ~ Next 반복문
+
+
+19. With ~ End With, Set~
+
+
+20. Select ~ Case ~ End Select, Do ~ Loop
+
+
+21. 엑셀 VBA 코딩 실무 활용 꿀팁
+
+
+
+22. 인사/재고 관리 실무 활용①-검색 및 색상변경 
+
+
+23. 인사/재고 관리 실무 활용②-시트 취합하기
+
+
+24. 날짜별 견적서 시트 생성 및 이름 바꾸기 자동화 
+
+
+25. 클릭 한번으로 필터 자유롭게 적용하기
+
+
+
+
+
 Alt F11
 Microsoft Excel 개체
 sheet1(Sheet1) > 오른쪽 마우스 > 삽입 > 모듈
@@ -178,52 +237,33 @@ End Sub
 24강
 
 Sub TOTAL()
-
 answer = MsgBox("시트를 모두 삭제하시겠습니까?", vbYesNo)
-
 If answer = vbYes Then
-
     'B3셀부터 B3셀 아래로 끝까지의 범위를 aa 변수로 저장하시오
     Set aa = Range(Range("b3"), Range("b3").End(xlDown))
 
     '각각의 aa범위 안에 있는 셀 에 대해서
-    For Each cell In aa
-    
-        If cell.Value <> "" Then
-        
-            Worksheets("양식").Copy after:=Worksheets(Worksheets.Count)
-            
-            ActiveSheet.Name = cell.Value
-            
-        End If
-        
-        Worksheets("취합").Activate
-    
+    For Each cell In aa  
+        If cell.Value <> "" Then        
+            Worksheets("양식").Copy after:=Worksheets(Worksheets.Count)            
+            ActiveSheet.Name = cell.Value            
+        End If        
+        Worksheets("취합").Activate    
     Next
-
 End If
-
 End Sub
 
 Sub CLEAN()
-
 answer = MsgBox("시트를 모두 삭제하시겠습니까?", vbYesNo)
-
 Application.DisplayAlerts = False
-
 If answer = vbYes Then
-
-    For Each sht In Worksheets
-    
-        If sht.Name <> "취합" And sht.Name <> "양식" Then
-        
-        sht.Delete
-        
-        End If
-    
-    Next
-    
+    For Each sht In Worksheets    
+        If sht.Name <> "취합" And sht.Name <> "양식" Then        
+          sht.Delete        
+        End If    
+    Next    
 End If
+End Sub
 
 
 ---------------------------------------------------------------------------------------------------------------------------------------
