@@ -1,6 +1,112 @@
-Alt F11
-Microsoft Excel 개체
-sheet1(Sheet1) > 오른쪽 마우스 > 삽입 > 모듈
+업무 효율 UP! 실무에 바로 활용하는 엑셀 VBA & 매크로
+
+1. 엑셀 매크로, VBA 코딩이란?
+*엑셀 매크로와 VBA의 차이
+1) Application : 응용 프로그램(엑셀, 파워포인트,워드,엑세스 등등)
+2) VB: Visual Basic, 프로그램 언어 중에 하나
+3) VBA : Visual Basic Application, 오피스 업무 자동화를 위한 VB 기반의 언어
+4) Macro : 매크로, 여러 개의 동작 또는 업무를 한번에 실행
+5) UDF: VBA 코딩으로 만들어낸 사용자 정의 함수[User Defined Function]
+
+
+2. 매크로 환경설정 (1)- 매크로보안설정, 개발도구 탭
+[엑셀 개발도구 상단리본 탭에 없다면?]
+1) 파일 ☞ 옵션 ☞ 리본사용자지정
+2) 사용자지정 탭에 개발도구 체크(없다면 모든 탭에서 추가)
+
+[엑셀 매크로 보안 설정 방법]
+1) 파일 ☞ 옵션 ☞ 보안센터 ☞ 보안센터 설정
+2) 모든 매크로 포함 또는 모든 매크로 제외(알림 설정)
+
+[엑셀 매크로 파일 확장자]
+1) 파일명.xlsm : 매크로, VBA 코딩이 포함된 엑셀 파일확장자
+
+
+3. 매크로 환경설정 (2) - VB편집기, 프로시저 사용하기
+[VB 편집기 실행 방법]
+1) 개발도구 ☞ Visual Basic 버튼 클릭
+2) 단축키 Alt + Fl1
+
+[모듈이란?]
+1) 엑셀 매크로, VBA 코딩을 담는 바구니
+2) 프로젝트 탐색기에서 마우스 우클릭 ☞ 삽입 ☞ 모듈
+
+[프로시저란?]
+1) 매크로 또는 함수를 생성하는 한 단위 명령어
+2) 모듈에 여러 개의 프로시저를 담을 수 있음
+3) 프로시저는 Sub~End Sub, Function ~End Fuction 명령어로 생성.
+
+
+4. 메시지, 인풋박스, 매크로 버튼 만들기
+[메시지 박스 명령어 입력 방법]
+1) msgbox "문구"
+2) Msgbox "문구", 옵션, '박스제목"
+
+[인풋 박스 명령어 입력 방법]
+1) Inputbox "문구"
+2) Inputbox "문구", "박스제목", "옵션"
+
+[매크로 버튼 연결 방법]
+1]도형에서 마우스 우클릭 ☞ 매크로 지정 ☞ 해당 프로시저 선택 ☞ 확인 버튼
+
+
+Sub TEST1()
+     MsgBox ("안녕하세요?")
+End Sub
+
+Sub TEST2()
+    MsgBox "나이가 만 20세 이상입니까?", vbYesNo
+End Sub
+
+Sub TEST3()
+    MsgBox "나이가 만 20세 이상입니까?", vbOKCancel, "질문"
+End Sub
+
+Sub TEST4()
+    MsgBox "나이가 만 20세 이상입니까?", vbYesNoCancel, "질문"
+End Sub
+
+Sub TEST5()
+    InputBox "당신이 다니는 회사명을 입력하세요"
+End Sub
+
+Sub TEST6()
+    InputBox "당신이 다니는 회사명을 입력하세요", "질문"
+End Sub
+
+Sub TEST7()
+    Company = InputBox("당신이 다니는 회사명을 입력하세요", "질문", "해커스 HRD")
+    MsgBox (Company)
+End Sub
+
+Sub TEST8()
+    Company = InputBox("당신이 다니는 회사명을 입력하세요", "질문", "해커스 HRD")
+    Range("P3").Value = Company
+End Sub
+
+
+5. 매크로 기록기 사용하기 
+[매크로 기록기란?]
+1) 방송녹화 처럼 엑셀 작업의 동작(키보드,마우스)을 코딩으로 기록해주는 기능
+2) 매크로를 가장 쉽게 만들 수 있는 방법
+
+[매크로 기록기 사용법]
+1) '매크로 기록' 클릭 ☞ 매크로 이름 지정 및 확인 ☞ 엑셀 작업 ☞ '기록 중지' 클릭
+2) VB편집기(단축키 Alt+F11)에서 기록된 VBA 코딩 확인
+3) 저장된 매크로 실행하면 같은 동작을 한번에 실행 기능.
+
+
+6. 셀(1)-범위 자유롭게 선택하기
+[셀선택 기본 명령에]
+range("b2").select                                             B2셀 선택
+range("b2:c3").select                                         B2셀~C3셀 드래그선택
+cells(2,2).select                                                아래로2칸, 오른쪽2칸셀 선택, 즉B2셀 선택
+
+[셀 선택 비어 있지 않은 셀 드래그]
+range("b2").end(xldown).select                                  B2셀에서 아래로 비어 있지 않은 셀까지이동
+range("b2").currentregion.select                                 B2셀에서 모든 방향으로 드래그 (비어있지않은 셀까지)
+range(range("b2"), range("b2").end(xldown)).select       b2부터 b2의아래 끝까지드래그선택
+
 
 Sub test1()
     Range("b2,c3").Select
@@ -42,48 +148,330 @@ Sub test10()
     Range(Range("b2"), Range("b2").End(xlToRight)).Select
 End Sub
 
------------------------------------------------------------------------------------------------------
+
+7. 셀(2)-속성(글자크기, 글자색상, 셀색상) 변경하기
+[셀색상 변경 명령에]
+1) range("b2:d4").interior.colorindex=색상번호[0~56번까지, 0번은 색없음]
+2) range("b2:d4").interior.color = rgb(255,0,0)
+
+[글자크기/색상/진하게]
+1) range("b2:d4").font.size=20
+2) range("b2:d4").font.colorindex=색상번호[0~56번까지, 0번은 색없음]
+3) range("b2:d4").font.color = rgb(255,0,0)
+4) range("b2:d4").font.bold = True
 
 
+8. 셀(3)-복사, 잘라내기, 붙이기, 내용 삭제하기
+[셀복사, 붙이기, 잘라내기, 내용삭제]
+1) range("b2:c3").copy range("d4") : B2~C3셀 복사, D4셀 에 붙여넣기
+2) range("b2:c3").cut range("d4"): B2~C3셀 잘라내기, D4셀에 붙여넣기
+3) range("b2:c3").clear:셀삭제[값,스타일 모두 삭제)]
 
-4강
+[셀 복사붙이기, 셀 내용 삭제 옵션]
+1) range("d4").PasteSpecial(xlPasteAll) :값 +스타일 붙이기
+2) range("d4").PasteSpeical(xlPasteValue) : 값붙이기
+3) range("d4").clearcontents :값만 지우기
+4) range("d4").clearformats : 스타일 삭제하기
+
+Sub test1()
+    Range("b2:c3").Value = "aa"
+    Range("b2:c3").Interior.ColorIndex = 4
+End Sub
+Sub test2()
+    Range("b2:c3").Copy Range("d4")
+    Range("b2:c3").Copy Range("b6")
+    Range("b2:c3").Copy Range("d8")
+End Sub
+Sub gesg3()
+    Range("b2:c3").Copy
+    Range("b10").PasteSpecial (xlPasteAll)
+End Sub
+Sub gesg4()
+    Range("b2:c3").Copy
+    Range("d12").PasteSpecial (xlPasteValues)
+End Sub
+Sub gesg5()
+    Range("d12:e13").Cut Range("d14")
+End Sub
+
+
+9. 시트 – 추가, 삭제, 이름바꾸기
+[시트 – 추가, 삭제, 이름바꾸기]
+1) sheets.add : 시트추가하기
+2) sheets(1).name="시트명" : 첫번째 시트명 바꾸기
+3) sheets(2).delete : 2번째 시트 삭제하기
+
+[시트 관련 코딩에 도움이 되는 명령에]
+1) sheets.count : 시트의 개수
+2) sheets.add after := sheets(sheets.count) : 맨끝에 시트 추가하기
+3) sheets(1).activate : 첫번째 시트 활성화 [첫번째 시트로 이동]
+4) Application.DisplayAlerts =False :팝업 보이지 않음 [시트 삭제여부 알림 생략]
+
+
+Sub test1()
+    Sheets.Add
+    'Sheets.Add before:=Sheets(1)
+End Sub
+Sub test2()
+    Sheets.Add.Name = "HRD"
+End Sub
+Sub test3()
+    Sheets.Add after:=Sheets(1)
+End Sub
+Sub test4()
+    MsgBox (Sheets.Count)
+End Sub
+Sub test5()
+    MsgBox ("시트개수는 " & Sheets.Count & "개 입니다.")
+End Sub
+Sub test6()
+    sht_number = Sheets.Count
+    Sheets.Add after:=Sheets(sht_number)
+End Sub
+Sub test7()
+    Range("a1") = Sheets.Count
+End Sub
+Sub test8()
+    Sheets(1).Activate
+End Sub
+Sub test9()
+    sht_name = InputBox("원하는 시트명을 입력하세요")
+    Sheets(1).Name = sht_name
+End Sub
+Sub test10()
+    Sheets(1).Delete
+End Sub
+Sub test11()
+    Application.DisplayAlerts = False
+    Sheets(1).Delete
+End Sub
+
+10. 엑셀 파일 불러오기, 다른 이름으로 저장하기
+[파일 열기/파일 닫기/파일 저장하기]
+1) Application.Workbooks.Open Filename := "C:\연습\연습파일1.xlsm"
+2) workbooks("연습파일1.xlsm").close
+3) workbooks("연습파일1.xlsm").save
+
+[읽기전용/ 저장하면서 닫기/특정 경로에 다른 이름으로 저장]
+1) Application.Workbooks.Open Filename:= "C:\연습\연습파일1.xlsm", ReadOnly:= True
+2) workbooks("연습파일1.xlsm").close SaveChanges:=False
+3) workbooks("연습파일1.xlsm").SaveAs Filename:="c:\연습\연습파일2xlsm"
+
+
+1. 특정 경로에 있는 엑셀 파일 열기
+book_name= ActiveWorkbook.Name     현재 파일명을 book_name으로 저장
+sht_name = ActiveSheet.Name             현재 시트명을 sht_name으로 저장
+
+Application.Workbooks.Open Filename:= "C:\연습\연습파일1.xlsm"
+→ C드라이브 ☞ 폴더(연습) ☞ 연습파일1.xlsm 열기
+
+Workbooks[book_name].Sheets[sht_name).Activate
+→ 처음 파일의 해당시트로 이동하기
+
 
 Sub TEST1()
-     MsgBox ("안녕하세요?")
+	Application.Workbooks.Open Filename := "c:\연습\연습파일1.xlsm"
 End Sub
 
 Sub TEST2()
-    MsgBox "나이가 만 20세 이상입니까?", vbYesNo
+	Application.Workbooks.Open Filename := "c:\연습₩연습파일1.xlsm", ReadOnly := True
 End Sub
-
 Sub TEST3()
-    MsgBox "나이가 만 20세 이상입니까?", vbOKCancel, "질문"
+	file_path = "c:W연습l"
+	file_name = "연습파일" & Range("A1").Value
+	MsgBox file_path & file_name & ".xlsm"
 End Sub
-
 Sub TEST4()
-    MsgBox "나이가 만 20세 이상입니까?", vbYesNoCancel, "질문"
+	Workbooks("연습파일1.xlsm").SaveAs Filename := "c:₩연습₩연습파일2"
 End Sub
 
-Sub TEST5()
-    InputBox "당신이 다니는 회사명을 입력하세요"
+Sub TEST1()
+	file_path = "c:₩연습₩"
+	file_name = "연습파일"
+
+	save_path = file_path & file_name & Range("a1").Value & ".xlsm"
+
+	Application.Workbooks("연습파일1.x|sm").SaveAs Filename := save_path
 End Sub
 
-Sub TEST6()
-    InputBox "당신이 다니는 회사명을 입력하세요", "질문"
+
+11. 개체, 메서드, 속성 이해하기
+[개체/메서드/속성]
+1) 개체(Object)는 어떤 코딩에 대한 대상을 의미
+2) 메서드(Method)는 개체.method 형태로 동작을 나타내는 코딩
+3) 속성[Property)은 개체.property 형태로 상태를 나타내는 코딩
+
+[개체의 구조와 사용 예제]
+1) 엑셀(Application), 엑셀 파일(Workbook), 엑셀 시트(Worksheet), 셀범위(Range) 등
+2) application.workbooks(1).worksheets(2).range("a1").select
+3) Msgbox workbooks.count
+
+12. 상대참조, OFFSET 사용법 익히기
+[상대참조/OFFSET 사용법/범위 이름 붙이기]
+1) 상대 참조란 특정 셀의 동서남북, 즉 좌,우,위,아래를 좌표를 통해 나타냄.
+2) range("C3").offset(1,1)은 C3셀에서 아래로 한 칸 오른쪽 1칸 셀 즉 D4를 나타냄.
+3) 셀의 범위에 이름(별명)을 붙일 수 있음.
+
+[Offset 사용 예제]
+1) range("c3").offset(0,0).value="해커스" ※C3셀의 값은 "해커스"
+2) range("C3").offset(1,0).value="해커스" ※C4셀의 값은 "해커스"
+
+
+13. 변수 선언 이해하기 ( Dim ~ As ~ )
+[변수 Dim~As~이해하기]
+1) Dim 변수이름 As 변수형식
+2) 변수 형식에는 integer, Long, Double, String, Variant, Object, Boolean 등이 있음
+3) Integer(정수), Double(소수점 숫자), String(문자), Boolean(참/거짓), Variant(가변변수)
+
+[변수 선언 사용 예시]
+1) Dim intAge as integer, Dim strAge as string
+2) Option Explicit 명령어를 입력하면, 변수 선언 하지 않은 변수는 사용 불가능
+
+
+14. VBA 내장함수 사용하기
+[엑셀함수 VS 내장함수]
+1) 엑셀함수는 엑셀에서 사용하는 함수
+2) VBA 내장함수는 VBA코딩에서 내장된 함수를 의미
+
+[VBA 내장함수 종류와 VBA에서 엑셀함수를 사용 예시]
+1) Len : 글자개수 세는 함수 / Left, Right : 글자 추출 / Instr : 특정 텍스트가 몇 번째 인지
+2) Application.WorksheetFunction.Sum(range("a1:c3").value) : 엑셀함수의 Sum을 사용
+
+
+15. 사용자 정의 함수 만들기
+[사용자 정의 함수 [User Defined Function] ]
+1) 엑셀함수는 엑셀에서 흔히 사용하는 내장된 함수
+2) 사용자 정의 함수(UDF)는 사용자가 마음대로 vba코딩으로 만들어낸 함수.
+3) Function 함수이름~End Function 프로시저 구조로 함수를 만듦.
+
+[ User Defined Function예시 ]
+1) Function aaa(var1 as integer, var2 as integer, Optional var3 as string)
+        aaa= var1 + var2
+    End Function
+
+
+16. IF 조건문 (IF, ELSEIF, ELSE)
+[IF 조건문 작성방법 정리]
+1) IF 조건 A Then 작업1 End if
+: 만약 조건 A를 만족하면 작업1을 하시오
+
+2) IF 조건 A Then 작업] Else 작업2 Endif
+:만약조건 A를 만족하면 작업], 아니면 작업2를 하시오
+
+[IF 조건문에 Elseif를 사용하는 경우]
+1) if 조건 A Then 작업1 Elseif 조건 B Then 작업2 else 작업3 Endif
+
+
+17. For ~ Next 반복문
+[For~ Next문 정리]
+1) For 변수=1 to 10 작업 Next 변수
+:변수에1~10을 대입하면서 작업을 하시오
+
+2) For i=1 to 10 작업 Next i
+: i에 1~10을 대입하면서 작업을 하시오
+
+[For ~ Next문을 중간에 빠져나오려면?]
+1) For ~Next문 중간에 Exit For 입력
+
+
+18. For Each ~ Next 반복문
+[For Each~Next문 정리]
+1) For Each 변수 in 바구니 작업 next
+: 바구니에서 변수를 하나씩 꺼내서 작업을 하시오
+
+2) For Each aa in Range("a1:c3") aa.value="해커스" Next
+: Al~C3 셀 범위의 각각의 aa(셀) 에 대해서 aa(셀]의 값에 "해커스" 입력하시오
+
+[For Each ~ next 시트에 적용]
+1) For Each aa in Thisworkbook.Worksheets aa.Tab.Color= VbYellow Next
+: 현재 파일의 시트들의 각각 aa(시트)에 대해서 aa(시트)의 색을 노랑으로 바꾸시오
+
+
+19. With ~ End With, Set~
+[With ~End With 구문 정리]
+1) With 개체 ~End With
+: With 구문 안에서는 동작 또는.상태로 개체의 작업들 시시할 수 있음.
+
+2) With Range("a1:c3") .value="해커스" End With
+: A1~C3 셀에 대해서.value="해커스" 즉, With 내에서 값을 "해커스"로 입력하시오
+
+[Set~으로 개체 변수이름 지정?]
+1) Set aa= range("a1:c3")
+: aa라는 변수에 개체인 AI~C3 셀범위를 지정하시오.
+
+
+20. Select ~ Case ~ End Select, Do ~ Loop
+[Select ~Case ~End Select 구문 정리]
+1) Select Case 변수 Case 값A 작업1 Case 값B 작업2 Case Else 작업 3 End Select
+: 변수에 대해서 값이 A일 경우 작업1, 값이 B일 경우 작업2, 그 이외의 경우 작업3
+20 Case + 조건을 작성할 경우 Case is 조건으로 명령어 작성함
+ex) Caseis < 1 ☞ 1보다 작은 경우
+
+[ Do While/Until ~ Loop ]
+1) Do While 조건A ~작업 Loop ☞ 조건 A를 만족하는 동안 작업하시오.
+: Do Until 조건A ~작업 Loop ☞ 조건 A를 만족할 때까지 작업하시오.
+
+
+21. 엑셀 VBA 코딩 실무 활용 꿀팁
+[엑셀 VBA 실무 활용 꿀팁 ]
+1) 1강~20강 필요한 강의들 복습하기
+2) 코딩 가독성 높이기 / 디버깅하기
+3) 검색을 활용해서 실무에 필요한 코딩 찾고 적용해보기
+
+[코딩 가독성 /디버깅?]
+1) 코딩 가독성 : 주석 달기 / Tab키로 여백 만들기 / Call명령어로 함수 호출 / With, Set활용
+2) 코딩 디버깅 : 한줄씩 실행하기 / 직접 실행창 활용 / Debug.print 명령어 활용
+
+
+22. 인사/재고 관리 실무 활용①-검색 및 색상변경 
+
+2. 실무 코딩 작성 원리 살펴 보기
+Sub FIND_COMPANY()
+
+Call RESET_COLOR                                                                                           Step1:영역의 색상을 지우시오
+
+'b4셀부터 b4의 내용이 있는 셀 맨 아래까지 aa 변수로 저장
+Set aa = Range(Range("b4"). Range("b4").Offset(0.0).End(xIDown))                 Step 2: 변수 aa는 B4부터~B4의 맨이래 끝까지 영역으로 정하시오
+인풋박스를 열어서 nation에 국적 변수를 저장하시오        
+nation = InputBox("회사의 국적을 입력하시오")                                                    Step3: InputBox를 열어서 입력된 값을 nation에 저장하시오
+'aa에 있는 각각하나의 셀에 대해서
+If nation <> "" Then                                                                                           Step4: 만약, nation인 값이비어있는 값, 즉공란("")이아니라면
+
+For Each cell In aa
+만약 각각의 셀의 아래 0칸. 오른쪽 1칸 즉 오른쪽
+·한약 셀값이 nation이 나오면 셀 색상을 바꾸시오
+If cell.Offset(0. 1).Value = nation Then                                                               Step5:aa에 있는 각각의 Cel에 대해서 cellOffset[0,1)즉오른쪽1칸의값이 nation이라면
+cell.Offset(0. 0). Interior.ColorIndex = 6                                                                        오른쪽0칸~오른쪽 4칸까지 색상을 변경
+cell.Offset(0. 1). Interior.ColorIndex = 6
+cell.Offset(0. 2). Interior.ColorIndex = 6
+cell.Offset(0. 3). Interior.ColorIndex = 6
+
+End If
+
+Next
+
+End If
+
+'선택국가 표시
+Range("i10").Value = nation                                                                               Step 6:셀 i10 값을 nation으로 바꾸시오
+
 End Sub
 
-Sub TEST7()
-    Company = InputBox("당신이 다니는 회사명을 입력하세요", "질문", "해커스 HRD")
-    MsgBox (Company)
+
+Sub RESET_COLOR()
+Set aa = Range(Range("b4"). Range("b4").Offset(0.3).End(xIDown))
+aa. Interior. ColorIndex = 0
 End Sub
 
-Sub TEST8()
-    Company = InputBox("당신이 다니는 회사명을 입력하세요", "질문", "해커스 HRD")
-    Range("P3").Value = Company
-End Sub
+[ 인사/재고 관리 실무 활용1- 검색 및 색상변경 ]
+1) set aa= Range( Range("b4"), Range("b4").Offset(0,3).End(Xldown)
+2) aa.interior.colorindex = 0
+3) Call RESET_COLOR
 
------------------------------------------------------------------------------------------------------------------------------------------------------
-22강
+[ InputBox와 같은 값을 찾는 과정 ]
+1) Set aa = Range(Range("b4"), Range("b4').Offset(0, 0).End(xIDown))
+2) For Each cell in aa 3 If cell.Offset(0,1).Value = nation Then
+
 
 Sub RESET_COLOR()
 
@@ -128,9 +516,44 @@ Range("i10").Value = nation
 End Sub
 
 
-------------------------------------------------------------------------------------------------------------------------------------
- 
-23강
+23. 인사/재고 관리 실무 활용②-시트 취합하기
+Sub TOTAL()
+
+answer = MsgBox("시트 생성하시겠습니까?", vbYesNo)                  Step1: 메시지 박스로 Yes/No 선택, 결과는 answer에 저장
+
+If answer = vbYes Then                                                                    Step2 : 메시지 박스의 결과가 VBYes라면 작업하시오
+
+'B3셀부터 B3셀 아래로 끝까최의 범위를 aa 변수로 저장하시오             Step3 : B3~B3셀 맨 끝까지 범위를 선택해서 aa로 저장
+Set aa = Range(Range("b3"),Range("b3").End(xlDown))
+
+'각각의 aa범위 안에 있는 셀 에 대해서
+For Each cell In aa                                                                             Step4  : aa에 있는 각각의 셀에 대해서 반복하시오
+
+If cell.Value <> "" Then                                                                      Step5 : cell 값이 공란이 아니라면
+
+Worksheets("A").Copy after := Worksheets(Worksheets.Count)            Step6 : 양식시트를 복사해서 시트의 맨 끝으로 붙여 넣으시오
+                                                                                                                         worksheets.count ☞ 시트개수, worksheet(숫자) ☞ 숫자번째 시트
+ActiveSheet.Name = cell.Value                                                       
+
+End If
+
+Worksheets("취합").Activate
+Next
+
+End If
+End Sub
+
+
+[인사/재고 관리 실무 활용 [시트 취합하기]]
+1) set aa= Range(Range("b3"), Range("b2").Offset(0, 2).End(xIDown))
+2] aa.ClearContents ☞ 내용 삭제 하시오
+3) Call CLEAN ☞ CLEAN 프로시저 호출
+
+[각각의 시트에 대해서 작업을 하는 과정]
+1) For Each Sht in Worksheets ~ Next
+2] sht.Range(sht.Range("b3"), sht.Range("b2").Offset(0, 2).End(xIDown)).Copy
+: 각sht에 대해서 b3셀부터 b2에서 오른쪽 2칸 맨아래로 내려간 영역을 복사하시오.
+
 
 Sub TOTAL()
 
@@ -174,7 +597,45 @@ aa.ClearContents
 End Sub
 
 
------------------------------------------------------------------------------------------------------------------------------------
+24. 날짜별 견적서 시트 생성 및 이름 바꾸기 자동화 
+Sub TOTAL()
+answer = MsgBox("시트 생성하시겠습니까?", vbYesNo)
+If answer = vbYes Then
+
+'B3셀부터 B3셀 아래로 끝까지의 범위를 aa 변수로 저장하시오
+Set aa = Range(Range("b3"), Range("b3").End(xlDown))
+
+'각각의 aa범위 안에 있는 셀 에 대해서
+For Each cell In aa
+
+If cell. Value <> "" Then
+
+Worksheets("양식").Copy after := Worksheets(Worksheets.Count)            Step 6:양식시트를 복사해서 시트의 맨 끝으로 붙여 넣으시오
+                                                                                                                        worksheets.count ☞ 시트개수, worksheets[숫자] ☞ 숫자번째시트
+ActiveSheet.Name = cell.Value
+
+End If
+
+Worksheets("취합").Activate
+
+Next
+
+End If
+
+End Sub
+
+
+[시트 삭제하기 매크로]
+1) Application.DisplayAlerts= False ☞ 경고 메시지를 무시하시오.
+2) For Each sht in Worksheets ~ Next
+3) if shtname <> "통합" and shtname<>"양식" then  ☞시트명이 양식, 통합 아니라면
+
+[날짜별 시트를 생성하는 매크로]
+1) Set aa=range[range("b3"),range("b3").End(Xdown), For Each cell in aa ~ Next
+2) worksheets("양식")].copy After:= worksheets[worksheets.count]   ☞ 맨 끝에 시트생성
+3) Activesheet.name =cell.value 활성화 된 시트이 이름을 바꾸시오
+
+
 24강
 
 Sub TOTAL()
@@ -226,8 +687,18 @@ If answer = vbYes Then
 End If
 
 
----------------------------------------------------------------------------------------------------------------------------------------
-25강
+
+25. 클릭 한번으로 필터 자유롭게 적용하기
+[고급필터 실행 방법]
+1) 상단 데이터 탭 ☞ 필터 ☞ 고급 선택으로 고급필터 실행 기능
+2) 다른 장소에 복사선택
+3)목록범위 ☞ 원본데이터, 조건 범위 ☞ 필터 조건 범위, 복사위치 ☞ 결과 위치
+
+[고급필터 매크로 만들기]
+1]매크로 기록기로 고급필터 실행해보기
+2] VB편집기에서 코딩 살펴보기, 범위 수정하기(셀 영역에 맞도록)
+3] 상단 데이터 탭 ☞ 데이터 유효성 검사 ☞ 목록 을 이용해서 조건을 목록화 기능
+
 
 Sub 매크로3()
 '
@@ -237,3 +708,18 @@ Sub 매크로3()
         "B3:E4"), CopyToRange:=Range("J8:M8"), Unique:=False
  
 End Sub
+
+
+
+● 강의를 마치며 ...
+
+▶ 1강~25강까지 강의 듣느라 고생 많으셨습니다^
+
+▶ VBA코딩을 실무에 적용하려면 지금 회사에서 하고 있는 업무를 하나씩 하나씩 코딩으로
+간단히 해보는 시도(Try)에서 시작합니다.
+
+▶ 강의에서 공부한 내용도 적용해보고, 업무에 필요한 코딩은 구글 검색 등을 활용해서
+나에게 맞는 내용을 찾아 하나씩 따라해보면 어느 순간 내 업무에 적용이 되면서
+내실력이 됩니다.
+
+▶ 업무 자동화를 통해서 효율적인 회사 업무가 되었으면 좋겠습니다.

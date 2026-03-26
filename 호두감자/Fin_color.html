@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { background-color: #121212; color: white; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .container { text-align: center; }
+        .palette { display: flex; gap: 10px; padding: 20px; background: #000; border-radius: 10px; }
+        .swatch { width: 80px; height: 80px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 4px; font-weight: bold; text-shadow: 1px 1px 2px black; border: 1px solid #333; }
+        .label { font-size: 12px; margin-top: 5px; color: #ccc; }
+        .hex { font-size: 10px; color: #aaa; margin-top: 2px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Finviz Style Color Palette</h2>
+        <div class="palette">
+            <div>
+                <div class="swatch" style="background-color: #F63538;">-3%↓</div>
+                <div class="label">폭락</div>
+                <div class="hex">#F63538</div>
+            </div>
+            <div>
+                <div class="swatch" style="background-color: #BF4045;">-1~3%</div>
+                <div class="label">하락</div>
+                <div class="hex">#BF4045</div>
+            </div>
+            <div>
+                <div class="swatch" style="background-color: #5A2629;">0~-1%</div>
+                <div class="label">약하락</div>
+                <div class="hex">#5A2629</div>
+            </div>
+            <div>
+                <div class="swatch" style="background-color: #2C2C2C;">0%</div>
+                <div class="label">보합</div>
+                <div class="hex">#2C2C2C</div>
+            </div>
+            <div>
+                <div class="swatch" style="background-color: #1A3822;">0~1%</div>
+                <div class="label">약상승</div>
+                <div class="hex">#1A3822</div>
+            </div>
+            <div>
+                <div class="swatch" style="background-color: #2F9E4F;">1~3%</div>
+                <div class="label">상승</div>
+                <div class="hex">#2F9E4F</div>
+            </div>
+            <div>
+                <div class="swatch" style="background-color: #30CC5A;">+3%↑</div>
+                <div class="label">폭등</div>
+                <div class="hex">#30CC5A</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
