@@ -1,0 +1,93 @@
+CIC
+
+PHP Programming with PDO
+
+PHP with PDO 강의개요
+
+학습목표
+
+ PDO 기반의 데이터베이스 연동을 통하여 CRUD 프로그램 및  Paging 처리 등을 학습한다.
+ Form 데이터 전송 시 자주 사용하는 Form 관련 함수 등의 사용법과 파일 기반(Text)의 DB 처리에 대해서 학습한다.
+ PDO CRUD 웹프로그램에 CSS Framework 디자인 적용과 반응형 웹과 Framework Form 요소들을 학습한다.
+ 모든 파트 학습 후에는 응용 및 활용 과정 등을 혼자서도 학습해 나갈 수 있도록 실력 배양.
+
+Part1 - PDO 연동 및 CRUD 입력
+Part2 - PDO CRUD 리스트 수정 삭제
+Part3 - FORM 데이터처리 및 파일 DB 사용      1개월 완성(하루 6~70분 정도)
+Part4 - PDO 데이터베이스 페이징
+Part5 - PDO 반응형 웹
+
+
+선수학습 및 학습대상
+
+ PHP 기초문법 및 기본적인 MySQL 사용법은 알고 있다는 전제하에서 강의가 진행됨.
+ 따라서, PHP 입문자나 초보자들을 대상으로 하는 강좌는 아님. 
+ PHP 입문자 및 초보자들은 별도의 PHP 입문과정 동영상이나 얇은 입문서를 학습한 후에 보실 것을 권장.
+ HTML, CSS 문법에 대한 어느 정도의 이해가 있어야 함.
+
+
+
+
+본 과정의 학습을 위한 필수 프로그램 및 설치 버전 안내
+
+ 1. PHP + MySQL + Apache
+	
+	MAMP 설치
+	https://www.mamp.info/en/windows/  (free download 클릭)
+	MAMP & MAMP PRO 5.0.4 (windows 10+)  공식 홈은 이걸 권장하고 있으나 본인 컴사양에 따라 판단 필요!
+	이유는 MAMP 최신 버전인 경우 닷넷 프레임워크를 필요로 할 수 있음.
+	따라서, 본인의 컴퓨터 사양이 낮거나 또는 불필요한 거대 프로그램을 설치하기 꺼려한다면 낮은 버전 설치 권장.
+	올드버전 다운로드  https://www.mamp.info/en/downloads/older-versions/
+	본 과정에서는 4.2.0 버전으로 설치 진행. (없어질지 모름. 그러면 최신 버전으로 진행)
+
+	MAMP 설치과정 및 설치 후 설정 변경
+	설치는 특별히 어려운 것이 없고 대부분은 자동으로 입력된 디폴트 값 그대로 사용하여 설치 진행해주면 끝.
+	컴퓨터 사양이 아주 좋으면(i7, RAM 32Gb, SSD) 1분 정도 소요.
+	시간이 제법 걸리는 이유는 아무래도 위 3가지 프로그램들을 패키지 형태로 일괄 설치하기 때문.
+	
+	설치 후에는 설정에서 웹서버, DB서버 가동을 자동으로 on/off 해주도록 해준다.
+	즉, MAMP 프로그램을 가동 시 서버들이 자동으로 Start 되어지고, 종료하면 자동으로 Stop 되도록 설정해준다.
+
+
+본 과정의 학습을 위한 필수 프로그램 및 설치 버전 안내
+
+ 2. Notepad++ v8.2.1
+	
+	https://notepad-plus-plus.org/downloads/ 
+	Download Notepad++ v8.2.1
+	Portable (zip) 다운로드  npp.8.2.1.portable.x64.zip
+
+	Notepad++은 설치하는 개념이 아니라 압축풀어서 사용하는 개념이므로 적당한 폴더에 압축 풀고 사용하면 끝.
+	압축풀어서 notepad++ 이름으로 바꾸고 C 드라이브 하위로 폴더 이동  C:\notepad++
+	++ 빼고 그냥 notepad 라고만 해도 됨.
+
+ 2. Notepad++ v8.2.1 설치 후 꼭 필요한 환경설정	
+	- 보통은 플러그인 설치가 필요  NppExec 설치 및 설정 변경 필요.
+	- 파이썬, 자바의 경우에 이 플러그인을 통해서 해당 프로그래밍 언어의 컴파일 및 실행환경 구축 가능.
+	- for문 하나 작성하고 저장은 C:\notepad++\sourcecode\python\MyFirst.py 로 저장.
+	- 상단메뉴 > Plugins > Plugins Admin > NppExec 설치 후 재스타트.
+	- F6 누르고 Python 컴파일 명령 입력하고 저장 이름은 "Python" 으로 컴파일 명령어 저장.
+		python "$(FULL_CURRENT_PATH)“
+	- 글꼴 설정, 백업 설정, Tab size 설정, 줄 간격 설정 등 코딩에 필요한 필수 요소 설정 어떻게 하는지 확인.
+
+
+MAMP, Notepad++ 설치 실습
+
+MAMP 5.0.4 버전 설치 시 요구하는 닷넷 프레임워크 설치 창
+Microsoft Windows Desktop Runtime - 3.1.5 (x86) 설치 관리자
+
+MAMP 설치
+
+PHP with PDO 회원가입
+회원가입 웹프로그램 PDO 연동으로 만들어보기
+
+ 1. 기본적인 회원가입 프로그램을 PDO 데이터베이스 연동 기반으로 만들어본다.
+
+ 2. CRUD 기능 구현에 초점을 맞춘다.
+	- 회원입력
+	- 회원출력
+	- 회원수정
+	- 회원삭제
+
+ 3. 웹프로그램 디자인은 CSS 프레임워크는 사용하지 않고 한다.
+

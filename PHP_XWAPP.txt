@@ -73,7 +73,7 @@ quit
 10. PHPMYADMIN 설정 변경
 C:\xampp\phpMyAdmin\config.inc.php 수정하거나 XAMPP Control Panel -> Apache -> Config -> PHPMYADMIN
 
-$cfg['Servers'][$i]['password'] = '설정된 비밀번호';
+$cfg['Servers'][$i]['password'] = '설정된 비밀번호';   ##'1234'
  
 
 ※ 참고로 PHPMYADMIN에서 mysql 데이터 베이스를 선택하고 7~8번의 과정만 해도 성공적으로 적용 된다.
