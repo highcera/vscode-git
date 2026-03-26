@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Home Design - Fixed Flow</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { margin: 0; overflow: hidden; font-family: 'Inter', sans-serif; background-color: #050505; color: #f5f5f7; }
+        #canvas-container { width: 100vw; height: 100vh; display: block; }
+        
+        /* 패널 스타일 */
+        .panel {
+            position: absolute; top: 20px;
+            background: rgba(25, 25, 27, 0.95); padding: 20px; border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6); z-index: 100;
+            display: flex; flex-direction: column; gap: 12px;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            max-height: 90vh;
+        }
+
+        #left-panel { left: 20px; width: 340px; }
+        #left-panel.closed { transform: translateX(-400px); opacity: 0; pointer-events: none; }
+
+        #right-panel { right: 20px; width: 300px; }
+        #right-panel.closed { transform: translateX(350px); opacity: 0; pointer-events: none; }
+
+        /* 단계별 UI 숨김 처리 (중요) */
+        .step-hidden { display: none !important; }
+        .step-visible { display: block !important; animation: fadeIn 0.5s ease; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* 입력 UI */
+        .input-dark {
+            background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white; padding: 10px; border-radius: 8px; width: 100%;
+            font-size: 13px; outline: none; transition: border-color 0.2s;
+        }
+        .input-dark:focus { border-color: #3b82f6; }
+        select.input-dark { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 10px center; background-size: 16px; }
+
+        .btn-action {
+            background: #3b82f6; color: white; padding: 10px; border-radius: 8px;
+            font-size: 13px; font-weight: 600; cursor: pointer; text-align: center;
+            transition: background 0.2s; width: 100%; display: block;
+        }
+        .btn-action:hover { background: #2563eb; }
+
+        /* 가구 리스트 */
+        .furniture-list { flex: 1; overflow-y: auto; padding-right: 4px; max-height: 400px; margin-top: 8px; }
+        .furniture-item {
+            display: flex; align-items: center; gap: 10px; padding: 8px;
+            background: rgba(255,255,255,0.05); border-radius: 8px; margin-bottom: 6px;
+            cursor: pointer; transition: 0.2s;
+        }
+        .furniture-item:hover { background: rgba(255,255,255,0.1); transform: translateX(2px); }
+        .furniture-thumb { width: 36px; height: 36px; border-radius: 6px; background: #333; object-fit: cover; }
+
+        /* 로그창 */
+        .log-box {
+            background: #111; border: 1px solid #333; border-radius: 6px;
+            padding: 8px; font-family: monospace; font-size: 11px;
+            height: 80px; overflow-y: auto; color: #aaa; margin-top: 5px;
+        }
+        .log-err { color: #ff5555; } .log-ok { color: #55ff55; }
+
+        /* 로딩 */
+        .loading-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); display: none; z-index: 999;
+            justify-content: center; align-items: center; flex-direction: column;
+        }
+        .spinner { width: 40px; height: 40px; border: 3px solid rgba(255,255,255,0.2); border-top-color: #3b82f6; border-radius: 50%; animation: spin 1s infinite linear; margin-bottom: 15px; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* 닫기 버튼 */
+        .btn-close { float: right; cursor: pointer; color: #888; }
+        .btn-close:hover { color: white; }
+        
+        /* 다시 열기 버튼 */
+        .float-btn {
+            position: absolute; top: 20px; z-index: 90;
+            width: 40px; height: 40px; background: rgba(30,30,30,0.8);
+            border: 1px solid #444; border-radius: 8px; color: white;
+            display: flex; justify-content: center; align-items: center; cursor: pointer;
+        }
+        .float-btn.hidden { display: none; }
+        #btn-open-left { left: 20px; } #btn-open-right { right: 20px; }
+    </style>
+    
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/",
+                "@google/generative-ai": "https://esm.run/@google/generative-ai"
+            }
+        }
+    </script>
+</head>
+<body>
+    <div id="canvas-container"></div>
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="spinner"></div>
+        <div class="text-white text-lg font-bold" id="loading-text">Processing...</div>
+    </div>
+
+    <!-- 플로팅 버튼 -->
+    <button id="btn-open-left" class="float-btn hidden">⚙️</button>
+    <button id="btn-open-right" class="float-btn hidden">🪑</button>
+
+    <!-- 좌측 패널 -->
+    <div id="left-panel" class="panel">
+        <div class="font-bold text-white mb-2">
+            설정 및 도면 <span class="btn-close" id="btn-close-left">✕</span>
+        </div>
+        
+        <!-- Step 1: API Key -->
+        <div id="step-1">
+            <label class="text-xs text-gray-400 block mb-1">1단계: API 연결</label>
+            <div class="flex gap-2">
+                <input type="password" id="api-key-input" class="input-dark" placeholder="AIzaSy... 키 입력">
+                <button id="btn-connect" class="bg-blue-600 text-white rounded px-3 text-xs hover:bg-blue-500 w-20 font-bold">연결</button>
+            </div>
+        </div>
+
+        <!-- Step 2: Model Select (Hidden Initially) -->
+        <div id="step-2" class="step-hidden">
+            <label class="text-xs text-gray-400 block mb-1 mt-2">2단계: 모델 선택</label>
+            <select id="model-select" class="input-dark"></select>
+        </div>
+        
+        <!-- Step 3: Upload (Hidden Initially) -->
+        <div id="step-3" class="step-hidden">
+            <div class="border-t border-gray-700 my-2"></div>
+            <label class="text-xs text-gray-400 block mb-1">3단계: 도면 분석</label>
+            <input type="file" id="floor-input" accept="image/*" class="hidden">
+            <label for="floor-input" class="btn-action bg-green-600 hover:bg-green-700">
+                📁 도면 업로드 & 벽 생성
+            </label>
+        </div>
+
+        <div id="log-box" class="log-box">API 키를 입력하고 연결하세요.</div>
+        <button id="btn-reset" class="btn-action bg-gray-700 hover:bg-gray-600 mt-2">초기화</button>
+    </div>
+
+    <!-- 우측 패널 -->
+    <div id="right-panel" class="panel">
+        <div class="font-bold text-white mb-2">
+            가구 라이브러리 <span class="btn-close" id="btn-close-right">✕</span>
+        </div>
+
+        <input type="file" id="custom-furniture-input" accept="image/*" class="hidden">
+        <label for="custom-furniture-input" class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-2 px-3 rounded-lg text-xs font-bold cursor-pointer text-center hover:brightness-110 block">
+            📷 내 가구 사진 추가 (AI)
+        </label>
+
+        <div class="border-t border-gray-700 my-2"></div>
+        <input type="text" id="search-input" class="input-dark" placeholder="가구 검색 (예: Sofa)">
+        <div id="furniture-list" class="furniture-list"></div>
+    </div>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+        import { GoogleGenerativeAI } from "@google/generative-ai";
+
+        let scene, camera, renderer, controls;
+        let floorMesh, wallGroup, furnitureGroup;
+        let planeWidth = 10, planeHeight = 10;
+        let raycaster, pointer, isDragging = false, selectedObject = null, dragPlane;
+
+        const FURNITURE_DB = [
+            { name: "Sofa", url: "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/SheenChair/glTF-Binary/SheenChair.glb", scale: [2.5, 1, 1], img: "https://via.placeholder.com/36/3b82f6/ffffff?text=S" },
+            { name: "Table", url: "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/AntiqueCamera/glTF-Binary/AntiqueCamera.glb", scale: [1, 0.5, 1], img: "https://via.placeholder.com/36/10b981/ffffff?text=T" },
+            { name: "Lamp", url: "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Lantern/glTF-Binary/Lantern.glb", scale: [1,1,1], img: "https://via.placeholder.com/36/f59e0b/ffffff?text=L" }
+        ];
+
+        function init() {
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x111111);
+
+            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 18, 12);
+            camera.lookAt(0, 0, 0);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            scene.add(ambientLight);
+            const dirLight = new THREE.DirectionalLight(0xffffff, 1.0);
+            dirLight.position.set(10, 20, 10);
+            dirLight.castShadow = true;
+            scene.add(dirLight);
+
+            wallGroup = new THREE.Group();
+            furnitureGroup = new THREE.Group();
+            scene.add(wallGroup);
+            scene.add(furnitureGroup);
+
+            const geometry = new THREE.PlaneGeometry(10, 10);
+            const material = new THREE.MeshStandardMaterial({ color: 0x333333, side: THREE.DoubleSide });
+            floorMesh = new THREE.Mesh(geometry, material);
+            floorMesh.rotation.x = -Math.PI / 2;
+            floorMesh.receiveShadow = true;
+            scene.add(floorMesh);
+
+            dragPlane = new THREE.Mesh(new THREE.PlaneGeometry(100, 100), new THREE.MeshBasicMaterial({ visible: false }));
+            dragPlane.rotation.x = -Math.PI / 2;
+            scene.add(dragPlane);
+
+            controls = new OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+
+            raycaster = new THREE.Raycaster();
+            pointer = new THREE.Vector2();
+
+            window.addEventListener('resize', onResize);
+            window.addEventListener('pointerdown', onPointerDown);
+            window.addEventListener('pointermove', onPointerMove);
+            window.addEventListener('pointerup', onPointerUp);
+            window.addEventListener('keydown', onKeyDown);
+
+            setupUIEvents();
+            renderFurnitureList(FURNITURE_DB);
+            animate();
+        }
+
+        function setupUIEvents() {
+            const leftPanel = document.getElementById('left-panel');
+            const rightPanel = document.getElementById('right-panel');
+            const btnOpenLeft = document.getElementById('btn-open-left');
+            const btnOpenRight = document.getElementById('btn-open-right');
+
+            document.getElementById('btn-close-left').onclick = () => { leftPanel.classList.add('closed'); btnOpenLeft.classList.remove('hidden'); };
+            btnOpenLeft.onclick = () => { leftPanel.classList.remove('closed'); btnOpenLeft.classList.add('hidden'); };
+            document.getElementById('btn-close-right').onclick = () => { rightPanel.classList.add('closed'); btnOpenRight.classList.remove('hidden'); };
+            btnOpenRight.onclick = () => { rightPanel.classList.remove('closed'); btnOpenRight.classList.add('hidden'); };
+
+            // [Step 1] 연결 버튼
+            document.getElementById('btn-connect').addEventListener('click', fetchModels);
+            
+            // [Step 3] 업로드 버튼 (초기엔 숨겨져 있음)
+            document.getElementById('floor-input').addEventListener('change', handleFloorUpload);
+            
+            // 기타 버튼
+            document.getElementById('custom-furniture-input').addEventListener('change', handleCustomFurniture);
+            document.getElementById('btn-reset').addEventListener('click', resetScene);
+            document.getElementById('search-input').addEventListener('input', (e) => {
+                const query = e.target.value.toLowerCase();
+                renderFurnitureList(FURNITURE_DB.filter(f => f.name.toLowerCase().includes(query)));
+            });
+        }
+
+        function log(msg, type = 'normal') {
+            const box = document.getElementById('log-box');
+            const line = document.createElement('div');
+            line.textContent = `> ${msg}`;
+            if(type==='error') line.className = 'log-err';
+            if(type==='success') line.className = 'log-ok';
+            box.appendChild(line);
+            box.scrollTop = box.scrollHeight;
+        }
+
+        // --- 1. 모델 검색 및 UI 순차 오픈 ---
+        async function fetchModels() {
+            const apiKey = document.getElementById('api-key-input').value.trim();
+            const select = document.getElementById('model-select');
+            
+            if(!apiKey) { log("API 키를 입력하세요!", "error"); return; }
+
+            log("모델 목록 조회 중...");
+            try {
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
+                const data = await res.json();
+                
+                if(data.error) throw new Error(data.error.message);
+
+                select.innerHTML = '';
+                const models = data.models.filter(m => m.name.includes('gemini') && m.supportedGenerationMethods.includes('generateContent'));
+                
+                if(models.length === 0) throw new Error("사용 가능한 모델이 없습니다.");
+
+                models.forEach(m => {
+                    const opt = document.createElement('option');
+                    opt.value = m.name.replace('models/', '');
+                    opt.text = m.displayName;
+                    select.appendChild(opt);
+                });
+                
+                // 1.5 Pro 우선
+                const preferred = models.find(m => m.name.includes('1.5-pro')) || models.find(m => m.name.includes('flash'));
+                if(preferred) select.value = preferred.name.replace('models/', '');
+                
+                log("연결 성공!", "success");
+
+                // [중요] 다음 단계 UI 보이기
+                document.getElementById('step-2').classList.remove('step-hidden');
+                document.getElementById('step-2').classList.add('step-visible');
+                document.getElementById('step-3').classList.remove('step-hidden');
+                document.getElementById('step-3').classList.add('step-visible');
+
+            } catch(e) {
+                log("오류: " + e.message, "error");
+                if(e.message.includes("403") || e.message.includes("fetch")) {
+                    log("팁: API 키 제한을 '없음'으로 설정했는지 확인하세요.", "error");
+                }
+            }
+        }
+
+        // --- 2. 도면 분석 ---
+        async function handleFloorUpload(event) {
+            const file = event.target.files[0];
+            if(!file) return;
+            const apiKey = document.getElementById('api-key-input').value.trim();
+            const modelName = document.getElementById('model-select').value;
+
+            showLoader("도면 분석 중... (Gemini)");
+            
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                const base64Data = e.target.result;
+                await updateFloorTexture(base64Data);
+
+                try {
+                    const genAI = new GoogleGenerativeAI(apiKey);
+                    const model = genAI.getGenerativeModel({ model: modelName });
+                    
+                    const prompt = `Analyze this floor plan image. Identify structural walls (thick lines). Return start/end coordinates (0-1000 int). JSON: { "walls": [{ "x1": int, "y1": int, "x2": int, "y2": int }] } Output ONLY valid JSON.`;
+                    
+                    const result = await model.generateContent([prompt, { inlineData: { data: base64Data.split(',')[1], mimeType: file.type } }]);
+                    let text = result.response.text().replace(/```json/g, '').replace(/```/g, '').trim();
+                    const start = text.indexOf('{'); const end = text.lastIndexOf('}');
+                    if(start!==-1 && end!==-1) text = text.substring(start, end+1);
+                    
+                    const json = JSON.parse(text);
+                    if(json.walls && json.walls.length > 0) {
+                        createWalls(json.walls);
+                        log(`성공: 벽 ${json.walls.length}개 생성`, "success");
+                    } else {
+                        log("실패: 벽 데이터를 찾지 못함", "error");
+                    }
+
+                } catch(e) {
+                    console.error(e);
+                    log("분석 오류: " + e.message, "error");
+                } finally {
+                    hideLoader();
+                }
+            };
+            reader.readAsDataURL(file);
+            event.target.value = '';
+        }
+
+        function updateFloorTexture(base64) {
+            return new Promise(resolve => {
+                new THREE.TextureLoader().load(base64, (tex) => {
+                    tex.colorSpace = THREE.SRGBColorSpace;
+                    tex.minFilter = THREE.LinearFilter;
+                    const aspect = tex.image.width / tex.image.height;
+                    if (aspect > 1) { planeWidth = 10; planeHeight = 10 / aspect; } 
+                    else { planeWidth = 10 * aspect; planeHeight = 10; }
+                    floorMesh.geometry.dispose();
+                    floorMesh.geometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
+                    floorMesh.material.map = tex;
+                    floorMesh.material.color.setHex(0xffffff); 
+                    floorMesh.material.needsUpdate = true;
+                    dragPlane.geometry.dispose();
+                    dragPlane.geometry = new THREE.PlaneGeometry(planeWidth*2, planeHeight*2);
+                    
+                    const maxDim = Math.max(planeWidth, planeHeight);
+                    camera.position.set(0, maxDim*1.5, maxDim*0.5);
+                    camera.lookAt(0,0,0);
+                    resolve();
+                });
+            });
+        }
+
+        function createWalls(lines) {
+            while(wallGroup.children.length > 0) wallGroup.remove(wallGroup.children[0]);
+            const mat = new THREE.MeshStandardMaterial({ color: 0xff3333, transparent: true, opacity: 0.6 });
+            lines.forEach(l => {
+                const x1 = (l.x1/1000-0.5)*planeWidth, z1 = (l.y1/1000-0.5)*planeHeight;
+                const x2 = (l.x2/1000-0.5)*planeWidth, z2 = (l.y2/1000-0.5)*planeHeight;
+                const len = Math.sqrt(Math.pow(x2-x1,2)+Math.pow(z2-z1,2));
+                if(len<0.1) return;
+                const midX = (x1+x2)/2, midZ = (z1+z2)/2, angle = Math.atan2(z2-z1, x2-x1);
+                const wall = new THREE.Mesh(new THREE.BoxGeometry(len, 1.2, 0.1), mat);
+                wall.position.set(midX, 0.6, midZ);
+                wall.rotation.y = -angle;
+                wall.castShadow = true;
+                wallGroup.add(wall);
+            });
+        }
+
+        // --- 가구 관련 ---
+        function renderFurnitureList(items) {
+            const list = document.getElementById('furniture-list');
+            list.innerHTML = '';
+            items.forEach(item => {
+                const el = document.createElement('div');
+                el.className = 'furniture-item';
+                el.innerHTML = `<img src="${item.img}" class="furniture-thumb"><div><div class="text-xs font-bold text-white">${item.name}</div></div>`;
+                el.onclick = () => spawnGLBFurniture(item.url, item.scale);
+                list.appendChild(el);
+            });
+        }
+
+        function spawnGLBFurniture(url, customScale=null) {
+            showLoader("가구 로딩...");
+            const loader = new GLTFLoader();
+            loader.load(url, (gltf) => {
+                const model = gltf.scene;
+                const box = new THREE.Box3().setFromObject(model);
+                const size = new THREE.Vector3(); box.getSize(size);
+                let scale = 1.2 / Math.max(size.x, size.y, size.z);
+                model.scale.set(scale, scale, scale);
+                if(customScale) { model.scale.x*=customScale[0]; model.scale.y*=customScale[1]; model.scale.z*=customScale[2]; }
+                model.position.set(0,0,0);
+                furnitureGroup.add(model);
+                selectedObject = model;
+                hideLoader();
+            }, undefined, (e)=>{ hideLoader(); log("가구 로드 실패", "error"); });
+        }
+
+        async function handleCustomFurniture(event) {
+            const file = event.target.files[0];
+            if(!file) return;
+            const apiKey = document.getElementById('api-key-input').value.trim();
+            const modelName = document.getElementById('model-select').value;
+            showLoader("가구 분석 중...");
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                const base64Data = e.target.result;
+                try {
+                    const genAI = new GoogleGenerativeAI(apiKey);
+                    const model = genAI.getGenerativeModel({ model: modelName || "gemini-1.5-flash" });
+                    const result = await model.generateContent([`Estimate dims (m). JSON: {"w":float,"h":float,"d":float}`, { inlineData: { data: base64Data.split(',')[1], mimeType: file.type } }]);
+                    const text = result.response.text().replace(/```json|```/g, '').trim();
+                    const start = text.indexOf('{'); const end = text.lastIndexOf('}');
+                    const json = JSON.parse(text.substring(start, end+1));
+                    createPhotoFurniture(base64Data, json.w||1, json.h||1, json.d||0.5);
+                } catch(err) { createPhotoFurniture(base64Data, 1, 1, 0.5); } 
+                finally { hideLoader(); }
+            };
+            reader.readAsDataURL(file);
+            event.target.value = '';
+        }
+
+        function createPhotoFurniture(imgUrl, w, h, d) {
+            const loader = new THREE.TextureLoader();
+            const tex = loader.load(imgUrl);
+            tex.colorSpace = THREE.SRGBColorSpace;
+            const geo = new THREE.BoxGeometry(w, h, d*0.2); 
+            const matGrey = new THREE.MeshStandardMaterial({ color: 0x555555 });
+            const matImg = new THREE.MeshBasicMaterial({ map: tex, transparent: true });
+            const mesh = new THREE.Mesh(geo, [matGrey, matGrey, matGrey, matGrey, matImg, matGrey]);
+            mesh.position.y = h/2;
+            furnitureGroup.add(mesh);
+            selectedObject = mesh;
+        }
+
+        // --- Interaction ---
+        function onPointerDown(e) {
+            pointer.x = (e.clientX/window.innerWidth)*2-1; pointer.y = -(e.clientY/window.innerHeight)*2+1;
+            raycaster.setFromCamera(pointer, camera);
+            const intersects = raycaster.intersectObjects(furnitureGroup.children, true);
+            if(intersects.length>0) {
+                let target = intersects[0].object;
+                while(target.parent !== furnitureGroup) target = target.parent;
+                isDragging=true; selectedObject=target; controls.enabled=false;
+            } else { selectedObject=null; }
+        }
+        function onPointerMove(e) {
+            if(!isDragging || !selectedObject) return;
+            pointer.x = (e.clientX/window.innerWidth)*2-1; pointer.y = -(e.clientY/window.innerHeight)*2+1;
+            raycaster.setFromCamera(pointer, camera);
+            const intersects = raycaster.intersectObject(dragPlane);
+            if(intersects.length>0) selectedObject.position.copy(intersects[0].point).setY(selectedObject.scale.y/2 || 0);
+        }
+        function onPointerUp() { isDragging=false; controls.enabled=true; }
+        function onKeyDown(e) {
+            if((e.key==='r'||e.key==='R') && selectedObject) selectedObject.rotation.y += Math.PI/4;
+            if((e.key==='Delete'||e.key==='Backspace') && selectedObject) { furnitureGroup.remove(selectedObject); selectedObject=null; }
+        }
+
+        function showLoader(msg) { document.getElementById('loading-text').innerText = msg; document.getElementById('loading-overlay').style.display = 'flex'; }
+        function hideLoader() { document.getElementById('loading-overlay').style.display = 'none'; }
+        
+        function resetScene() {
+            while(wallGroup.children.length > 0) wallGroup.remove(wallGroup.children[0]);
+            while(furnitureGroup.children.length > 0) furnitureGroup.remove(furnitureGroup.children[0]);
+            floorMesh.material.map = null; floorMesh.material.color.setHex(0x333333); floorMesh.material.needsUpdate = true;
+            log("초기화 완료");
+        }
+
+        function onResize() { camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize(window.innerWidth, window.innerHeight); }
+        function animate() { requestAnimationFrame(animate); controls.update(); renderer.render(scene, camera); }
+
+        init();
+    </script>
+</body>
+</html>
