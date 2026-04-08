@@ -794,6 +794,16 @@ AI가 표현하는 감정은 대체로 과장된 사례가 많음
 다음 단계는 해당 프롬프트로 이미지(주인공 인생샷) 생성 실습
 
 
+2000년대 누아르 영화의 한 장면처럼 / 어둡고 그윽한 분위기의 재즈바에 / 날카로운 턱선의 30대 동양인 남자 첩보요원이 홀로 앉아있다. / 빈틈없이 잘 다려진 고급스러운 검정색 정장을 완벽하게 갖춰 입은 그는 / 차갑게 가라앉은 눈빛으로 / 테이블 위에 놓인 크리스탈 위스키 잔을 조용히 만지고 있다.
+
+ Like a scene from a 2000s noir film, / in a jazz bar with a dark, moody atmosphere, / a male Asian spy in his thirties with sharp jawlines sits alone. / Dressed impeccably in a high-end black suit, / he gazes with a cold, distant stare / as he quietly traces his fingers along the crystal whiskey glass resting on the table.
+
+이건 내가 써놓은 인물 프롬프트야. 여기에 인물이 긴장한 상태를 넣을 건데, 방금 짠 감정 롬프트 중에 Tension을 넣고, jaw set 동작을 넣어서 프롬프트를 하나로 조합해줘.
+
+
+Like a scene from a 2000s noir film, in a jazz bar with a dark, moody atmosphere, a male Asian spy in his thirties with sharp jawlines sits alone. Dressed impeccably in a high-end black suit, he gazes with a cold, distant stare, subtle tension beneath his calm exterior — his jaw set tight, a faint muscle shifting along the line of his jaw as he quietly traces his fingers along the crystal whiskey glass resting on the table.
+
+
 4. [실습] 나만의 AI 배우, 미드저니로 인생 샷 뽑아내기
 수업 목표
 미드저니로 인물 통합 프롬프트를 활용해 영상의 기준이 될 한 장의 완벽한 인생샷을 만드는 방법에 대해 알아보도록 하겠습니다.
