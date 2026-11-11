@@ -1,0 +1,325 @@
+** https://dsbook.tistory.com/192
+다항 회귀 (Polynomial, 편향, 분석)
+
+https://datasirup.tistory.com/124
+파이썬 이것저것/파이썬 머신러닝
+[Python] 다중, 다항회귀분석
+
+https://sseozytank.tistory.com/25
+통계/머신러닝 MachineLearning
+[ML] 회귀 모델 성능 평가 지표 개념과 파이썬 코드 (MAE,MSE,RMSE,R2,MAPE,MPE)
+=======================================================================================
+(X + y) data df → data1
+
+from sklearn.preprocessing import MinMaxScaler
+min_max_scaler = MinMaxScaler()    #class MinMaxScaler의 instance 생성
+fitted = min_max_scaler.fit(data1)    # instance의 method fit 사용 (인자는 data1) 
+
+scaled_data = min_max_scaler.transform(data1) #정규화, normalization 
+scaled_data = pd.DataFrame(scaled_data, columns=['Freq(Hz)', 'AC Volt(Vrms)', 'DC Volt(V)', 'Temp.(℃)', 'Capacitance(uF)'] )
+scaled_data = scaled_data.dropna(axis=0)
+# scaled_data.to_excel('scaled_data.xlsx', sheet_name='Cap_1A_scaled', index=True)
+scaled_data.head(6)
+
+# X 인자간 histogram 확인
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+sns.pairplot(scaled_data, diag_kind='hist')
+
+# X 인자간 corr 확인
+df_corr = scaled_data.corr()
+df_corr
+
+# X 인자간 corr heatmap 표시
+plt.figure(figsize=(7, 6))
+ax = sns.heatmap(df_corr, annot=True)
+
+bttm, top = ax.get_ylim()
+print(bttm, top)
+
+ax.set_ylim(bttm+0.5, top-0.5)
+
+# plt.savefig('Current.png')
+plt.show()
+
+# (X + y) data 정규화 후 X, y로 분리
+df=scaled_data
+
+X=df.drop(["Capacitance(uF)"], axis=1)
+y=df["Capacitance(uF)"]
+
+
+import numpy as np
+
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_absolute_error
+from sklearn.metrics import mean_squared_error
+from sklearn.metrics import r2_score
+from sklearn.preprocessing import PolynomialFeatures
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=0)  #데이터를 학습용과 검증용으로 분리
+
+# 다중 선형회귀 모델 생성
+model = LinearRegression()   #class LinearRegression()의 instance 생성
+model.fit(X_train, y_train)      # instance의 method fit 사용 (인자는 data1) 
+
+# 다중 선형회귀 모델로 학습데이터 추정
+y_pred = model.predict(X_test)
+
+# mean_absolute_error, mean_squared_error, "RMSE:", np.sqrt(mse), r2_score
+print("mean_absolute_error(MAE):", mean_absolute_error(y_test, y_pred))
+mse = mean_squared_error(y_test, y_pred)
+print("mean_squared_error(MSE):", mse)
+print("RMSE:", np.sqrt(mse))
+print("결정계수(설명력) R2_score:", r2_score(y_test, y_pred))
+
+
+Polynormial Regression (다항 회귀)
+
+# poly features 생성
+degree=2
+
+poly_model = PolynomialFeatures(degree=degree)  #class PolynomialFeatures()의 instance 생성
+poly_X = poly_model.fit_transform(X)                   # instance의 method fit_transform 사용 (인자는 data1) 
+# print(poly_model.get_feature_names())
+print(X)
+print(poly_X)
+
+X_train, X_test, y_train, y_test = train_test_split(poly_X, y, test_size=0.3, random_state=0)  #데이터를 학습용과 검증용으로 분리
+
+# 예측 모델 학습 for Train data only
+poly_model.fit(X_train, y_train)        # poly_model.fit() 
+
+regression_model = LinearRegression()    #class LinearRegression()의 instance 생성
+regression_model.fit(X_train, y_train)
+
+# 다항 회귀 모델로 검증 데이터 추정
+y_pred = regression_model.predict(X_test)
+
+
+# 차수별 mean_square_error 확인
+number_degrees = [1,2,3,4,5,6,7,8]
+plt_mean_squared_error = []
+
+for degree in number_degrees:
+   poly_model = PolynomialFeatures(degree=degree)
+    
+   poly_X = poly_model.fit_transform(X) 
+    
+   X_train, X_test, y_train, y_test = train_test_split(poly_X, y, test_size=0.3, random_state=0) 
+
+   poly_model.fit(X_train, y_train)
+  
+   regression_model = LinearRegression()
+   regression_model.fit(X_train, y_train)
+   y_pred = regression_model.predict(X_test)
+  
+   plt_mean_squared_error.append(mean_squared_error(y_test, y_pred))
+
+plt.scatter(number_degrees,plt_mean_squared_error, color="green")
+plt.plot(number_degrees,plt_mean_squared_error, color="red")
+
+# 차수별 r2_score 확인
+number_degrees = [1,2,3,4,5,6,7,8]
+plt_r2_score = []
+
+for degree in number_degrees:
+   poly_model = PolynomialFeatures(degree=degree)
+    
+   poly_X = poly_model.fit_transform(X) 
+    
+   X_train, X_test, y_train, y_test = train_test_split(poly_X, y, test_size=0.3, random_state=0) 
+
+   poly_model.fit(X_train, y_train)
+  
+   regression_model = LinearRegression()
+   regression_model.fit(X_train, y_train)
+   y_pred = regression_model.predict(X_test)
+  
+   plt_r2_score.append(r2_score(y_test, y_pred))
+
+   print("결정계수(설명력) R2_score:", r2_score(y_test, y_pred))
+   print("coef:", regression_model.coef_)
+   print("intercept:", regression_model.intercept_)
+
+plt.scatter(number_degrees,plt_r2_score, color="green")
+plt.plot(number_degrees,plt_r2_score, color="red")
+
+# 차수별 r2_score 확인 (그래프 라벨 첨가)
+x=number_degrees
+y=plt_r2_score
+
+for i in range(len(x)):
+    height = y[i]
+    plt.text(x[i], height + 0.0025, '%.3f' %height, ha='center', va='bottom', size = 10)
+
+plt.scatter(number_degrees,plt_r2_score, color="green")
+plt.plot(number_degrees,plt_r2_score, color="red") 
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+https://blog.naver.com/samsjang/221006905415
+[28편] 회귀 분석 - 다항 회귀 (Polynomial Regression)
+
+https://aliencoder.tistory.com/48#google_vignette
+[Python] 다항 회귀(Polynomial Regression)의 이해와 구현
+
+
+
+
+
+https://itstory1592.tistory.com/7
+[인공지능][실습] 다항회귀(Polynomial Regression)와 다중선형회귀(Mutiple Linear Regression)를 활용하여 생선의 무게를 예측해보자
+
+https://herjh0405.tistory.com/70
+[ML] 다중 회귀 VS 다항 회귀 (Multiple VS Polynomial regression)
+
+https://softtone-someday.tistory.com/23
+[python]다항회귀(Polynomial Regression)란? [예제 포함]
+
+
+
+
+
+https://ysyblog.tistory.com/122
+YSY의 데이터분석 블로그
+Data Analysis & ML/회귀분석
+[회귀분석] 회귀분석 실습(4) - 다중공선성 (Python)
+
+https://wikidocs.net/230300
+ 함께해요 파이썬 생태계 03 데이터 과학 및 분석 통계 및 수학 계산 Statsmodels: 통계적 모델링 및 시…
+Statsmodels: 통계적 모델링 및 시각화 라이브러리
+
+https://wikidocs.net/26300
+ 토닥토닥 sklearn - 머신러닝 03 장 sklearn -----------… 섹션 01 프로그램 설치 강의 05 sklearn 패키지 설치 
+강의 05 sklearn 패키지 설치
+
+https://blog.deeplink.kr/?p=2409
+선형 회귀와 다중 회귀의 이해와 Python 예제 코드: 데이터 사이언스의 필수 요소 이해하기 
+
+
+https://aliencoder.tistory.com/17
+
+
+https://wikidocs.net/205253
+ 비즈니스 데이터 분석 with Python 12장. 통계 분석과 머신 러닝
+
+https://wikidocs.net/206417
+비즈니스 데이터 분석 with Python 12장. 통계 분석과 머신 러닝 01. 통계 분석(Statistical An… 1-2. 데이터 분포
+
+
+https://olivia-blackcherry.tistory.com/593#google_vignette
+
+====================================================================================================================
+
+
+https://wikidocs.net/230300
+
+** https://wikidocs.net/206420  비즈니스 데이터 분석 with Python 12장. 통계 분석과 머신 러닝
+
+https://wikidocs.net/book/9257
+비즈니스 데이터 분석 with Python
+
+https://wikidocs.net/230300
+함께해요 파이썬 생태계 03 데이터 과학 및 분석
+
+=============================================================================================================
+*** https://olivia-blackcherry.tistory.com/596
+[multiple linear regression] Pythonb으로 다중회귀 분석하기
+
+
+[Python] VIF(Variance Inflation Factors)를 이용한 다중공선성(Multicollinearity) 판단
+
+주요개념
+VIF (Variance Inflation Factor)
+다중공선성문제(Multicollinearity) : 독립 변수 간 강한 상관관계가 나타나는 문제
+===========================================================
+=============================================================================================================
+
+
+https://aliencoder.tistory.com/17#google_vignette
+[Python] VIF(Variance Inflation Factors)를 이용한 다중공선성(Multicollinearity) 판단
+
+=============================================================================================================
+https://todayisbetterthanyesterday.tistory.com/6?category=821465
+[Python]단순선형회귀분석 실습 - 데이터 불러오기부터 회귀계수까지
+
+https://todayisbetterthanyesterday.tistory.com/7?category=821465
+[Python]다중회귀분석 실습 - 데이터 불러오기부터 회귀계수까지
+
+https://todayisbetterthanyesterday.tistory.com/8?category=821465https://todayisbetterthanyesterday.tistory.com/8?category=821465
+[Python]다중회귀분석 실습 - 모델해석과 다중공선성 확인하기
+
+
+=============================================================================================================
+https://blog.deeplink.kr/?p=2409
+선형 회귀와 다중 회귀의 이해와 Python 예제 코드: 데이터 사이언스의 필수 요소 이해하기 
+
+[Python 예제 코드]
+
+선형 회귀 분석 예제
+먼저 Boston Housing Dataset의 RM 변수(방의 수)를 사용하여 주택 가격(MEDV)을 예측하는 선형 회귀 모델을 만들어 보자.
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+import statsmodels.api as sm
+
+data = pd.read_csv('./housing_data.csv')
+
+# 선형 회귀: 'RM'을 독립 변수로 사용
+X = data['RM']
+y = data['MEDV']
+X = sm.add_constant(X)
+model = sm.OLS(y, X).fit()
+
+# 결과 시각화
+plt.scatter(data['RM'], data['MEDV'], alpha=0.5)
+plt.plot(data['RM'], model.predict(X), color='red')
+plt.title('Linear Regression: House Price vs Number of Rooms')
+plt.xlabel('Number of Rooms (RM)')
+plt.ylabel('House Price (MEDV)')
+plt.show()
+
+# 모델 요약 결과 출력
+print(model.summary())
+
+R-squared(결정 계수): 0.484. 이는 모델이 종속 변수 ‘MEDV’의 변동성의 약 48.4%를 설명한다는 것을 의미한다.
+Coef(계수): ‘RM’(방의 수)의 계수는 9.1021이며, 이는 방의 수가 하나 증가할 때마다 주택 가격이 평균적으로 9.1021만큼 증가한다는 것을 의미한다.
+P>|t|: ‘RM’의 p-값이 매우 낮다(0.000), 이는 ‘RM’이 주택 가격에 유의미한 영향을 미친다는 것을 나타낸다.
+
+
+
+
+다중 회귀 분석 예제
+다음으로, RM 뿐만 아니라 다른 변수들도 포함하여 주택 가격을 예측하는 다중 회귀 모델을 만들어보자.
+
+# 다중 회귀: 'RM', 'LSTAT', 'PTRATIO'를 독립 변수로 사용
+X = data[['RM', 'LSTAT', 'PTRATIO']]
+y = data['MEDV']
+X = sm.add_constant(X)
+model = sm.OLS(y, X).fit()
+
+# 각 독립 변수와 종속 변수 간의 관계를 개별적으로 시각화
+sns.pairplot(data, x_vars=['RM', 'LSTAT', 'PTRATIO'], y_vars='MEDV', height=4, aspect=1, kind='reg')
+plt.suptitle('Multiple Regression: Relationship with MEDV')
+plt.show()
+
+# 모델 요약 결과 출력
+print(model.summary())
+
+R-squared(결정 계수): 0.679. 이는 모델이 종속 변수 ‘MEDV’의 변동성의 약 67.9%를 설명한다는 것을 의미하며, 선형 회귀 모델보다 높은 것을 볼 수 있다.
+Coef(계수): ‘RM’의 계수는 4.5154, ‘LSTAT’의 계수는 -0.5718, ‘PTRATIO’의 계수는 -0.9307이다. 이는 ‘RM’이 증가하면 주택 가격이 증가하고, ‘LSTAT’과 ‘PTRATIO’가 증가하면 주택 가격이 감소한다는 것을 의미한다.
+P>|t|: 모든 독립 변수의 p-값이 매우 낮아, 이 변수들이 주택 가격에 유의미한 영향을 미친다는 것을 나타낸다.
+
+결론
+이 포스트를 통해 선형 회귀와 다중 회귀 분석의 기본 개념과 이들이 데이터 사이언스에서 어떻게 적용되는지에 대해 알아보았다.
+
+선형 회귀는 단순성과 명확한 해석이라는 장점을 가지고 있으며, 다중 회귀는 복잡한 데이터 세트를 보다 정밀하게 분석할 수 있도록 해준다. 
+이러한 분석 방법은 데이터에서 유의미한 패턴을 찾고, 미래의 결과를 예측하는 데 있어 매우 실용적인 도구이며, 손쉽게 적용해볼 수 있는 방법이니 활용해보도록 하자.
