@@ -14,6 +14,7 @@
 import os
 import re
 import html
+import json
 import base64
 import mimetypes
 import threading
@@ -118,6 +119,39 @@ def parse_doc(rel_path):
     return result
 
 
+def save_page_text(rel_path, page_num, new_text):
+    """지정한 페이지의 <details>텍스트 보기</details> 블록 내용을 새 텍스트로 바꿔서 원본 md 파일에 저장."""
+    if '```' in new_text:
+        raise ValueError('텍스트에 코드블록 기호(```)는 사용할 수 없습니다.')
+
+    abs_path = _resolve_rel(rel_path)
+    if abs_path is None:
+        raise FileNotFoundError(rel_path)
+
+    with open(abs_path, encoding='utf-8') as f:
+        content = f.read()
+
+    pattern = re.compile(
+        r'(## 페이지 ' + str(page_num) + r'\n.*?<details><summary>텍스트 보기</summary>\n\n```\n)'
+        r'.*?'
+        r'(\n```\n\n</details>)',
+        re.S,
+    )
+
+    def _repl(m):
+        return m.group(1) + new_text + m.group(2)
+
+    new_content, n = pattern.subn(_repl, content, count=1)
+    if n == 0:
+        raise ValueError(f'페이지 {page_num}의 텍스트 블록을 찾을 수 없습니다.')
+
+    with open(abs_path, 'w', encoding='utf-8') as f:
+        f.write(new_content)
+
+    with _cache_lock:
+        _cache.pop(rel_path, None)
+
+
 PAGE_TEMPLATE = """<!doctype html>
 <html lang="ko">
 <head>
@@ -165,8 +199,19 @@ PAGE_TEMPLATE = """<!doctype html>
   }}
   .pager button:disabled {{ opacity:0.4; cursor:default; }}
 
-  nav.toc {{ display:flex; flex-wrap:wrap; gap:6px; max-width:1100px; margin:10px auto 0; }}
+  .toc-wrap {{ display:flex; align-items:center; gap:6px; max-width:1100px; margin:10px auto 0; }}
+  .toc-nav-btn {{
+    flex:0 0 auto; border:1px solid var(--border); background:var(--card); color:var(--text);
+    border-radius:6px; padding:4px 9px; font-size:0.85rem; cursor:pointer;
+  }}
+  .toc-nav-btn:disabled {{ opacity:0.35; cursor:default; }}
+  nav.toc {{
+    display:flex; flex-wrap:nowrap; overflow-x:auto; gap:6px; flex:1 1 auto; min-width:0;
+    scroll-behavior:smooth; scrollbar-width:none;
+  }}
+  nav.toc::-webkit-scrollbar {{ display:none; }}
   nav.toc button {{
+    flex:0 0 auto; white-space:nowrap;
     border:1px solid var(--border); background:var(--card); color:var(--text);
     border-radius:6px; padding:3px 9px; font-size:0.8rem; cursor:pointer;
   }}
@@ -175,6 +220,14 @@ PAGE_TEMPLATE = """<!doctype html>
   main {{ max-width:1100px; margin:18px auto 0; }}
   .slide {{ display:none; background:var(--card); border:1px solid var(--border); border-radius:12px; overflow:hidden; }}
   .slide.active {{ display:flex; flex-direction:column; }}
+  /* 텍스트 위치가 "아래"일 때: 이미지 영역만 스크롤되고, 텍스트 입력창은 항상 하단에 보이게 고정
+     (텍스트 칸 자체 높이는 내용에 맞춰 자동으로 커지는 기존 동작 유지). */
+  main:not(.layout-right) .slide.active {{
+    max-height: calc(100vh - var(--head-h, 170px) - 24px);
+  }}
+  main:not(.layout-right) .slide.active .slide-media {{ flex:1 1 auto; min-height:0; overflow-y:auto; }}
+  main:not(.layout-right) .slide.active .slide-text {{ flex:0 0 auto; }}
+
   main.layout-right .slide.active {{ flex-direction:row; align-items:stretch; }}
 
   .slide-head {{ padding:9px 14px; font-weight:600; font-size:0.8rem; color:var(--accent);
@@ -184,9 +237,29 @@ PAGE_TEMPLATE = """<!doctype html>
   .slide-media {{ display:flex; flex-direction:column; min-width:0; }}
   main.layout-right .slide.active .slide-media {{ flex:1 1 55%; }}
   .slide img {{ display:block; width:100%; height:auto; background:#fff; }}
-  .slide-text {{ padding:12px 14px; font-size:0.92rem; line-height:1.6; }}
-  main.layout-right .slide.active .slide-text {{ flex:1 1 45%; overflow-y:auto; max-height:80vh;
+  .slide-text {{ padding:12px 14px; font-size:0.92rem; line-height:1.6; display:flex; flex-direction:column; gap:8px; }}
+  /* 텍스트 위치가 "오른쪽"일 때: 텍스트 칸이 이미지 높이에 맞춰 늘어나고, 넘치면 칸 안에서만 스크롤 */
+  main.layout-right .slide.active .slide-text {{ flex:1 1 45%; min-height:0;
     border-top:none; border-left:1px solid var(--border); }}
+  main.layout-right .slide.active .slide-text-input {{
+    flex:1 1 auto; min-height:0; height:auto !important; resize:none; overflow-y:auto;
+  }}
+  main.layout-right .slide.active .slide-text-actions {{ flex:0 0 auto; }}
+
+  .slide-text-input {{
+    width:100%; min-height:90px; resize:vertical; box-sizing:border-box;
+    font:inherit; line-height:1.6; color:var(--text); background:var(--bg);
+    border:1px solid var(--border); border-radius:8px; padding:8px 10px;
+  }}
+  .slide-text-actions {{ display:flex; align-items:center; gap:10px; }}
+  .save-text-btn {{
+    border:1px solid var(--border); background:var(--card); color:var(--text);
+    border-radius:6px; padding:5px 10px; font-size:0.8rem; cursor:pointer;
+  }}
+  .save-text-btn.dirty {{ border-color:var(--accent); color:var(--accent); font-weight:600; }}
+  .save-status {{ font-size:0.78rem; color:var(--muted); }}
+  .save-status.ok {{ color:#2e9e5b; }}
+  .save-status.err {{ color:#e5484d; }}
 
   @media (max-width: 860px) {{
     main.layout-right .slide.active {{ flex-direction:column; }}
@@ -214,9 +287,13 @@ PAGE_TEMPLATE = """<!doctype html>
       <button type="button" id="nextBtn">다음 &#9654;</button>
     </div>
   </div>
-  <nav class="toc" id="toc">{toc}</nav>
+  <div class="toc-wrap">
+    <button type="button" id="tocPrev" class="toc-nav-btn" title="이전 줄">&laquo;</button>
+    <nav class="toc" id="toc">{toc}</nav>
+    <button type="button" id="tocNext" class="toc-nav-btn" title="다음 줄">&raquo;</button>
+  </div>
 </div>
-<main id="pageArea">{sections}</main>
+<main id="pageArea" data-file="{file}">{sections}</main>
 <script>
 (function() {{
   var main = document.getElementById('pageArea');
@@ -264,11 +341,33 @@ PAGE_TEMPLATE = """<!doctype html>
     if (e.key === 'ArrowRight') show(current + 1);
   }});
 
+  // sticky 헤더 실제 높이를 CSS 변수로 넘겨서, "텍스트 아래" 모드에서 이미지 영역의
+  // 스크롤 가능 높이(= 뷰포트 - 헤더)를 계산하는 데 쓴다.
+  function updateHeadHeightVar() {{
+    var head = document.getElementById('stickyHead');
+    if (head) document.documentElement.style.setProperty('--head-h', head.offsetHeight + 'px');
+  }}
+
+  function isRowLayoutActive() {{
+    return main.classList.contains('layout-right') && window.matchMedia('(min-width: 861px)').matches;
+  }}
+  function syncTextareaHeight(ta) {{
+    if (isRowLayoutActive()) {{
+      ta.style.height = '';  // CSS flex:1(이미지 높이에 맞춰 늘어남)가 대신 처리
+    }} else {{
+      autoHeight(ta);  // "텍스트 아래" 모드: 내용 길이에 맞춰 칸이 커지는 기존 동작
+    }}
+  }}
+  function syncAllTextareas() {{
+    Array.prototype.slice.call(main.querySelectorAll('.slide-text-input')).forEach(syncTextareaHeight);
+  }}
+
   var layoutBtns = Array.prototype.slice.call(document.querySelectorAll('.layout-toggle button'));
   function applyLayout(mode) {{
     main.classList.toggle('layout-right', mode === 'row');
     layoutBtns.forEach(function(b) {{ b.classList.toggle('active', b.dataset.layout === mode); }});
     try {{ localStorage.setItem('viewer_layout', mode); }} catch (e) {{}}
+    syncAllTextareas();
   }}
   layoutBtns.forEach(function(b) {{
     b.addEventListener('click', function() {{ applyLayout(b.dataset.layout); }});
@@ -278,6 +377,84 @@ PAGE_TEMPLATE = """<!doctype html>
   applyLayout(savedLayout);
 
   show(current);
+
+  // 페이지 번호가 많을 때 toc가 여러 줄로 늘어나는 대신 한 줄만 보이고
+  // <</>> 버튼으로 이전/다음 줄(한 화면 너비만큼)을 스크롤해서 보여준다.
+  var tocEl = document.getElementById('toc');
+  var tocPrev = document.getElementById('tocPrev');
+  var tocNext = document.getElementById('tocNext');
+  function updateTocNav() {{
+    tocPrev.disabled = tocEl.scrollLeft <= 0;
+    tocNext.disabled = tocEl.scrollLeft + tocEl.clientWidth >= tocEl.scrollWidth - 1;
+  }}
+  tocPrev.addEventListener('click', function() {{ tocEl.scrollBy({{ left: -tocEl.clientWidth, behavior: 'smooth' }}); }});
+  tocNext.addEventListener('click', function() {{ tocEl.scrollBy({{ left: tocEl.clientWidth, behavior: 'smooth' }}); }});
+  tocEl.addEventListener('scroll', updateTocNav);
+  updateTocNav();
+
+  updateHeadHeightVar();
+  window.addEventListener('resize', function() {{
+    updateTocNav();
+    updateHeadHeightVar();
+    syncAllTextareas();
+  }});
+
+  // ---- 텍스트 편집/저장 ----
+  var fileRel = main.dataset.file;
+  function autoHeight(el) {{
+    el.style.height = 'auto';
+    el.style.height = (el.scrollHeight + 2) + 'px';
+  }}
+  Array.prototype.slice.call(main.querySelectorAll('.slide-text-input')).forEach(function(ta) {{
+    syncTextareaHeight(ta);
+    ta.addEventListener('input', function() {{
+      syncTextareaHeight(ta);
+      var idx = ta.dataset.idx;
+      var btn = main.querySelector('.save-text-btn[data-idx="' + idx + '"]');
+      var status = main.querySelector('.save-status[data-idx="' + idx + '"]');
+      if (btn) btn.classList.add('dirty');
+      if (status) {{ status.textContent = ''; status.className = 'save-status'; }}
+    }});
+    ta.addEventListener('keydown', function(e) {{
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {{
+        e.preventDefault();
+        var idx = ta.dataset.idx;
+        var btn = main.querySelector('.save-text-btn[data-idx="' + idx + '"]');
+        if (btn) btn.click();
+      }}
+    }});
+  }});
+
+  function saveText(idx, btn, status) {{
+    var ta = main.querySelector('.slide-text-input[data-idx="' + idx + '"]');
+    if (!ta) return;
+    status.textContent = '저장 중...';
+    status.className = 'save-status';
+    fetch('/save-text', {{
+      method: 'POST',
+      headers: {{ 'Content-Type': 'application/json' }},
+      body: JSON.stringify({{ file: fileRel, idx: idx, text: ta.value }})
+    }}).then(function(res) {{ return res.json(); }}).then(function(data) {{
+      if (data.ok) {{
+        status.textContent = '저장됨 ✓';
+        status.className = 'save-status ok';
+        btn.classList.remove('dirty');
+      }} else {{
+        status.textContent = '저장 실패: ' + (data.error || '알 수 없는 오류');
+        status.className = 'save-status err';
+      }}
+    }}).catch(function(err) {{
+      status.textContent = '저장 실패: ' + err;
+      status.className = 'save-status err';
+    }});
+  }}
+  Array.prototype.slice.call(main.querySelectorAll('.save-text-btn')).forEach(function(btn) {{
+    btn.addEventListener('click', function() {{
+      var idx = btn.dataset.idx;
+      var status = main.querySelector('.save-status[data-idx="' + idx + '"]');
+      saveText(idx, btn, status);
+    }});
+  }});
 }})();
 </script>
 </body>
@@ -351,7 +528,6 @@ def render_doc_page(rel_path):
     toc = ' '.join(f'<button type="button">{num}</button>' for num, _, _, _ in doc['pages'])
     sections = []
     for num, text, raw, ext in doc['pages']:
-        esc_text = html.escape(text).replace('\n', '<br>')
         img_tag = (
             f'<img src="/img?file={quote(rel_path)}&idx={num}" alt="페이지 {num}" loading="lazy">'
             if raw else ''
@@ -360,13 +536,20 @@ def render_doc_page(rel_path):
             f'<section class="slide" id="p{num}">'
             f'<div class="slide-head">페이지 {num}</div>'
             f'<div class="slide-media">{img_tag}</div>'
-            f'<div class="slide-text">{esc_text}</div>'
+            f'<div class="slide-text">'
+            f'<textarea class="slide-text-input" data-idx="{num}" spellcheck="false">{html.escape(text)}</textarea>'
+            f'<div class="slide-text-actions">'
+            f'<button type="button" class="save-text-btn" data-idx="{num}">\U0001F4BE 저장</button>'
+            f'<span class="save-status" data-idx="{num}"></span>'
+            f'</div>'
+            f'</div>'
             f'</section>'
         )
     return PAGE_TEMPLATE.format(
         title=html.escape(doc['title']),
         count=len(doc['pages']),
         toc=toc,
+        file=html.escape(rel_path),
         sections=''.join(sections),
     )
 
@@ -430,6 +613,14 @@ class Handler(BaseHTTPRequestHandler):
         data = body.encode('utf-8')
         self.send_response(status)
         self.send_header('Content-Type', 'text/html; charset=utf-8')
+        self.send_header('Content-Length', str(len(data)))
+        self.end_headers()
+        self.wfile.write(data)
+
+    def _send_json(self, obj, status=200):
+        data = json.dumps(obj, ensure_ascii=False).encode('utf-8')
+        self.send_response(status)
+        self.send_header('Content-Type', 'application/json; charset=utf-8')
         self.send_header('Content-Length', str(len(data)))
         self.end_headers()
         self.wfile.write(data)
@@ -508,6 +699,33 @@ class Handler(BaseHTTPRequestHandler):
                     if not chunk:
                         break
                     self.wfile.write(chunk)
+            return
+
+        self.send_response(404)
+        self.end_headers()
+
+    def do_POST(self):
+        parsed = urlparse(self.path)
+
+        if parsed.path == '/save-text':
+            length = int(self.headers.get('Content-Length', 0) or 0)
+            raw_body = self.rfile.read(length) if length else b''
+            try:
+                data = json.loads(raw_body.decode('utf-8'))
+                rel_path = data['file']
+                page_num = int(data['idx'])
+                text = data['text']
+            except Exception:
+                self._send_json({'ok': False, 'error': '잘못된 요청입니다.'}, 400)
+                return
+            if _resolve_rel(rel_path) is None or not rel_path.endswith('_독립.md'):
+                self._send_json({'ok': False, 'error': '파일을 찾을 수 없습니다.'}, 404)
+                return
+            try:
+                save_page_text(rel_path, page_num, text)
+                self._send_json({'ok': True})
+            except Exception as e:
+                self._send_json({'ok': False, 'error': str(e)}, 500)
             return
 
         self.send_response(404)
