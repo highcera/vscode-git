@@ -12,7 +12,8 @@ DRM이 걸린 xlsx를 "진짜 Excel"로 정상 오픈(DRM 인증을 그대로 �
 정상적으로 열람·편집 권한을 가진 세션에서 보이는 내용을 받아적는 것뿐이다.
 
 사전 준비:
-  pip install pywin32
+  pip install pywin32 Pillow
+  (Pillow는 chart.Export()가 깨진 PNG를 만들 때 클립보드 방식으로 재시도하는 데 필요)
   대상 파일을 Excel로 더블클릭해서 정상적으로 열리는 상태(DRM 인증 완료)여야 함.
 
 사용법:
@@ -69,6 +70,33 @@ CHART_TYPE_NAMES = {
 
 MAX_FORMAT_CELLS = 8000  # 서식까지 셀 단위로 읽을 때 너무 느려지지 않게 상한
 XL_NONE_COLOR_INDEX = -4142
+
+# 로컬라이즈된 Excel에서 Range.NumberFormat이 영어 "General"이 아니라 그 언어의
+# 번역된 이름을 그대로 돌려주는 경우가 실제로 확인됨(한국어 Excel: "표준").
+# 이걸 "커스텀 서식"으로 오인해서 그대로 저장하면, 복원 시 Excel이 그 단어를
+# 숫자서식 코드로 잘못 해석해서 모든 값이 그 글자 그대로(음수는 "-표준"처럼)
+# 표시되는 사고가 났었다(실사용자 리포트로 발견). 흔한 로케일의 "General" 별칭을
+# 화이트리스트로 걸러낸다.
+GENERAL_FORMAT_ALIASES = {
+    'general', '표준', '標準', '常规', '常規', 'estándar', 'standard', 'allgemein',
+}
+# 진짜 서식 코드라면 숫자/기호/날짜토큰 중 하나는 반드시 들어있다 — 하나도 없는
+# 순수 문자열이면 위 화이트리스트에 없는 다른 로케일의 "General" 번역일 가능성이
+# 높으므로, 모르면 저장하지 않는 쪽(=기본 서식으로 둠)이 안전하다.
+_FORMAT_CODE_MARKER_CHARS = set('0123456789#%$₩¥€.,:/\\ -+()[]@";_*')
+_DATE_TIME_TOKENS = ('yyyy', 'yy', 'mm', 'dd', 'hh', 'ss', 'AM/PM', 'am/pm')
+
+
+def _looks_like_real_format_code(nf):
+    if not nf:
+        return False
+    if nf.strip().lower() in GENERAL_FORMAT_ALIASES:
+        return False
+    if any(ch in _FORMAT_CODE_MARKER_CHARS for ch in nf):
+        return True
+    if any(tok in nf for tok in _DATE_TIME_TOKENS):
+        return True
+    return False
 
 log = logging.getLogger('encode_excel')
 
@@ -156,8 +184,10 @@ def extract_sheet(ws):
                 try:
                     rng = ws.Cells(row, col)
                     nf = rng.NumberFormat
-                    if nf and nf != 'General':
+                    if _looks_like_real_format_code(nf):
                         cell_info['number_format'] = nf
+                    elif nf and nf.strip().lower() not in GENERAL_FORMAT_ALIASES:
+                        log.debug(f'  [{ws.Name}] R{row}C{col} 서식 코드로 보기 애매해서 생략: {nf!r}')
                     if rng.Font.Bold:
                         cell_info['bold'] = True
                     if rng.Font.Italic:
@@ -236,6 +266,57 @@ def extract_names(wb):
     return names
 
 
+def _is_valid_png(path):
+    try:
+        if os.path.getsize(path) < 100:
+            return False
+        with open(path, 'rb') as f:
+            header = f.read(8)
+        return header == b'\x89PNG\r\n\x1a\n'
+    except Exception:
+        return False
+
+
+def export_chart_image(co, chart, out_path, label):
+    """차트를 PNG로 내보낸다. chart.Export()가 가끔(특히 콤보/복합 차트) 손상된
+    파일을 만드는 게 실측으로 확인돼서, 내보낸 뒤 실제로 유효한 PNG인지 검사하고,
+    깨졌으면 '차트를 그림으로 복사 → 클립보드에서 저장' 방식으로 한 번 더 시도한다."""
+    try:
+        chart.Export(out_path, 'PNG')
+        if _is_valid_png(out_path):
+            return True
+        size = os.path.getsize(out_path) if os.path.exists(out_path) else -1
+        log.warning(f'  {label} — Export()가 유효하지 않은 PNG를 만듦(size={size}B), '
+                    f'클립보드 방식으로 재시도')
+    except Exception as e:
+        log.warning(f'  {label} — chart.Export() 실패: {e}, 클립보드 방식으로 재시도')
+
+    try:
+        from PIL import ImageGrab
+        # CopyPicture(Appearance=xlScreen(1), Format=xlBitmap(2)) — 레거시 메타파일(EMF) 대신
+        # 래스터 비트맵으로 클립보드에 올려야 ImageGrab.grabclipboard()가 안정적으로 읽어들인다.
+        chart.CopyPicture(1, 2)
+        import time
+        time.sleep(0.3)
+        img = ImageGrab.grabclipboard()
+        if img is None:
+            log.warning(f'  {label} — 클립보드에서 이미지를 가져오지 못함(복사 실패)')
+            return False
+        img.save(out_path, 'PNG')
+        if _is_valid_png(out_path):
+            log.info(f'  {label} — 클립보드 방식으로 복구 성공')
+            return True
+        log.warning(f'  {label} — 클립보드로 저장한 파일도 유효하지 않음')
+        return False
+    except ImportError:
+        log.warning(f'  {label} — Pillow(PIL)가 없어서 클립보드 재시도 불가 '
+                    f'(`pip install Pillow` 후 다시 시도하면 복구될 수 있음)')
+        return False
+    except Exception as e:
+        log.warning(f'  {label} — 클립보드 방식도 실패: {e}')
+        return False
+
+
 def extract_charts(wb, out_dir):
     log.info('차트 추출 시작')
     charts = []
@@ -290,14 +371,17 @@ def extract_charts(wb, out_dir):
                 log.warning(f'  [{ws.Name}] 차트 "{co.Name}" 시리즈 읽기 실패: {e}')
             info['series'] = series
 
-            safe_name = re.sub(r'[^A-Za-z0-9가-힣_-]', '_', f'{ws.Name}_{co.Name}')
+            # \w는 파이썬 3에서 기본적으로 유니코드 인식이라 일본어/한글 등도 그대로 보존됨
+            # (예전엔 한글만 허용하는 정규식이라 일본어 차트 이름이 전부 밑줄로 뭉개졌었음)
+            safe_name = re.sub(r'[^\w-]', '_', f'{ws.Name}_{co.Name}')
             img_name = f'chart_{safe_name}.png'
-            try:
-                chart.Export(os.path.join(out_dir, img_name), 'PNG')
+            img_path = os.path.join(out_dir, img_name)
+            label = f'차트 "{co.Name}" ({ws.Name})'
+            if export_chart_image(co, chart, img_path, label):
                 info['image_file'] = img_name
-            except Exception as e:
-                log.warning(f'  [{ws.Name}] 차트 "{co.Name}" PNG 내보내기 실패 '
-                            f'(복원 시 이미지 없이 메타데이터만 남음): {e}')
+            else:
+                log.warning(f'  {label} — PNG 확보 실패, 이미지 없이 메타데이터(종류/시리즈 범위)만 남음 '
+                            f'— decode 시 수동 재현 필요')
                 info['image_file'] = None
 
             charts.append(info)

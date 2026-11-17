@@ -1,0 +1,12 @@
+21:59:57 [INFO] === decode_excel.py 시작 === 입력 폴더: D:\vscode-git\Test1
+21:59:57 [INFO] 로그 파일: D:\vscode-git\decode_log_20261117_215957.txt
+21:59:57 [ERROR] 치명적 오류로 중단됨: [WinError 3] 지정된 경로를 찾을 수 없습니다: 'D:\\vscode-git\\Test1'
+21:59:57 [ERROR] Traceback (most recent call last):
+  File "d:\vscode-git\excel_drm_bridge\decode_excel.py", line 215, in main
+    manifest_path = find_manifest(folder)
+                    ^^^^^^^^^^^^^^^^^^^^^
+  File "d:\vscode-git\excel_drm_bridge\decode_excel.py", line 74, in find_manifest
+    candidates = [fn for fn in os.listdir(folder) if fn.endswith('.json')]
+                               ^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [WinError 3] 지정된 경로를 찾을 수 없습니다: 'D:\\vscode-git\\Test1'
+

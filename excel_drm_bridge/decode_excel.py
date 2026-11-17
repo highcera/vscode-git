@@ -149,22 +149,70 @@ def build_sheet(wb, sheet_data, is_first):
     return ws
 
 
+# Excel 내부 예약 이름(인쇄영역/자동필터 등). AutoFilter·페이지설정 같은 다른 XML
+# 구조와 맞물려 있어서, 그냥 DefinedName으로만 복원하면 그 연결이 깨진 반쪽짜리
+# 참조가 되고 — 실제로 "명명된 범위가 제거됨" Excel 복구 경고의 흔한 원인이다.
+# 인쇄영역 자체는 서식 수준이라 중요도가 낮으므로, 여기서는 아예 건너뛴다.
+BUILTIN_NAME_WORDS = {
+    'print_area', 'print_titles', 'database', 'criteria', 'extract',
+    'consolidate_area', 'sheet_title', '_filterdatabase', 'filterdatabase',
+}
+
+
+def _is_builtin_name(clean_name):
+    return clean_name.lstrip('_').lower() in BUILTIN_NAME_WORDS
+
+
 def apply_defined_names(wb, names):
     log.info(f'정의된 이름(이름관리자) 복원 시작 — {len(names)}개')
     ok = 0
+    skipped_builtin = 0
+    dup_count = 0
     for n in names:
         name = n.get('name', '') or ''
         refers = n.get('refers_to')
+        scope = n.get('scope', 'workbook')
         if not name or not refers:
             log.debug(f'  이름/참조가 비어서 건너뜀: {n}')
             continue
+
         clean_name = name.split('!')[-1]
+        if _is_builtin_name(clean_name):
+            skipped_builtin += 1
+            log.debug(f'  "{name}" — Excel 내부 예약 이름이라 생략(인쇄영역/자동필터 등)')
+            continue
+
+        attr_text = refers.lstrip('=')
         try:
-            wb.defined_names[clean_name] = DefinedName(clean_name, attr_text=refers.lstrip('='))
-            ok += 1
+            if scope == 'workbook':
+                if clean_name in wb.defined_names:
+                    dup_count += 1
+                    # 이름이 몇천 개 단위면 중복도 흔해서, 건마다 콘솔에 찍으면 화면이
+                    # 묻혀버린다(실제로 사용자가 겪은 문제) — 상세는 파일(DEBUG)에만 남기고
+                    # 콘솔에는 끝에 집계 한 줄만 보여준다.
+                    log.debug(f'  [이름관리자] "{clean_name}"가 이미 있어서 덮어씀(통합문서 범위 중복)')
+                wb.defined_names[clean_name] = DefinedName(clean_name, attr_text=attr_text)
+                ok += 1
+            elif scope in wb.sheetnames:
+                ws = wb[scope]
+                if clean_name in ws.defined_names:
+                    dup_count += 1
+                    log.debug(f'  [이름관리자] "{scope}!{clean_name}"가 이미 있어서 덮어씀')
+                ws.defined_names[clean_name] = DefinedName(clean_name, attr_text=attr_text)
+                ok += 1
+            else:
+                log.debug(f'  [이름관리자] "{name}" — scope "{scope}" 시트를 못 찾아서 '
+                          f'통합문서 범위로 대신 등록')
+                wb.defined_names[clean_name] = DefinedName(clean_name, attr_text=attr_text)
+                ok += 1
         except Exception as e:
             log.warning(f'  [이름관리자] "{name}" 복원 실패(수동 확인 필요): {e}')
-    log.info(f'정의된 이름 복원 완료 — {ok}/{len(names)}개 성공')
+    summary = f'정의된 이름 복원 완료 — {ok}/{len(names)}개 성공'
+    if skipped_builtin:
+        summary += f', 예약 이름 {skipped_builtin}개 생략'
+    if dup_count:
+        summary += f', 같은 이름 중복 {dup_count}건(마지막 값으로 덮어씀 — 상세는 로그 파일 DEBUG 라인 참고)'
+    log.info(summary)
 
 
 def add_charts(wb, charts, folder):
