@@ -4,16 +4,23 @@ encode_excel.py — DRM 권한이 있는 PC에서 실행.
 
 DRM이 걸린 xlsx를 "진짜 Excel"로 정상 오픈(DRM 인증을 그대로 통과)한 뒤,
 그 Excel 객체 모델(COM)에서 셀 값/수식/기본 서식/정의된 이름(이름관리자)/
-차트 정보를 읽어서 비(非)엑셀 포맷(JSON + PNG)으로 저장한다.
+차트 정보를 읽어서 비(非)엑셀 포맷(JSON)으로 저장한다.
 
-이 PC의 DRM 정책은 "xlsx로 저장하면 자동으로 암호화"되는 방식이라고
-확인했으므로(md/txt는 안 걸림), 출력은 전부 JSON/PNG로만 내보낸다 —
+이 PC의 DRM 정책은 "xlsx로 저장하면 자동으로 암호화"되는 방식이라고 확인했는데
+(md/txt는 안 걸림), **실측해보니 PNG 파일도 걸린다** — chart.Export()로 만든
+PNG가 스크립트 실행 중 검증할 땐 멀쩡해 보였는데, 나중에 열어보면 전부
+"<## NASCA DRM FILE" 헤더로 암호화돼 있었다(디스크에 이미지 파일로 남는 순간
+백그라운드에서 비동기로 가로채 재암호화하는 것으로 추정). 그래서 **차트 이미지를
+별도 .png 파일로 두지 않고, base64 문자열로 인코딩해서 JSON 안에 통째로
+담는다** — JSON/텍스트는 이미 안전하다고 확인됐으므로 이 방식이면 디스크에
+"이미지 파일"이 존재하는 시점 자체가 없어서 안전하다.
+
 이 스크립트 자체가 DRM 암호화를 풀거나 우회하는 게 아니라, 사용자가 이미
 정상적으로 열람·편집 권한을 가진 세션에서 보이는 내용을 받아적는 것뿐이다.
 
 사전 준비:
   pip install pywin32 Pillow
-  (Pillow는 chart.Export()가 깨진 PNG를 만들 때 클립보드 방식으로 재시도하는 데 필요)
+  (Pillow는 차트를 클립보드로 캡처해서 PNG 바이트로 바꾸는 데 필요 — 필수)
   대상 파일을 Excel로 더블클릭해서 정상적으로 열리는 상태(DRM 인증 완료)여야 함.
 
 사용법:
@@ -21,7 +28,7 @@ DRM이 걸린 xlsx를 "진짜 Excel"로 정상 오픈(DRM 인증을 그대로 �
 
 출력:
   출력폴더\\<원본파일명>.json          — 시트별 셀 그리드, 정의된 이름, 차트 메타데이터
-  출력폴더\\chart_<시트>_<차트명>.png   — 차트 스냅샷(참고/대체용 이미지)
+                                      (차트 이미지는 base64로 이 JSON 안에 포함됨)
   출력폴더\\encode_log_<시각>.txt      — 진행 단계/경고/오류를 전부 남기는 로그.
                                       예상 못한 문제(특정 셀에서 멈춤, 서식 못 읽음,
                                       차트 추출 실패, COM 자체 오류 등)가 생기면
@@ -30,7 +37,7 @@ DRM이 걸린 xlsx를 "진짜 Excel"로 정상 오픈(DRM 인증을 그대로 �
 주의:
   - 서식(글꼴/색/번호서식)은 셀 수가 너무 많으면(MAX_FORMAT_CELLS 초과) 건너뛴다.
     값/수식은 항상 전부 뽑는다.
-  - 차트는 "종류 + 소스 범위 문자열 + 스냅샷 이미지"까지만 뽑는다. 완전히
+  - 차트는 "종류 + 소스 범위 문자열 + 스냅샷 이미지(base64)"까지만 뽑는다. 완전히
     동일한 차트 객체를 코드로 자동 재현하는 건 신뢰도가 낮아서, decode_excel.py는
     기본적으로 이미지로만 삽입하고, 실제 데이터 연동 차트가 필요하면 복원된
     값을 기준으로 Excel에서 직접 새로 만드는 걸 권장한다(README 참고).
@@ -40,8 +47,12 @@ DRM이 걸린 xlsx를 "진짜 Excel"로 정상 오픈(DRM 인증을 그대로 �
 
 import sys
 import os
+import io
 import json
 import re
+import time
+import base64
+import tempfile
 import datetime
 import logging
 import traceback
@@ -138,6 +149,23 @@ def json_safe(val):
     return val
 
 
+def flatten_scalar(val, label=''):
+    """배열수식(레거시 CSE 등)이 걸린 셀은 COM이 그 위치의 값을 중첩 튜플로 주는
+    경우가 실측으로 확인됨(예: ['텍스트'] 형태) — 셀엔 스칼라 하나만 들어갈 수
+    있으므로 첫 번째 값만 꺼내 쓴다(실사용 사례는 전부 단일 원소였음)."""
+    depth = 0
+    while isinstance(val, (tuple, list)):
+        if not val:
+            return None
+        if len(val) > 1 and depth == 0:
+            log.debug(f'  {label} 배열수식 셀에 값이 여러 개({len(val)}개) — 첫 값만 사용: {val!r}')
+        val = val[0]
+        depth += 1
+        if depth > 10:
+            break
+    return val
+
+
 def normalize_grid(values, formulas, n_rows, n_cols):
     """COM은 셀이 1개면 스칼라, 1행/1열이면 1중 튜플을 주므로 2중 튜플로 통일."""
     if n_rows == 1 and n_cols == 1:
@@ -169,13 +197,13 @@ def extract_sheet(ws):
     format_fail_count = 0
     for i in range(n_rows):
         for j in range(n_cols):
-            val = values[i][j]
-            formula = formulas[i][j]
+            row = start_row + i
+            col = start_col + j
+            val = flatten_scalar(values[i][j], label=f'[{ws.Name}] R{row}C{col}')
+            formula = flatten_scalar(formulas[i][j], label=f'[{ws.Name}] R{row}C{col} 수식')
             if val is None and (formula in (None, '')):
                 continue
 
-            row = start_row + i
-            col = start_col + j
             cell_info = {'row': row, 'col': col, 'value': json_safe(val)}
             if isinstance(formula, str) and formula.startswith('='):
                 cell_info['formula'] = formula
@@ -266,58 +294,68 @@ def extract_names(wb):
     return names
 
 
-def _is_valid_png(path):
-    try:
-        if os.path.getsize(path) < 100:
-            return False
-        with open(path, 'rb') as f:
-            header = f.read(8)
-        return header == b'\x89PNG\r\n\x1a\n'
-    except Exception:
-        return False
+PNG_MAGIC = b'\x89PNG\r\n\x1a\n'
 
 
-def export_chart_image(co, chart, out_path, label):
-    """차트를 PNG로 내보낸다. chart.Export()가 가끔(특히 콤보/복합 차트) 손상된
-    파일을 만드는 게 실측으로 확인돼서, 내보낸 뒤 실제로 유효한 PNG인지 검사하고,
-    깨졌으면 '차트를 그림으로 복사 → 클립보드에서 저장' 방식으로 한 번 더 시도한다."""
-    try:
-        chart.Export(out_path, 'PNG')
-        if _is_valid_png(out_path):
-            return True
-        size = os.path.getsize(out_path) if os.path.exists(out_path) else -1
-        log.warning(f'  {label} — Export()가 유효하지 않은 PNG를 만듦(size={size}B), '
-                    f'클립보드 방식으로 재시도')
-    except Exception as e:
-        log.warning(f'  {label} — chart.Export() 실패: {e}, 클립보드 방식으로 재시도')
+def _is_valid_png_bytes(data):
+    return bool(data) and len(data) > 100 and data[:8] == PNG_MAGIC
 
+
+def capture_chart_png_bytes(co, chart, label):
+    """차트를 PNG 바이트로 캡처한다(파일로는 절대 남기지 않음).
+
+    1차: 차트를 비트맵으로 클립보드에 복사 → 메모리에서 바로 읽음. 디스크를
+    전혀 거치지 않으므로 "이미지 파일을 쓰는 순간 DRM이 나중에 가로채 재암호화"
+    하는 문제(실측으로 확인됨 — chart.Export()로 만든 PNG가 스크립트 실행 중
+    검증할 땐 멀쩡했는데 나중에 열어보면 전부 암호화돼 있었음)에서 안전하다.
+
+    2차 폴백(1차가 실패했을 때만): chart.Export()로 임시 파일을 만들고 즉시
+    읽어서 바이트만 챙긴 뒤 바로 삭제한다. 디스크에 남는 시간을 최소화하지만
+    1차보다는 덜 안전하다."""
     try:
         from PIL import ImageGrab
         # CopyPicture(Appearance=xlScreen(1), Format=xlBitmap(2)) — 레거시 메타파일(EMF) 대신
         # 래스터 비트맵으로 클립보드에 올려야 ImageGrab.grabclipboard()가 안정적으로 읽어들인다.
         chart.CopyPicture(1, 2)
-        import time
         time.sleep(0.3)
         img = ImageGrab.grabclipboard()
-        if img is None:
-            log.warning(f'  {label} — 클립보드에서 이미지를 가져오지 못함(복사 실패)')
-            return False
-        img.save(out_path, 'PNG')
-        if _is_valid_png(out_path):
-            log.info(f'  {label} — 클립보드 방식으로 복구 성공')
-            return True
-        log.warning(f'  {label} — 클립보드로 저장한 파일도 유효하지 않음')
-        return False
+        if img is not None:
+            buf = io.BytesIO()
+            img.save(buf, 'PNG')
+            data = buf.getvalue()
+            if _is_valid_png_bytes(data):
+                return data
+            log.debug(f'  {label} — 클립보드 캡처 결과가 비정상, Export 방식으로 재시도')
+        else:
+            log.debug(f'  {label} — 클립보드에서 이미지를 못 가져옴, Export 방식으로 재시도')
     except ImportError:
-        log.warning(f'  {label} — Pillow(PIL)가 없어서 클립보드 재시도 불가 '
-                    f'(`pip install Pillow` 후 다시 시도하면 복구될 수 있음)')
-        return False
+        log.warning(f'  {label} — Pillow(PIL)가 없어서 클립보드 캡처 불가 '
+                    f'(`pip install Pillow` 필수) — Export 방식만 시도')
     except Exception as e:
-        log.warning(f'  {label} — 클립보드 방식도 실패: {e}')
-        return False
+        log.debug(f'  {label} — 클립보드 캡처 실패({e}), Export 방식으로 재시도')
+
+    tmp_path = os.path.join(tempfile.gettempdir(), f'_chart_tmp_{os.getpid()}_{id(co)}.png')
+    try:
+        chart.Export(tmp_path, 'PNG')
+        with open(tmp_path, 'rb') as f:
+            data = f.read()
+        if _is_valid_png_bytes(data):
+            return data
+        log.warning(f'  {label} — PNG 확보 실패(클립보드/Export 둘 다 실패), '
+                    f'이미지 없이 메타데이터(종류/시리즈 범위)만 남음 — decode 시 수동 재현 필요')
+        return None
+    except Exception as e:
+        log.warning(f'  {label} — chart.Export() 실패: {e}')
+        return None
+    finally:
+        try:
+            if os.path.exists(tmp_path):
+                os.remove(tmp_path)
+        except Exception as e:
+            log.debug(f'  {label} — 임시 PNG 삭제 실패(무시): {e}')
 
 
-def extract_charts(wb, out_dir):
+def extract_charts(wb):
     log.info('차트 추출 시작')
     charts = []
     for ws in wb.Worksheets:
@@ -371,18 +409,12 @@ def extract_charts(wb, out_dir):
                 log.warning(f'  [{ws.Name}] 차트 "{co.Name}" 시리즈 읽기 실패: {e}')
             info['series'] = series
 
-            # \w는 파이썬 3에서 기본적으로 유니코드 인식이라 일본어/한글 등도 그대로 보존됨
-            # (예전엔 한글만 허용하는 정규식이라 일본어 차트 이름이 전부 밑줄로 뭉개졌었음)
-            safe_name = re.sub(r'[^\w-]', '_', f'{ws.Name}_{co.Name}')
-            img_name = f'chart_{safe_name}.png'
-            img_path = os.path.join(out_dir, img_name)
             label = f'차트 "{co.Name}" ({ws.Name})'
-            if export_chart_image(co, chart, img_path, label):
-                info['image_file'] = img_name
+            data = capture_chart_png_bytes(co, chart, label)
+            if data:
+                info['image_b64'] = base64.b64encode(data).decode('ascii')
             else:
-                log.warning(f'  {label} — PNG 확보 실패, 이미지 없이 메타데이터(종류/시리즈 범위)만 남음 '
-                            f'— decode 시 수동 재현 필요')
-                info['image_file'] = None
+                info['image_b64'] = None
 
             charts.append(info)
     log.info(f'차트 {len(charts)}개 추출 완료')
@@ -407,7 +439,7 @@ def run(src_path, out_dir):
             'workbook_name': os.path.splitext(os.path.basename(src_path))[0],
             'sheets': [],
             'defined_names': extract_names(wb),
-            'charts': extract_charts(wb, out_dir),
+            'charts': extract_charts(wb),
         }
         for ws in wb.Worksheets:
             try:

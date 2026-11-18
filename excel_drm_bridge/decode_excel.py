@@ -2,8 +2,11 @@
 """
 decode_excel.py — DRM 권한이 없거나 DRM 정책이 안 걸리는 PC에서 실행.
 
-encode_excel.py가 뽑아낸 JSON(+ 차트 PNG)을 읽어서 새 xlsx를 조립한다.
-openpyxl만 쓰므로 Excel 설치가 필요 없다.
+encode_excel.py가 뽑아낸 JSON을 읽어서 새 xlsx를 조립한다. 차트 이미지는 별도
+파일이 아니라 JSON 안에 base64로 들어있다(인코더 쪽 DRM이 디스크에 쓰인 이미지
+파일을 나중에 가로채 재암호화하는 문제가 실측으로 확인돼서, 이미지 파일 자체를
+아예 안 만드는 방식으로 바뀜 — 2026-11-18). openpyxl만 쓰므로 Excel 설치가
+필요 없다.
 
 복원되는 것: 셀 값, 수식(문자열로 그대로 넣으면 Excel이 다시 계산함),
 기본 서식(굵게/기울임/글꼴색/배경색/숫자서식), 열 너비/행 높이, 정의된
@@ -32,7 +35,9 @@ openpyxl만 쓰므로 Excel 설치가 필요 없다.
 
 import sys
 import os
+import io
 import json
+import base64
 import datetime
 import logging
 import traceback
@@ -215,7 +220,7 @@ def apply_defined_names(wb, names):
     log.info(summary)
 
 
-def add_charts(wb, charts, folder):
+def add_charts(wb, charts):
     log.info(f'차트 삽입 시작 — {len(charts)}개')
     for ch in charts:
         sheet_name = ch.get('sheet')
@@ -225,20 +230,28 @@ def add_charts(wb, charts, folder):
             continue
         ws = wb[sheet_name]
 
-        img_file = ch.get('image_file')
-        if img_file:
-            img_path = os.path.join(folder, img_file)
-            if os.path.exists(img_path):
-                try:
-                    img = XLImage(img_path)
-                    anchor_col = get_column_letter(max(1, int(ch.get('left', 0) // 64) + 1))
-                    ws.add_image(img, f'{anchor_col}2')
-                    log.info(f'  {chart_label} — 이미지로 삽입됨')
-                    continue
-                except Exception as e:
-                    log.warning(f'  {chart_label} — 이미지 삽입 실패: {e}')
-            else:
-                log.warning(f'  {chart_label} — 이미지 파일을 못 찾음: {img_path}')
+        b64 = ch.get('image_b64')
+        if b64:
+            try:
+                data = base64.b64decode(b64)
+                from PIL import Image as PILImage
+                # .load()를 호출하면 PIL이 다 읽었다고 보고 내부 fp를 None으로 비우는데,
+                # openpyxl은 wb.save() 시점에 그 fp.seek(0)을 다시 호출해서 바이트를 꺼내므로
+                # load()를 부르면 안 된다(실측으로 'NoneType' seek 오류 확인) — PIL Image가
+                # 이 BytesIO를 계속 들고 있게 그대로 둬서 저장 시점까지 열려있게 한다.
+                pil_img = PILImage.open(io.BytesIO(data))
+                img = XLImage(pil_img)
+                anchor_col = get_column_letter(max(1, int(ch.get('left', 0) // 64) + 1))
+                ws.add_image(img, f'{anchor_col}2')
+                log.info(f'  {chart_label} — 이미지로 삽입됨')
+                continue
+            except ImportError:
+                log.warning(f'  {chart_label} — Pillow(PIL)가 없어서 이미지 삽입 불가 '
+                            f'(`pip install Pillow` 후 다시 시도)')
+            except Exception as e:
+                log.warning(f'  {chart_label} — 이미지 삽입 실패: {e}')
+        else:
+            log.debug(f'  {chart_label} — JSON에 이미지 데이터 없음(인코딩 시 캡처 실패)')
 
         log.warning(f'  {chart_label} — 이미지 없음, 수동 재현 필요. '
                     f'종류: {ch.get("chart_type_name") or ch.get("chart_type")}, '
@@ -247,11 +260,25 @@ def add_charts(wb, charts, folder):
 
 def main():
     if len(sys.argv) < 3:
-        print('사용법: python decode_excel.py <encode 출력 폴더> <결과.xlsx>')
+        print('사용법: python decode_excel.py <encode 출력 폴더> "<결과.xlsx>"')
+        print('(결과 파일 경로에 공백이 있으면 반드시 따옴표로 감싸주세요)')
         sys.exit(1)
 
     folder = os.path.abspath(sys.argv[1])
-    out_path = os.path.abspath(sys.argv[2])
+    if len(sys.argv) > 3:
+        # 출력 경로에 공백이 있는데 따옴표 없이 입력하면 쉘이 여러 인자로 쪼개서 뒷부분이
+        # 통째로 사라지는 사고가 실제로 있었음(예: "...\신뢰성 OJT.xlsx" → "...\신뢰성"만 저장됨)
+        # — 남은 인자를 공백으로 다시 합쳐서 구제한다.
+        out_path_raw = ' '.join(sys.argv[2:])
+        print(f'[안내] 결과 경로 인자가 여러 개로 쪼개져 들어왔습니다(따옴표 없이 공백 포함 '
+              f'경로를 쓰신 것으로 보입니다) — "{out_path_raw}"로 합쳐서 처리합니다. '
+              f'다음엔 따옴표로 감싸주세요.')
+    else:
+        out_path_raw = sys.argv[2]
+    if not out_path_raw.lower().endswith(('.xlsx', '.xlsm')):
+        print(f'[안내] 결과 경로에 확장자가 없어서 .xlsx를 붙입니다: "{out_path_raw}" -> "{out_path_raw}.xlsx"')
+        out_path_raw += '.xlsx'
+    out_path = os.path.abspath(out_path_raw)
     out_dir = os.path.dirname(out_path) or '.'
     os.makedirs(out_dir, exist_ok=True)
 
@@ -273,7 +300,7 @@ def main():
             build_sheet(wb, sheet_data, is_first=(i == 0))
 
         apply_defined_names(wb, data.get('defined_names', []))
-        add_charts(wb, data.get('charts', []), folder)
+        add_charts(wb, data.get('charts', []))
 
         wb.save(out_path)
     except Exception as e:
