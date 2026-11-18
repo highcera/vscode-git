@@ -219917,7 +219917,7 @@
      "values_formula": "=SERIES(,삼증연저!$B$7:$B$494,삼증연저!$G$7:$G$494,2)"
     }
    ],
-   "image_file": "chart_삼증연저_profit.png"
+   "image_file": null
   },
   {
    "sheet": "삼증연저",
@@ -219943,7 +219943,7 @@
      "values_formula": "=SERIES(삼증연저!$AP$6,정리2.xlsx!rng_count,정리2.xlsx!rng_rich,4)"
     }
    ],
-   "image_file": "chart_삼증연저_Chart_2.png"
+   "image_file": null
   },
   {
    "sheet": "삼증연저",
@@ -219965,7 +219965,7 @@
      "values_formula": "=SERIES(,삼증연저!$B$123:$B$494,삼증연저!$CF$123:$CF$494,2)"
     }
    ],
-   "image_file": "chart_삼증연저_Chart_4.png"
+   "image_file": null
   },
   {
    "sheet": "삼증연저",
@@ -219987,7 +219987,7 @@
      "values_formula": "=SERIES(,삼증연저!$B$123:$B$413,삼증연저!$CB$123:$CB$413,2)"
     }
    ],
-   "image_file": "chart_삼증연저_Chart_5.png"
+   "image_file": null
   },
   {
    "sheet": "삼증연저",
@@ -220009,7 +220009,7 @@
      "values_formula": "=SERIES(,삼증연저!$B$123:$B$413,삼증연저!$CD$123:$CD$413,2)"
     }
    ],
-   "image_file": "chart_삼증연저_Chart_6.png"
+   "image_file": null
   },
   {
    "sheet": "삼증연저",
@@ -220035,7 +220035,7 @@
      "values_formula": "=SERIES(,삼증연저!$B$189:$B$494,삼증연저!$CX$189:$CX$494,3)"
     }
    ],
-   "image_file": "chart_삼증연저_Chart_8.png"
+   "image_file": null
   },
   {
    "sheet": "삼증연저",
@@ -220061,7 +220061,7 @@
      "values_formula": "=SERIES(\"base line\",삼증연저!$B$337:$B$494,삼증연저!$DU$337:$DU$494,5)"
     }
    ],
-   "image_file": "chart_삼증연저_Chart_7.png"
+   "image_file": null
   },
   {
    "sheet": "삼증연저",
@@ -220079,7 +220079,7 @@
      "values_formula": "=SERIES(,삼증연저!$B$321:$B$494,삼증연저!$DQ$321:$DQ$494,1)"
     }
    ],
-   "image_file": "chart_삼증연저_Chart_12.png"
+   "image_file": null
   },
   {
    "sheet": "삼증연저",
@@ -220113,7 +220113,7 @@
      "values_formula": "=SERIES(\"Fund2\",삼증연저!$B$405:$B$594,삼증연저!$DH$405:$DH$594,5)"
     }
    ],
-   "image_file": "chart_삼증연저_Chart_10.png"
+   "image_file": null
   },
   {
    "sheet": "잔업",
@@ -220149,7 +220149,7 @@
      "values_formula": "=SERIES(,pay!$L$111:$L$116,pay!$M$111:$M$116,1)"
     }
    ],
-   "image_file": "chart_pay_Chart_1.png"
+   "image_file": null
   },
   {
    "sheet": "pay",
@@ -220167,7 +220167,7 @@
      "values_formula": "=SERIES(,pay!$K$111:$K$116,pay!$O$111:$O$116,1)"
     }
    ],
-   "image_file": "chart_pay_Chart_2.png"
+   "image_file": null
   }
  ]
 }

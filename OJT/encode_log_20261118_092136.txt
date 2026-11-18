@@ -1,0 +1,15 @@
+09:21:36 [INFO] === encode_excel.py 시작 === 대상: P:\신뢰성\신뢰성
+09:21:36 [INFO] 로그 파일: D:\git\vscode-git\OJT\encode_log_20261118_092136.txt
+09:21:36 [INFO] Excel COM 애플리케이션 시작 시도
+09:21:37 [INFO] Excel COM 애플리케이션 시작 성공
+09:21:37 [INFO] 파일 여는 중: P:\신뢰성\신뢰성
+09:21:37 [INFO] Excel 종료
+09:21:37 [ERROR] 치명적 오류로 중단됨: (-2147352567, '예외가 발생했습니다.', (0, 'Microsoft Excel', "'P:\\신뢰성\\신뢰성.xlsx'을(를) 찾을 수 없습니다. 파일의 이름이 변경되었거나 파일이 이동 또는 삭제되지 않았는지 확인하세요.", 'xlmain11.chm', 0, -2146827284), None)
+09:21:37 [ERROR] Traceback (most recent call last):
+  File "d:\git\vscode-git\excel_drm_bridge\encode_excel.py", line 449, in main
+    result = run(src_path, out_dir)
+  File "d:\git\vscode-git\excel_drm_bridge\encode_excel.py", line 403, in run
+    wb = excel.Workbooks.Open(src_path, ReadOnly=True)
+  File "<COMObject <unknown>>", line 5, in Open
+pywintypes.com_error: (-2147352567, '예외가 발생했습니다.', (0, 'Microsoft Excel', "'P:\\신뢰성\\신뢰성.xlsx'을(를) 찾을 수 없습니다. 파일의 이름이 변경되었거나 파일이 이동 또는 삭제되지 않았는지 확인하세요.", 'xlmain11.chm', 0, -2146827284), None)
+
