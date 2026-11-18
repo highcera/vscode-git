@@ -1,0 +1,1164 @@
+nodejs 웹서버
+https://als2019.tistory.com/158
+================================================================================================================================
+
+
+1교시: HTML, CSS, JS (프론트엔드 단과반)
+2교시: Node.js, Mysql (백엔드 단과반)
+3교시: AWS 배포와 GA 분석
+
+Web · 프론트엔드
+HTML, CSS, JS 프론트엔드 속성 실무!
+2020년 10월 30일 수강 시작
+크리에이터 개발자 사관학교
+
+Welcome 실전 웹개발자 사관학교에 오신 것을 환영합니다!
+1. 웹 개발자 단기과정 1교시 소개
+2. 코칭권 사용법
+
+Ch1. 개발하기 전 준비 및 워밍업
+1. 개발을 대하는 마음가짐
+2. 물어보는 기술도 능력 - 검색 방법과 공식문서
+3. 명령어 치는 장소인 검은 화면과 친해지기
+4. 코드 관리 - 깃허브 사용방법 및 프로젝트 생성
+5. 친해져야 할 에디터 vscode 사용법
+6. 앞으로 배울 내용과 함께 만들 프로젝트
+
+Ch2. 웹과 서버에 대한 이해부터!
+1. 웹과 서버의 동작 방식 이해하기
+2. 알고 시작하면 편한 API와 통신방식 GET, POST
+3. 빠르게 훑어보는 웹 서비스 배포과정
+4. 빠르게 훑어보는 배포과정까지의 개발 기술 종류들
+
+Ch3. 옷과 뼈대 = HTML, CSS
+1. 우리가 만들 화면과 개발 준비
+2. 마크업 언어와 HTML 기본
+3. 자주 사용되는 HTML 태그들
+4. 스타일 언어와 CSS 기본
+5. 자주 사용되는 CSS + 웹폰트까지
+6. CSS가 그냥 커피라면 Bootstrap은 TOP
+7. Bootstrap 제공 기능들 여러 가지 다뤄보기
+
+Ch4. 만능 언어 자바스크립트, JS
+1. JS 제대로 이해하기 - JS로 할 수 있는 것들
+자바스크립트는 기본적으로 화면의 움직이는 그림을 표현하기 위해 사용된 스크립트 언어이지만, 이제는 시대가 바뀜
+자바스크립트로 더 고차원적인 프론트엔드 개발도 할 수 있고, 우리가 2교시에 배울 NodeJS 서버도 개발 가능. 만능 언어로 등극!
+크롬 브라우저의 개발자 모드에서 (윈도우는 F12, 맥은 command + option + i), 콘솔 탭을 누르면 자바스크립트를 한 번 써볼 수 있는 곳이 보임
+실제 해당란에서 자바스크립트 문법을 공부할 수도 있고, 바로 테스트 해볼 수도 있지만! 우린 vscode body 하단에서 자바스크립트를 실전연습 진행!
+
+2. JS 기본 문법 시간 1 - 변수, 타입, 주석
+let -> 변수 선언!
+사칙연산 + - / * %
+true, false -> boolean 형
+문자열 ", ' , 벡틱을 이용한 표현 -> ${} 표현식을 통해 문자열안에 변수 넣기
+부등호를 통한 true, false 값 부여 모습도 가능 - 기본적으로 부등호는 참 또는 거짓의 값만 알려준다
+객체 object - key와 value
+배열 array - index 0 번째 부터 시작, push
+객체와 배열 복합 구조 - 값 꺼내기
+주석 - /
+
+3. JS 기본 문법 시간 2 - 조건문, 반복문
+조건문은 boolean 형이 조건문의 실행 여부를 결정 지음
+if(true){} 일 경우 조건문 바로 옆의 중괄호가 실행되고, 아니라면 연쇄적으로 else fi() 문을 통해 맞는 조건을 찾아 떠남
+모든 조건 중에 일치하는 게 없다면 최종적으로 else{} 문에서 조건문이 마지막으로 실행되고 마침
+반복문은 for(변수, 조건, 증가 또는 감소형태) 로 구성되어 있음
+변수 부분에서는 let i=0; 과 같이 반복문의 시작 위치를 숫자로 선언
+조건에선 언제까지 반복시킬 것인지를 결정
+증가 또는 감소 형태에서는 반복문에서 변수를 어떤식으로 증가 또는 감소 시킬 지를 결정
+이 둘을 이용해 복잡한 객체 배열 구조의 데이터에서 원하는 데이터를 취할 수 있음
+영화 API
+https://api.themoviedb.org/3/movie/popular?api_key=10923b261ba94d897ac6b81148314a3f&page=1
+
+4. JS 기본 문법 시간 3- 함수, 유용한 제공함수들
+학창 시절에 배웠던 y = f(x)와 같이 전달되는 x 값에 따라 결괏값이 달라지는 함수 그대로 자바스크립트에서도 구현이 가능
+function x(){} 의 형태로 함수를 선언하며, 그 내부에서는 return 키워드가 있고 없고에 따라 값을 밖으로 내보낼수도, 내보내지 않을 수도 있음
+split 또는 join은 넘겨지는 기호를 기준으로 문자열을 배열로 만들고, 배열을 다시 문자열로 합치는 자바스크립트 기본 제공 함수임
+아주 다양한 제공 함수들이 존재하는데, 공식문서에 수록되어 있음
+https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/String/split
+[자주 사용하는 제공 함수]
+
+eval()문자형 데이터를 큰따옴표가 없는 스크립트 코드로 처리합니다.
+isFinite()유한수인지 체크해서 논리값으로 돌려줍니다.
+isNaN()데이터에 숫자가 아닌 문자를 포함하면 true를 반환합니다.
+parseFloat()문자형 데이터를 실수형 데이터로 바꿉니다.
+parseInt()문자형 데이터를 정수형 데이터로 바꿉니다.
+String()문자형 데이터로 바꿉니다.
+Number()숫자형 데이터로 바꿉니다.
+Boolean()논리형 데이터로 바꿉니다.
+
+5. 자바스크립트가 그냥 커피라면 Jquery는 TOP
+자바스크립트만로도 충분히 훌륭한 프로젝트를 만들 수 있지만, 하나부터 열까지 코드를 짜기란 쉬운일이 아님
+따라서 코드를 간결하게 표현하고, 자바스크립트 기능을 사용할 수 있게 도와주는 도구, 즉 라이브러리가 있는데 바로 제이쿼리(Jquery)
+input에 있는 값을 가지고 올때, $(선택자).val() 형태로 직관적으로 사용할 수 있는 함수들을 많이 제공해주고 있음
+https://jquery.com/
+
+6. 유용한 Jquery 제공 함수들
+Jquery에는 자바스크립트 기본 제공 함수와 마찬가지로 유용한 함수들을 제공해주고 있음
+https://api.jquery.com/category/events/
+
+7. 서버와 통신할 수 있는 Jquery 도구, Ajax
+자바스크립트단에서 서버와 통신할 수 있는 방법, 즉 프론트단에서 백엔드와 통신하기 위해 사용하는 도구 Ajax
+$.ajax() 함수에 정해진 객체 값을 전달해주는 방식
+url 에는 api 주소를
+data에는 통신방식이 get 방식을 경우 서버로 전달 할 데이터를
+type은 어떤 통신 방식인지 기입
+success:function(json){} 부분은 서버로 부터 전달해오는 데이터를 받는 곳!
+
+
+Ch5. 배운내용으로 30분만에 프로젝트 시작하기
+1. 만들 내용 살펴보기 - 원페이지 영화 커뮤니티 플랫폼
+2. 메인화면 만들기
+3. 영화별 모달 댓글창 만들기
+
+4. 메인화면에 영화 API 연결
+영화 API를 사용할 땐 themoviedb 업체 api를 사용했습니다.
+해당 API는 하단의 주소를 통해 GET 통신 방식으로 호출 할 수 있습니다
+themoviedb 업체 API
+https://api.themoviedb.org/3/movie/popular?api_key=10923b261ba94d897ac6b81148314a3f&page=1
+
+5. 영화별 모달 댓글창에 댓글 달기 API 연결
+리뷰를 작성하고 버튼을 누른 후 input란이 비워지지 않는 부분은 클래스가 아닌 아이디로 되어 있는 문제와 뒤에 $("#review").val(); 에 작은 따옴표가 빠져있습니다.
+
+클래스만 바꾸면 안되니 혹시 여기서 막히신 분은 $("#review").val('');로 작성하시면 될 것 같습니다 :)
+
+1. 리뷰 가져오기
+API: http://universeapi.net/review/list?movie_id=
+
+1) 영화 리뷰 보기 버튼 클릭
+2) 리뷰 정보 요청 API 실행과 동시에 영화 아이디 값 전달
+3)리뷰 데이터 응답으로 받고 보여주기
+
+2. 리뷰 작성하기
+API: http://universeapi.net/review/add
+
+1) 리뷰 모달창에서 글 작성
+2) 글과 영화 아이디 서버로 전달
+3) 저장 성공 응답 받고 마무리
+
+6. 만든 내용 리뷰
+만든 내용을 리뷰해보도록 하겠습니다!
+
+[완성 코드]
+https://github.com/glenncy/init/tree/master/movie
+
+
+Outro 완강을 축하합니다!
+1. 1교시 리뷰 및 2교시 맛보기
+수고 정말 많으셨습니다!
+
+1교시 때 배운 화면을 그리는 기술을 기반으로
+2교시 때는 웹사이트의 기능을 직접 서버 구현을 통해 만들어 보도록 하시죠!
+어렵지 않게 서버란 어떤 것인지 감을 함께 잡아봅시다!
+
+===================================================================================================================
+
+Ch1. 개발하기 전 준비 및 워밍업
+1. 개발을 대하는 마음가짐
+[수업요약]
+레고처럼 생각하자! 맞는 블럭을 흩뿌려진 레고 사이에서 찾는 과정!
+아무리 찾아도 없다면? 주변에 물어봐서 찾아 해결하면 그만! 혼자서 해결하는게 꼭 멋지고 효율적인 방법은 아님
+물어보고 찾아보며 해결하는 것을 부끄러워 말고 두려워 말자! 이미 똑똑한 개발자들이 쉽게 개발할 수 있도록 유용한 도구들(참고 코드)을 만들어 공개하고 있다
+자바스크립트로 우리가 사용할 수 있게 도구화 시켜 놓은 것만 이렇게 많다 안쓰면 손해
+제발 하나하나 짚고 넘어가려 하지 말자
+수학의 정석 1단원 같은 일이 벌어진다
+운동을 배울때, 가령 농구라 할 때 공을 던지는 포물선과 운동에너지에 대해 생각한적 있는가?
+일단 던지고 공의 궤적을 보며 공이 어디로 가는지 보고 고쳐나가면 언젠간 공이 들어간다
+이와 마찬가지로 개발을 배울때 이건 왜그러지 너무 곰곰히 생각말고 일단 만들고 있는 프로젝트에 적용해보고 모습을 확인해보자
+그러다 그날 배운게 왜 그렇게 동작하는제 자연스레 체득되는 날이 온다
+이게 가능하려면, 매일 배운 내용은 기록하는 습관을 가지가
+TIL이라고 today i learned, 즉 하루 배운 내용을 그날 그날 기록하는 개발자들 사이의 챌린지 같은게 있는데, 이걸 하면서 매일 기록하면 본인이 공부하고 알게된 내용을 구지 외우지 않아도, 그때그때 바로 찾아볼 수도 있음. 따라서 이번기회에 미디엄이나 네이버 블로그 상관없으니 하나 만들어서 기록해나갑니다.
+
+가벼운 마음으로 시작합시다. 차근차근
+
+
+2. 물어보는 기술도 능력 - 검색 방법과 공식문서
+[수업 요약]
+구글에 검색하자 네이버보다 훨씬 많은 전세계 데이터가 존재한다
+개발은 어쩔수 없이 영어가 베이스인 분야로, 영어로 검색 해버릇 하고 영어 단어로 키워드화 하는 연습을 해보자. 예컨대 앞으로 배울 css에서 글자 색을 바꾸는 방법을 찾는다면, css font color 식으로 생각해서 검색해버릇 해야한다.
+키워드에 how to를 붙이면 방법에 대한 질문들이 잘 걸러져서 나온다
+검색할땐 반드시 개발 관련 용어를 담아야 한다 예컨대 글짜 색을 바꾸려면 어떻게 해야하는지 how to change font color라고 했다면 앞이나 뒤에 css를 붙여주자 뭘할때 글자색을 바꾸는지는 알려줘야 한다
+날짜를 1년으로 바꿔서 검색해보고 점점늘려가자. 프로그래밍은 시시각각 변화하고 새로운것들이 나온다. 반대로 기존건 없어지기도 한다
+개발관련 검색을 하다보면 스택오버 플로우(stackoverflow) 사이트를 자주보게 된다. 이 사이트에서 주의해서 보야 할점은 질문 다음의 답변의 채택 숫자다. 숫자가 5이상이면 한번 보고 시도 할만 하다
+그러나 또 눈여겨 봐야할 글은 답변의 코멘트들이다. 코멘트에서 해당 답변을 작성한 글쓴이와 이 답변을 본사람들이 얘기를 하며 답변을 디벨롭 할수도 있고, 결국 잘못 됐다라는 결론을 볼 수도 있어 시간을 절약 할수 있다
+공식문서를 더 자주보자
+MDN(html, css, js) , bootstrap 공식문서
+
+
+3. 명령어 치는 장소인 검은 화면과 친해지기
+윈도우 사용자들은 https://gitforwindows.org/ 이 곳에서 gitbash를 다운 받고 검은 화면 명령어 공부를 진행하자!
+리눅스 명령어 체제에 익숙해져야 비로소 개발자!
+
+
+cd <폴더명> : 검은 화면에서 폴더로 이동하는 명령어
+cd .. : 이동했던 폴더에서 뒤로 빠져나오는 명령어
+mkdir <폴더명> : 폴더를 생성하는 명령어
+del <폴더명 또는 파일명> : 폴더 또는 파일을 지우는 명령어 (사용할때 조심!)
+copy con <파일명> : 빈 파일을 바로 생성하는 명령어
+
+
+4. 코드 관리 - 깃허브 사용방법 및 프로젝트 생성
+[수업 참고 사항]
+git bash를 설치하고 git 관련 명령어를 입력하실때
+
+"Author identity unknown" 관련 오류를 보시는 분들은 다음과 같이 git bash에 명령어를 차례차례 입력해주세요!
+
+gitbash에게 어떤 깃허브 계정으로 지금 git 명령어를 치려는지 알려주는 단계라 보시면 될것 같습니다!
+(아이디와 유저네임은, 깃허브 가입 당시 생성한 계정입니다!)
+
+'git push origin master' 전에
+git config --global user.email "아이디@이메일.com"
+git config --global user.name "유저네임"
+
+:) 잘 이해가 안가시면! 다음 줄로 이해해보세요!
+git config --global user.email "github에서의 내 이메일 주소"
+git config --global user.name "github에서의 내 아이디"
+== 그래도 오류가 발생한다!!
+
+문제상황:
+git bash로 commit까지는 git log로 확인했을 때 정상적으로 작동합니다.
+그러나 이후 git push -u origin main 을 하면 커서만 깜빡이고 bash가 아무 동작도 하지 않는 현상이 발견되었습니다.
+그리고 git bash를 종료하려고 하면 아직 진행중인데 그래도 끌꺼냐는 안내창이 나옵니다.
+인터넷에서 방화벽이 문제다, git을 다시 설치해봐라 등은 효과가 없었습니다..
+
+해결법:
+git 연동할 폴더에 들어간 상태로 cmd를 킵니다. (내폴더 위쪽 경로창에 cmd 치면 바로 가실 수 있습니다)
+(저는 윈도우여서 cmd를 썼는데 다른 플랫폼으로도 가능할 것 같습니다)
+그리고 동일하게 git push -u origin main 까지 진행하면
+
+인터넷연결 승인 어쩌고저쩌고
+개인 승인 토큰 어쩌고저쩌고 
+이렇게 뜨는데 1을 치고 엔터를 치면 아이디/비밀번호를 치라는 창이 뜹니다.( 전 여기서 로딩이 길어서 충분히 시간을 주고 타이핑했습니다)
+
+그러면 push가 완료되며, 이후부터는 git bash에서도 push가 잘 되는 것으로 확인했습니다.
+다들 이 방법으로 해결 되셨으면 좋겠네요..!!
+
+[수업 내용]
+
+깃허브는 코드 관리 및 협업 툴
+어디서든지 관리하고 있는 코드를 내려 받을 수 있고, 여러사람의 코드를 관리 및 하나로 합칠 수 있음
+깃허브를 사용하려면 github 사이트에서 가입후 코드 저장소(repository)를 생성해야함
+브랜치의 개념으로 여러사람들이 협업 할 수 있는데, 맨 처음 코드 저장소를 만든 본인은 master 브랜치!
+[깃허브 명령어]
+
+프로젝트 폴더 안에서 명령어를 진행
+git add . : 코드를 업로드 할 준비
+git commit -m '메시지' : 코드를 코드 저장소에 업로드 할 때 보낼 메시지 까지 준비
+git push origin master : master 브랜치(본인 계정)에 코드를 업로드
+git clone <저장소 주소> : 코드 저장소로부터 코드를 컴퓨터로 내려받을 때의 명령어
+
+
+5. 친해져야 할 에디터 vscode 사용법
+[수업 요약]
+에디터에는 종류가 많음: atom, vscode, sublimeText등
+vscode를 열고 open folder를 클릭해서 지난시간에 깃허브 프로젝트를 만들었던 폴더를 연다
+좌측 폴더/파일 리스트를 확인할 수 있는데 여기서 우측클릭 하여 새로운 폴더를 만들수도 있고 새로운 파일도 만들수도 있음
+메뉴에서 view → terminal을 누르면 우리가 지난시간에 공부했던 검은 화면을 볼 수 있는데, vscode 에서 바로 현재 폴더 즉 오픈한 폴더에 대한 터미널 접근이 가능함
+따라서 추후엔, 서버까지 다루는 2교시부터는 이 한 화면에서 필요한 도구들을 바로 화면 하단에서 다운로드하고, 코드도 한꺼번에 관리 작성할 수 있게됨
+왼쪽 보면 폴더가 이쁘지가 않음→ Material Icon Theme 을 왼쪽 5번째 아이콘을 눌러 설치
+
+
+6. 앞으로 배울 내용과 함께 만들 프로젝트
+
+
+
+
+
+
+Ch 2. 웹과 서버에 대한 이해부터!
+
+1. 웹과 서버의 동작 방식 이해하기
+웹과 서버는 어떤 관계일까?
+한줄로 말할 수 있다면, "데이터를 주고 받고 하는 사이"
+좀더 긴 한 줄로 말하면, "정해진 규칙에 따라 데이터를 주고 받고 하는 사이"
+조금 더 긴 한 줄로 말하면, "정해진 규칙에 따라 그림 파일 또는 텍스트 데이터를 주고 받고 하는 사이"
+API는 바로 그 정해진 규칙! <- 서버 개발자가 만들어 놓음
+API 규칙에 따라 프론트 개발자와 백엔드 개발자가 서로 프론트 작업 밴엔드 작업을 진행
+동일한 API 주소도 각기 다른 통신 방식으로써 다른 기능을 할 수 있음
+GET, POST -> 자세한 내용은 다음시간에!
+
+2. 알고 시작하면 편한 API와 통신방식 GET, POST
+GET은 주로 데이터나 그림 파일을 요청 할 때 사용하는 통신 방식
+www.api.com?key=value 의 형태로 데이터를 서버개발자에게 보낼 수도 있음
+그러나 민감하지 않은 데이터를 보낼때만 사용!
+POST는 데이터를 서버 개발자에게 보낼 때 사용
+브라우저 도메인에 POST 통신방식 API 주소를 입력해도 우리는 데이터를 확인 할 수 없음
+추후에 배울 통신 코드, ajax 와 같은 코드단에서 POST 방식을 사용해야함
+데이터 삭제, 수정, 저장등에 주로 사용하는 통신 방식
+그럼 GET, POST 통신 방식은 누가 결정짓는건가요? ⇒ 서버개발자가 정합니다. 서버단에서 이 도메인은 GET 방식, 이 도메인은 POST 방식이라며 정해놔요!
+
+$.ajax({
+    // 클라이언트가 요청을 보낼 서버의 URL 주소
+    url: `www.api.com`.
+    // 요청과 함께 서버로 보낼 데이터 POST 방식에서만 사용
+    data: {},
+    type: "POST", // HTTP 요청 방식(GET, POST)
+    success: function(json){},
+    error: function(e){}
+})
+
+3. 빠르게 훑어보는 웹 서비스 배포과정
+
+4. 빠르게 훑어보는 배포과정까지의 개발 기술 종류들
+amzon  Google Cloud Plateform Microsoft Azure  Naver Cloud Flatform
+IP:123.12.123.3
+www.도메인.com
+
+Front End                        Back End         데이터 저장/관리
+HTML CSS JS            Node JS Spring Janggo
+React Angular Vue                                     MySQL...
+
+
+
+Ch3. 옷과 뼈대 = HTML, CSS
+
+1. 우리가 만들 화면과 개발 준비
+
+
+7. Bootstrap 제공 기능들 여러 가지 다뤄보기
+https://getbootstrap.com/docs/4.6/getting-started/introduction/
+제가 사용한 부트스트랩 버전은 4.5버전입니다!
+구글에 bootstrap 치고 들어가면 바로 나오는 버전은 5버전이에요! 따라서 헷갈리시는 분들은 이 주의사항 상단의 주소를 쳐서 확인해주세요!!!
+
+HTML과 CSS로 플랫폼을 하나하나 만들어 가기엔 시간이 너무 오래 걸리고, 약간의 전문 지식도 필요함
+이를 위해, 기본적인 레이아웃과 디자인을 제공해줘서 이쁜 웹 사이트 하나를 뚝딱 만들 수 있는 외부 도구가 존재
+Bootstrap 과 Materialize Lite
+트위터에서 만들어 제공해주고 있는 Boostrap은 head에 CSS와 자바스크립트 제공 링크를 가지고 와야 사용 할 수 있음!
+레이아웃을 잡아주는 class 이름 container
+가져다가 바로 사용해도 좋은 components
+
+
+
+7. Bootstrap 제공 기능들 여러 가지 다뤄보기
+부트스트랩 최근 업데이트로 Jquery 도구 가져오는 부분이 사이트상에서 사라진듯합니다 
+ㅜㅜ 그러나 걱정마시고 다음 아랫줄을 추가해주시면 됩니다 ㅎㅎ 어디에? 
+head 안에다가요! 부트스트랩 자바스크립트 불러온 부분 바로 밑에다가요!
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+[수업 목표]
+어떤 Bootstrap의 components를 사용해야 할 지 모르겠다면! Bootstrap에서 제공 해주는 example 페이지에 들어가, 원하는 모습을 크롬 요소 검사를 통해 살펴보기!
+class 이름은 이미 Bootstrap에서 정한 다음 스타일을 제공해주고 있기 때문에, 최대한 class이름은 피해서 **id 이름으로 스타일을 지정해줄 것!
+[완성 코드]
+https://github.com/glenncy/init/tree/master/todo
+
+5. 자주 사용되는 CSS + 웹폰트까지
+[수업 요약]
+CSS 또한 HTML과 다르지 않게 MDN 공식 문서를 보며 필요한 레고를 찾아 쌓듯 사용하면 됨
+https://developer.mozilla.org/ko/docs/Web/CSS
+중요한건 항상 모든 것을 외우려고 하지 않고, CSS를 대입해본 다음 눈으로 확인해보는 것이 중요! -> 코딩의 재미를 위해!
+구글 웹폰트 사이트에서 원하는 폰트를 누른 후 emebed 탭에서 제공해주는 link 태그와 font-family를 가져다 쓰면 끝!
+https://fonts.google.com/
+
+[자주 사용되는 CSS] - 배운 내용 외의 CSS도 추가!
+background-color : #eee ;    /* transparent 투명 */
+background-image : url('이미지경로') ;
+background-position : 0% 0% ;    /* 가로 세로 */
+background-repeat : no-repeat ;    /* repeat-x, repeat-y, repeat */
+background : url('이미지경로') #eee no-repeat 50% 100%     /* 같이쓰기 */  
+border-style : solid    /* none, dotted, dashed, double, groove, ridge, inset, outset */
+border-top    /* border-right, border-bottom, border-left */
+border : 1px solid #eee ;    /* 같이쓰기 */
+
+color : #999;
+font-family : dotum, tahoma ;     /* 폰트이름 */
+font-weight : bold     /* normal, lighter, border */
+font-style : normal ;     /* italic, oblique */
+font-size : 12px ;     /* 1.5em, 14pt, 95% */
+text-variant : small-caps ;     /* 알파벳 소문자를 작은 대문자로 표시 */
+text-transform : uppercase ;     /* uppercase(알파벳대문자), capitalize(알파벳 첫글자 대문자), lowercase(알파벳 소문자) */
+
+text-decoration : none ;    /* line-through, overline, underline */
+text-align : center ;     /* left, right, justify */
+text-indent : 999px ;     /* 들여쓰기 */
+white-space : nowrap ;     /* 자동 줄바꿈 막기 */
+
+word-break : break-all ;     /* break-all (문자 단위 끊기), keep-all(단어 단위 끊기) */
+word-spacing : 3px ;     /* 단어 간격 조절 */
+letter-spacing : -1px ;     /* 자간 조정 */
+line-height : 150% ;      /* 줄간격 */
+line-mode : disabled ;     /* 영문만 입력 */
+
+margin     /* 바깥여백 */
+margin-top     /* margin-right, margin-bottom, margin-left */
+margin : 50px 50px 50px 50px ;     /* top, right, bottom, left */
+margin : 40px auto ;     /* 위, 아래 마진 = 40px 왼쪽, 오른쪽 마진 = auto */
+margin : 50px ;     /* 같이쓰기 top, right, bottom, left = 50px */
+
+padding     /* 안쪽 여백 */
+padding-top     /* padding-right, padding-bottom, padding-left */
+padding : 50px 50px 50px 50px ;     /* top, right, bottom, left */
+padding : 40px auto ;     /* 위, 아래 패딩 = 40px 왼쪽, 오른쪽 패딩 = auto */
+padding : 50px     /* 같이쓰기 top, right, bottom, left = 50px */       
+position : absolute ;     /* relative, fixed, static */
+
+top : 0px :     /* left, right, bottom */
+z-index : 1 ;     /* 레이어 기능 */
+float :left ;     /* right, none */
+clear : both    /* left, right, none */
+table-layout : fixed ;     /* auto */
+border-collapse : collapse ;     /* separate */
+
+border-spacing : 0 ;     /* 간격 */
+caption-side : top ;     /* bottom 캡션위치 */
+emtpy-cells : show ;     /* hide 빈셀 숨기기, 보이기 */
+list-style-type : circle ;     /* ul-circle(빈원), disc(까만원), square(까만네모), none(없음) // ol-decimal(1,2,3), decimal-leading-zero(01,02,03), lower-alpha(a,a,c), lower-roman(i,ii,iii), upper-alpha(A,B,C), none (없음) */
+
+list-style-positon : inside ;     /* outside */
+
+list-style-images : url('이미지경로') ;
+display : block ;     /* inline, inline-block, hidden, none, list-item */ 
+width : 800px ;     /* 가로값 */
+height : 500px ;    /* 세로값 */
+
+vertical-align : middle ;     /* top, bottom, text-top, text-bottom, sub, super, baseline */
+visibility : hidden ;     /* visble, collapse */
+opacity : 85% ;     /* filter :alpha (opacity=85) ; */
+overflow : hidden ;     /* scroll, visible */
+
+cursor : pointer ;     /* pointer(손모양), default(변화없음), wait(모래시계), help(물음표), move(이동 모양), crosshair(십자가모양) */
+
+<head>
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Jua&display=swap" rel="stylesheet">
+</head>
+
+<!-- <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script> -->
+    <script
+    src="https://code.jquery.com/jquery-3.5.1.min.js"
+    integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="
+    crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+
+
+Ch. 4 만능 언어 자바스크립트, JS
+
+let -> 변수 선언!
+사칙연산 + - / * %
+true, false -> boolean 형
+문자열 ", ' , 벡틱을 이용한 표현 -> ${} 표현식을 통해 문자열안에 변수 넣기
+부등호를 통한 true, false 값 부여 모습도 가능 - 기본적으로 부등호는 참 또는 거짓의 값만 알려준다
+객체 object - key와 value
+배열 array - index 0 번째 부터 시작, push
+객체와 배열 복합 구조 - 값 꺼내기
+주석 - /
+
+5. 자바스크립트가 그냥 커피라면 Jquery는 TOP
+자바스크립트만로도 충분히 훌륭한 프로젝트를 만들 수 있지만, 하나부터 열까지 코드를 짜기란 쉬운일이 아님
+따라서 코드를 간결하게 표현하고, 자바스크립트 기능을 사용할 수 있게 도와주는 도구, 즉 라이브러리가 있는데 바로 제이쿼리(Jquery)
+input에 있는 값을 가지고 올때, $(선택자).val() 형태로 직관적으로 사용할 수 있는 함수들을 많이 제공해주고 있음
+https://jquery.com/
+
+
+
+
+Ch5. 배운내용으로 30분만에 프로젝트 시작하기
+1. 만들 내용 살펴보기 - 원페이지 영화 커뮤니티 플랫폼
+
+2. 메인화면 만들기
+
+3. 영화별 모달 댓글창 만들기
+
+4. 메인화면에 영화 API 연결
+영화 API를 사용할 땐 themoviedb 업체 api를 사용했습니다.
+해당 API는 하단의 주소를 통해 GET 통신 방식으로 호출 할 수 있습니다
+themoviedb 업체 API
+https://api.themoviedb.org/3/movie/popular?api_key=10923b261ba94d897ac6b81148314a3f&page=1
+
+5. 영화별 모달 댓글창에 댓글 달기 API 연결
+[참고 사항]
+리뷰를 작성하고 버튼을 누른 후 input란이 비워지지 않는 부분은 클래스가 아닌 아이디로 되어 있는 문제와
+뒤에 $("#review").val(); 에 작은 따옴표가 빠져있습니다.
+클래스만 바꾸면 안되니 혹시 여기서 막히신 분은 $("#review").val('');로 작성하시면 될 것 같습니다 :)
+
+[수업 요약]
+1. 리뷰 가져오기
+API: http://universeapi.net/review/list?movie_id=
+1) 영화 리뷰 보기 버튼 클릭
+2) 리뷰 정보 요청 API 실행과 동시에 영화 아이디 값 전달
+3)리뷰 데이터 응답으로 받고 보여주기
+
+2. 리뷰 작성하기
+API: http://universeapi.net/review/add
+1) 리뷰 모달창에서 글 작성
+2) 글과 영화 아이디 서버로 전달
+3) 저장 성공 응답 받고 마무리
+
+6. 만든 내용 리뷰
+[완성 코드]
+https://github.com/glenncy/init/tree/master/movie
+
+https://github.com/glenncy/init/tree/master/movie
+
+
+
+
+
+
+
+
+
+
+
+
+======================================================================================================
+2교시: Node.js, Mysql (백엔드 단과반)
+
+Web 백엔드
+MySQL, Node.js 백엔드 속성 실무!
+
+WELCOME 실전 웹 개발자 사관학교에 오신 것을 환영합니다!
+1. 웹 개발자 단기과정 2교시 소개
+2. 코칭권 사용 방법
+
+CH 1. 백엔드를 배우기 전 워밍업!
+1. 본격 서버 개발 전, 서버 & 백엔드 개념 큰 그림 잡기
+2. 명령어로 컴퓨터에 공부 폴더 만들기
+3. 깃허브 프로젝트 생성 및 공부 폴더 연결(코드 관리)
+4. vscode 사용법 속성 강좌
+5. 백엔드 학습을 위한 HTML 속성 강좌
+6. 백엔드 학습을 위한 CSS 속성 강좌
+7. 백엔드 학습을 위한 JS 속성 강좌
+
+CH 2. 본격! 백엔드 다루기, Node.js의 모든 것
+1. 자바스크립트로 만드는 서버 구조와 NodeJS 소개
+2. 첫 Node.JS 프로젝트 폴더 생성과 구조 살펴보기
+3. 서버 개발을 더 쉽게! Express와 서버 실행해보기
+4. NodeJS 서버 개발을 위한 필수 지식!
+5. 직접 만들어보는 API, GET과 POST 방식
+6. HTML, CSS 그림 파일 보여주기 (with 템플릿엔진 EJS)
+
+CH 3. 데이터베이스까지 다루는 초간단 서버 개발
+1. 엑셀과 닮은 MySQL 개념 잡기
+컴퓨터에 MySQL 설치하기
+Node.js에서 MySQL을 더 쉽게! Sequelize 적용하기
+Sequelize로 초간단 데이터베이스 테이블 만들기
+Sequelize로 데이터 저장/조회 API 만들기
+Sequelize로 데이터 변경/삭제 API 만들기
+
+CH 4. 영화리뷰 사이트로 백엔드 실전 연습하기
+영화 리뷰 사이트 프론트엔드(HTML, CSS) 리뷰
+영화 리뷰 사이트 주소 만들기(라우터 복습)
+리뷰 저장 API 만들기 (+ 고급기술!)
+리뷰 읽기 API 만들기
+백엔드 총 정리!
+
+CH 5. Node.js로 크롤링과 엑셀 업무 자동화를 직접!
+1. 자바스크립트로 만드는 크롤링과 엑셀 업무 자동화
+2. 네이버 증권 화면을 HTML로 변환! Cheerio 사용법
+3. 네이버 증권 화면에서 주식 정보 가져오기
+4. 엑셀 파일을 JSON 데이터로 바꾸기
+ajax를 사용하기 위한 Jquery 라이브러리 준비!
+https://code.jquery.com/jquery-3.4.1.min.js
+
+엑셀을 다루기 위한 도구!
+https://github.com/SheetJS/sheetjs (Sheetjs 사이트)
+https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.14.3/xlsx.full.min.js
+
+[최종 코드]
+https://github.com/glenncy/node-study
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <p>
+    엑셀 업로드 :<input type="file" id="excelFile" onchange="excelExport(event)"/>
+  </p>
+  <script src="<https://code.jquery.com/jquery-3.4.1.min.js>"></script>
+  <script src="<https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.14.3/xlsx.full.min.js>"></script>
+
+  <script>
+    function excelExport(event){
+      var input = event.target;
+      var reader = new FileReader();
+      reader.onload = function(){
+        var fileData = reader.result;
+        var wb = XLSX.read(fileData, {type : 'binary'});
+        wb.SheetNames.forEach(function(sheetName){
+          var rowObj =XLSX.utils.sheet_to_json(wb.Sheets[sheetName]);
+          console.log(JSON.stringify(rowObj));
+        })
+      };
+      reader.readAsBinaryString(input.files[0]);
+    }
+  </script>
+</body>
+</html>
+
+
+
+
+
+엑셀파일 읽어서 원하는 결과값만 추려 엑셀파일 만들기
+Node.js로 손쉽게 만들 수 있는 유용한 기능들
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+OUTRO 완강을 축하합니다!
+2교시 리뷰 및 3교시 맛보기
+=================================================================================================================================
+CH 1. 백엔드를 배우기 전 워밍업!
+7. 백엔드 학습을 위한 JS 속성 강좌
+
+[강의 요약]
+
+[중요] 웹 개발자 사관학교 2교시는 JS 기초 문법 공부를 진행한 1교시 수강을 전제하고 있기 때문에, 이번 JS 속성 강좌는 Rewind 정도의 속성 강의입니다. 
+따라서 빠르게 진행하므로 자세하고 실습 위주의 JS 강의는 CLASS101 웹 개발자 사관학교 1교시를 수강해주세요! OR 혹시 공부를 이미 열심히 하신분들은 1-5, 1-6은 건너 띄고 바로 2부터 들으셔도 무방합니다!
+
+[쪽집게 속성 강의] : 빠르게 들어보고 모르겠다 싶은 내용은 추가 학습 하시길 권장 드립니다!
+자바스크립트는 화면의 움직이는 그림을 표현하기 위해 태어난 프로그래밍 언어(스크립트)이지만, 요즘엔 프론트 뿐만 아니라 백엔드 등등에서 사용범위가 넓어졌습니다. 이번 2교시때도 이 자바스크립트로 서버를 만듭니다.
+head 부분에 <script></script> 태그를 둬서 자바스크립트 문법을 작성할 수도 있고, 하단 </body> 태그 바로 위에 <script></script> 영역을 만들고 태그를 작성할 수도 있습니다.
+[자바스크립트 문법]
+let, const
+사칙연산 + - / * %
+true, false boolean 형
+문자열 ", ' , 벡틱을 이용한 표현
+문자열안에 변수 넣기
+부등호를 통한 true, false 값 부여 모습도 가능 - 기본적으로 부등호는 참 또는 거짓의 값만 알려준다
+객체 object - key와 value
+배열 array - index 0 번째 부터 시작, push
+객체와 배열 복합 구조 - 값 꺼내기
+주석 //
+for
+if
+객체와 배열 복합 구조를 이용한 값 꺼내기
+영화 api 데이터
+<https://api.themoviedb.org/3/movie/popular?api_key=10923b261ba94d897ac6b81148314a3f&page=1>
+
+let api = {
+ "page": 1,
+ "total_results": 10000,
+ "total_pages": 500,
+ "results": [
+   {
+     "popularity": 3130.643,
+     "vote_count": 143,
+     "video": false,
+     "genre_ids": [
+       18,
+       878,
+       53
+     ],
+     "title": "2067",
+     "vote_average": 5.8
+   }
+ ]
+}
+
+console.log(api.results[0].vote_count)
+
+수학시간에 배운 f(x) = y처럼 우리도 f(x) 부분인 함수를 만들 수 있음
+function x(){
+}
+
+function x(){
+return value;
+}
+
+let y = x()
+console.log(y)
+
+function x(num1,num2){
+return num1 + num2;
+}
+
+function x(){
+alert()
+}
+
+자바스크립트에서는 기본적으로 제공해주는 유용한 함수들이 있음
+우리가 맨처음에 사용했었던 것처럼 alert 또한 그 중 하나! - 바로 팝업창을 띄워주는 자바스크립트 함수
+split - 문자열을 배열로 만들어주는 제공함수
+join - 배열을 문자열로 연결시켜주는 함수
+이 자바스크립트를 좀 더 쉽게 사용할 수 있게 도와주는 Jquery(제이쿼리)는 챕터4 영화 리뷰 사이트로 백엔드 연습하기에서 살펴보기로 합니다!
+
+
+
+
+
+
+
+CH 2. 본격! 백엔드 다루기, Node.js의 모든 것
+1. 자바스크립트로 만드는 서버 구조와 NodeJS 소개
+2. 첫 Node.JS 프로젝트 폴더 생성과 구조 살펴보기
+3. 서버 개발을 더 쉽게! Express와 서버 실행해보기
+4. NodeJS 서버 개발을 위한 필수 지식!
+5. 직접 만들어보는 API, GET과 POST 방식
+
+
+6. HTML, CSS 그림 파일 보여주기 (with 템플릿엔진 EJS)
+그림 파일은 어떤 폴더에서 꺼내 보여줄 것인지, 그리고 그림 파일을 보여줄 때 동시에 데이터도 전달해줄 때는 어떤 도구를 사용할 것인지 app.js에 세팅을 해야합니다.
+우리에게 익숙한 태그 형식의 문법으로 HTML 파일에서 서버로부터 가져온 데이터를 연결할 수 있는 ejs 템플릿 엔진을 사용합니다.
+views 폴더에 HTML 파일 확장자명이 ejs로 된다는거 외엔 달라진게 없어요! 똑같이 HTML을 화면에 그려주는가 동시에 데이터도 같이 화면에 보여준다 정리해보고 바로 코드로 확인해봅시다.
+서버의 기본적인 구조를 설정할 땐 app.set을 사용합니다.
+
+//파일 위치:app.js
+//express 도구를 불러오는 부분
+//도구를 불러와 변수에 담아 사용합니다.
+const express = require('express');
+const helmet = require("helmet");
+const ejs = require("ejs");
+
+//결국 express도 많은 기능을 담고 있는 자바스크립트 함수로 볼 수 있으므로
+//express 함수가 반환하는 서버 기능들을 다시 app에 담아 사용합니다.
+
+const app = express();
+
+app.set('view engine', 'ejs');
+app.set('views', './views');
+
+app.use(helmet());
+
+//분리한 라우터(주소)들을 한 곳에 가져옵니다.
+const mainRouter = require('./router/mainRouter.js')
+
+app.use('/', mainRouter)
+
+//서버를 켜는 코드입니다.
+//3000은 컴퓨터의 몇 번방을 사용할 것인지, 즉 포트에 대한 설정을 하는 부분입니다.
+app.listen(3000, function () {
+ console.log('Example app listening on port 3000!');
+});
+
+그림파일을 내보낼땐, res.send가 아닌 res.render를 사용합니다.
+// 파일 위치: /router/mainRouter.js
+const express = require('express')
+const router = express.Router()
+
+// Home page route
+router.get('/', function (req, res) {
+ res.render('index.ejs',{"title":"class101 웹개발자 사관학교"})
+})
+
+router.post('/', function (req, res) {
+ res.send({"key":"value"})
+})
+
+// About page route
+router.get('/about', function (req, res) {
+ res.send('어바웃 페이지')
+})
+
+module.exports = router
+
+views 폴더엔 간단히 index.ejs파일을 만들고 다음과 같이 기본 골격 구조만 작성해봅시다.
+서버로부터 받은 데이터는 locals.에 담겨 있으며, ejs 문법인 서버로부터 가져온 데이터는 <%= %> 태그안에 작성하여 화면에 나타낼 수 있습니다.
+<%= locals.title %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <h1><%= locals.title %></h1>
+</body>
+</html>
+
+ejs 템플릿 엔진 문법은 몇개 없습니다. 공식문서를 참고해보세요!
+https://ejs.co/
+
+여러분이 HTML 파일 외부에서 작성한 CSS 또는 이미지 파일들이 있다면 어디서 어떻게 가져와야 할까요? 다음과 같이 app.js를 수정해보세요
+//파일 위치:app.js
+//express 도구를 불러오는 부분
+//도구를 불러와 변수에 담아 사용합니다.
+
+const express = require('express');
+const helmet = require("helmet");
+const ejs = require("ejs");
+
+//결국 express도 많은 기능을 담고 있는 자바스크립트 함수로 볼 수 있으므로
+//express 함수가 반환하는 서버 기능들을 다시 app에 담아 사용합니다.
+
+const app = express();
+
+app.set('view engine', 'ejs');
+app.set('views', './views');
+**app.use('/static', express.static(__dirname + '/public'));**
+
+app.use(helmet());
+
+//분리한 라우터(주소)들을 한 곳에 가져옵니다.
+const mainRouter = require('./router/mainRouter.js')
+app.use('/', mainRouter)
+
+//서버를 켜는 코드입니다.
+//3000은 컴퓨터의 몇 번방을 사용할 것인지, 즉 포트에 대한 설정을 하는 부분입니다.
+app.listen(3000, function () {
+ console.log('Example app listening on port 3000!');
+});
+
+서버에 절대 경로를 설정하여 모든 리소스들(css, 이미지 등등 정적파일들)은 public 폴더에서 꺼내올 수 있게 지정할 수 있습니다.
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+<link href="/public/css/main.css" rel="stylesheet"/>
+</head>
+<body>
+  <h1><%= locals.title %></h1>
+</body>
+</html>
+
+절대 외우지 말고, 자주 쓰이는 이런 서버 설정 코드들은 기록해두세요, " 어떨 때 뭐가 필요했더라? " 정도만 떠올려도 충분합니다. 암기 테스트가 아니잖아요?
+
+
+
+CH 3. 데이터베이스까지 다루는 초간단 서버 개발
+1. 엑셀과 닮은 MySQL 개념 잡기
+컴퓨터에 MySQL 설치하기
+Node.js에서 MySQL을 더 쉽게! Sequelize 적용하기
+Sequelize로 초간단 데이터베이스 테이블 만들기
+Sequelize로 데이터 저장/조회 API 만들기
+Sequelize로 데이터 변경/삭제 API 만들기
+
+
+
+[수업 요약]
+Sequelize는 Mysql을 더 쉽게 사용하는 도구 입니다. 그냥 파리채가 아닌 전기파리채 정도로 이해해주세요!
+쉽게 사용한다는 뜻은 코드단에서 SQL 쿼리, 즉 Mysql 문법을 몰라도 데이터베이스 조작이 가능하게끔 해준다는 뜻입니다.
+이 역시 npm 명령어 도구를 통해 Sequelize 도구를 여러분 Node.js 프로젝트에 설치하면 준비끝입니다 순서대로 설치 명령어를 vscode 터미널 복붙해 쳐보도록 하겠습니다.
+그림과 같이 오른쪽 상단의 분할 버튼을 눌러주세요. 여러분 프로젝트를 바라보고 있는 검은화면을 두 개 여는거랍니다.
+
+npm install sequelize@5.22 (비교적 안정적인 5.22 버전을 설치합니다 🙂)
+npm install mysql2
+두 도구를 설치했다면, model 폴더의 db.js 파일에 다음 코드를 옮겨 넣어보세요
+(** 주석을 아주 상세히 달아놨으니, 시간을 두고 천천히 한번 읽어보세요!)
+
+//우리가 사용할 sequelize 라이브러리를 설치합니다.
+var Sequelize = require("sequelize");
+
+//대문자 Sequelize를 통해 연결한 결과를 받을 소문자 sequelize 변수를 뒀습니다
+//이 이름은 마음껏 지어도 무방합니다.
+var sequelize;
+
+//sequelize 변수에 연결 정보를 담습니다. 
+//연결정보 마저 Sequelize 도구에서 제공해주는 형식 그대로 사용할 뿐입니다.
+sequelize = new Sequelize("class101", "root", "roodo102", {
+ host: "localhost",
+ port: 3306,
+ dialect: "mysql",
+ timezone: '+09:00', //한국 시간 셋팅
+ define: {
+  //sequelize는 기본적으로 영어 복수이름으로 테이블을 만드는데
+  //그 기능을 끄는 옵션입니다.
+  freezeTableName: true,
+  charset: "utf8",
+  collate: "utf8_general_ci",
+  timestamps: true,
+ }
+});
+
+var db = {};
+
+//객체식으로 데이터베이스 테이블을 구성하고, 직접 해당 테이블에 접속을 할 수 있습니다
+//따라서 이런 ORM 방식을 통해, 직접 쿼리를 날리지 않아도 테이블 정보가 담긴 객체를 이용하여
+//데이터 조회,생성,변경,삭제를 할 수 있습니다.
+
+db.users = sequelize.import(__dirname + "/users.js");
+
+//추후에 연결된 sequelize 객체를 통해, 직접적으로 데이터베이스에 쿼리도 날릴 수 있습니다
+//그래서 앞으로 우리가 사용할 db 객체에 sequelize 객체와 바로 위에서 만든 모델들을 채워 넣습니다.
+
+db.sequelize = sequelize;
+db.Sequelize = Sequelize;
+
+module.exports = db;
+
+연결정보가 담긴 db.js를 완성했다면, 실제 테이블 즉, 모델을 만듭니다. model 폴더에 users.js 파일을 만들고 다음 코드를 작성해봅니다.
+//코드 하나하나에 대한 의미를 몰라도 무방합니다.
+//이렇게 사용하라고 제공해주는 걸 저는 그대로 소개할 뿐입니다!
+//걱정마시고 이 전체 코드는 단지 엑셀의 sheet를 만드는 코드
+//즉, 데이터베이스의 테이블을 만드는,정의하는 코드이다 라고만 알고 복붙해서 사용하시면 됩니다.
+//물론 내부 컬럼 값은 프로젝트에 맞게 변경하구요!
+
+module.exports = function(sequelize, DataTypes){
+  //테이블 이름을 정의
+  return sequelize.define('users', {
+    //데이터베이스 테이블에는 반드시 유니크한 값이 하나 존재해야합니다.
+    //테이블에 데이터가 하나씩 늘어날때마다 알아서 자동적으로 생성되는 값을 맨 처음에 이렇게 둡니다.
+    idx: {
+      type : DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+      allowNull: false
+    },
+
+    //컬럼 값을 정의합니다.
+    //user_id라는 컬럼 이름과, 해당 컬럼에는 텍스트 값만 받겠다는 STRING을 입력합니다.
+    //숫자 100은 데이터 값의 길이인데 꽤 긴 데이터를 담을 수 있는 250을 설정합니다.
+    //이와 관련해서는 mysql datatype size라고 구글에 검색해보세요!
+
+    user_id : {
+      type: DataTypes.STRING(250)
+    }
+  });
+ }
+
+
+
+데이터 컬럼에 대한 타입들은 공식문서에 다양하게 나와 있습니다.
+https://sequelize.org/v3/api/datatypes/
+모든 준비가 끝났으니, app.js에 데이터베이스를 연결해야 우리가 만들어나가고 있는 서버가 켜짐과 동시에 데이터베이스를 사용할 수 있겠죠? app.js에 다음 코드를 넣어줍니다.
+
+const express = require('express');
+const helmet = require("helmet");
+const app = express();
+const ejs = require("ejs")
+const db = require('./model/db')
+
+app.set('view engine', 'ejs');
+app.set('views', './views')
+app.use('/public',express.static(__dirname + '/public'));
+
+app.use(helmet());
+app.use(express.json());
+app.use(express.urlencoded());
+
+const mainRouter = require('./router/mainRouter')
+app.use('/',mainRouter)
+
+// 먼저 app.listen 함수를 통해 서버가 실행되고 나서 내부에 있는 
+// 데이터베이스 접속 코드가 실행!
+app.listen(3000,function(req,res){
+  //force가 true면 데이터베이스가 서버가 켜질때마다 초기화됩니다. 즉 데이터가 날아갑니다
+  db.sequelize.sync({ force: false })
+  console.log("서버가 실행되고 있다!")
+})
+
+저장을 누르면, 서버 로그에 뭔가 긴 글들이 주루룩 지나갑니다. 그럼 정상적으로 데이터베이스가 준비됐는지 검은 화면에 가서 다음 명령어 순서대로 입력하며 데이터베이스를 확인합니다.
+데이터베이스 목록 확인 : show databases;
+특정 데이버베이스 사용 : use class101;
+테이블 목록 확인 : show tables;
+테이블 정보 확인 : desc users;
+
+
+=======================================================================================================================================================
+CH 3. 데이터베이스까지 다루는 초간단 서버 개발
+1. 엑셀과 닮은 MySQL 개념 잡기
+2. 컴퓨터에 MySQL 설치하기
+3. Node.js에서 MySQL을 더 쉽게! Sequelize 적용하기
+4. Sequelize로 초간단 데이터베이스 테이블 만들기
+5. Sequelize로 데이터 저장/조회 API 만들기
+6. Sequelize로 데이터 변경/삭제 API 만들기
+
+
+5. Sequelize로 데이터 저장/조회 API 만들기
+[강의 요약]
+
+데이터베이스에 데이터를 저장/조회/변경/삭제 하는 아주 기본적인, 데이터 관련 기능 API를 보통 CRUD 라고 부릅니다.
+Create: 데이터 생성
+Read: 데이터 조회
+Update: 데이터 변경
+Delete: 데이터 삭제
+API 즉 여러 약속들을 만들고 결과 값을 확인하기 위해, 챕터2에서 설치한 포스트맨을 열어주세요
+데이터베이스를 이용하는 API 다루기는, 앞으로 연습할 시간이 많으니 단번에 이해하려고 스트레스 받지 않아도 됩니다 😂
+데이터 저장/조회 API는 주소를 만들고, 해당 주소를 요청하면(브라우저에서 주소를 치거나, 코드단에서 주소를 실행시키거나) 주소 내부에 우리가 정할 내용(코드)에 따라 데이터베이스에 데이터가 저장되거나 또는, 조회하는 기능을 갖습니다.
+[데이터 저장 API]
+
+mainRouter.js 파일에 다음 코드를 작성해주세요.
+const express = require('express')
+const router = express.Router();
+const db = require('../model/db')
+
+router.get("/", function(req,res){
+  res.render('index',{title:"EJS 메인페이지"})
+})
+
+router.get("/about", function(req,res){
+  res.send('About Page')
+})
+
+router.post("/postapi", function(req,res){
+  let body = req.body;
+
+  console.log(body)
+  res.send('POST API')
+})
+
+router.get("/data/create", function(req,res){
+  //기본적으로 제공해주는 자바스크립트 Math 도구에서
+  //랜덤 소수를 제공해주는 random() 함수를 사용했습니다.
+  //랜덤 함수는 소수이기 때문에 결과 값을 정수로 바꾸기 위해 parseInt()라는 정수 변환 함수로 감쌉니다.
+  let user_id = parseInt(Math.random() * 10000);
+  db.users.create({user_id:user_id}).then(function(result){
+    res.send({success:200})
+  })
+})
+
+module.exports = router
+
+여러분 컴퓨터에 생성한 데이터베이스 접속 정보가 담긴 db를 변수로 가져옵니다.
+db 안에는 여러분들이 만든 users라는 모델이 있으므로 . 을통해 db 변수안에서 접근합니다.
+sequelize는 모든 테이블, 즉 모델에 기본적으로 데이터베이스 기능이 담긴 함수들을 제공합니다. create는 생성함수 입니다.
+create에 새롭게 생성할 데이터를 객체형태로 보내줍니다. 앞의 user_id는 우리가 정의한 모델의 user_id 컬럼입니다. 잠깐 다시보고 오시죠!
+
+module.exports = function(sequelize, DataTypes){
+  return sequelize.define('users', {
+    idx: {
+      type : DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+      allowNull: false
+    },
+    user_id : {
+      type: DataTypes.STRING(250)
+    }
+  });
+ }
+
+저장 기능이 실행된 다음엔 then이라는 함수 부분이 실행됩니다. 데이터베이스 기능이 실행되고 나서 뭘 할 것인지 정의하는 곳입니다.
+저장이 잘되었으면 응답으로 이 API를 호출한 개발자에게 우리가 임의로 만든 데이터를 보내줍니다.
+res.send({success:200})
+그럼 포스트맨에서 다음과 같이 확인해봅시다.
+
+그럼 실제로 변경이 됐는지 조회 API를 만들어 확인해봅시다.
+[데이터 조회 API]
+
+다음 API를 만들어 봅시다.
+router.get("/data/read", function(req,res){
+  db.users.findAll().then(function(result){
+    res.send({success:200, data:result})
+  })
+})
+
+너무 간단하게도, findAll 함수를 사용하면 users 테이블에 저장된 모든 데이터들을 조회하여 가져옵니다.
+이것 또한 바로 res.send 즉 호출한 개발자(프론트엔드 겠죠?)에게 응답으로 보내줍니다. 그 모습은 어려울 것 없이 딕셔너리 형태 즉 객체입니다.
+
+
+
+
+6. Sequelize로 데이터 변경/삭제 API 만들기
+[수업 요약]
+다시한번 리뷰하자면, 여러분들이 mainRouter 말고 다른 라우터를 만든다 할 때도 이렇게 상단에 db 접속 정보를 변수에 담아 사용하시면 됩니다! 아주 편리하죠!
+ const db = require('../model/db');
+
+지난시간에 생성했던 데이터를 이용해 데이터 변경/ 삭제 API를 만들어봅니다.
+
+[데이터 변경 API]
+지난시간에 생성했던 user_id는 898 이였습니다. 이 데이터를 다음과 같이 지울 수 있습니다. 지울 user_id는 받아 데이터를 삭제하는 POST 방식의 API라 정해봅시다.
+router.post("/data/update", function(req,res){
+  let target_id = req.body.target_id;
+
+  db.users.update({user_id:9999},{where:{user_id:target_id}}).then(function(result){
+    res.send({success:200})
+  })
+})
+
+외부로부터 전달 받은 데이터는 req.body에 들어있으므로, 해당 body에서 target_id를 꺼내 변수에 담습니다. 물론 외부에서 전달할때 target_id라는 키값으로 전달할거에요!
+
+update 함수엔 두 객체를 전달하는데, 하나는 변경하려는 모델 속성값과 변경 값의 쌍, 그리고 변경하려는 데이터 키값을 지칭해서 전달해줘야합니다. 쉽죠? 우리가 model 폴더에 만든 users 파일 값들을 매칭시켜주기만 하면됩니다.
+그럼 다시 조회를 해서 변경됐는 지 확인해봅시다.
+
+[데이터 삭제 API]
+데이터 변경 API와 동일하게 삭제할 타겟 아이디를 받은 뒤 데이터를 삭제하는 시나리오입니다.
+router.post("/data/delete", function(req,res){
+  let target_id = req.body.target_id;
+  db.users.destroy({where:{user_id:target_id}}).then(function(result){
+    res.send({success:200})
+  })
+})
+
+삭제 API를 실행 후 조회 API를 실행시키면 데이터 값엔 빈 리스트만 전달되고 있습니다. 즉 현재 users 테이블엔 아무 데이터도 존재하지 않는거죠!
+지금까지 테니스로 치면 계속해서 서브만 넣었습니다. 즉 프론트 개발자와의 상호 소통이 아닌, API를 만들고 해당 API에 대한 기능과 결과에만 집중한거였죠!
+이제 다음시간에는 1교시때만들었던 영화 리뷰 사이트와 여러분들이 만들 서버 API를 통해 온전한 하나의 웹 서비스가 어떻게 프론트와 백엔드 상호 대화를 통해 작동을 하는지 직접! 만들어보도록 하겠습니다
+
+
+
+
+CH 4. 영화리뷰 사이트로 백엔드 실전 연습하기
+1. 영화 리뷰 사이트 프론트엔드(HTML, CSS) 리뷰
+
+
+이번 시간을 통해 API 제작에 완전한 감을 익히고, 프론트 개발자와 백엔드 개발자가 어떻게 협업하는 지 큰 그림을 보게 됩니다
+
+
+
+1교시에는 영화리뷰 사이트를 뼈대(HTML)부터 옷까지 (CSS, Bootstrap) 입혀봤습니다.
+프론트에 대한 큰 그림과 집중 공부를 위해서는 1교시를 들어주세요!
+1교시때 완성한 코드는 이 깃헙 코드 저장소에서 확인 가능합니다
+https://github.com/glenncy/init/tree/master/movie
+이 프로젝트에서는 부트스트랩을 통해 전체 디자인을 구현했습니다.
+부트스트랩은 트위터에서 제공해주는 디자인 툴로 HTML head 부분에 CSS와 JS를 임포트한 후 손 쉽게 사용할 수 있는 디자인 툴입니다.
+이 프로젝트에서 2교시때 눈여겨봐야 할 곳은 단연 스크립트 부분입니다.
+기존에는 사관학교에서 만든 API를 이용하여, 댓글 기능을 구현했습니다.
+프론트(화면)에서 리뷰를 작성한 후, 리뷰 작성 API에 리뷰를 body 담아 요청을 하면 서버에 저장이 되었습니다.
+또한 화면에서 특정 영화를 클릭하면, 해당 영화 아이디 값이 리뷰 조회 API에 get 방식 데이터 보내기로 API를 요청하면 해당 영화에 작성된 리뷰를 조회할 수 있는 API 였습니다.
+프론트 단에서(HTML 화면) API 요청은 Ajax라는 API 요청 Jquery 함수를 사용하면 간단히 요청할 수 있습니다.
+
+
+
+2. 영화 리뷰 사이트 주소 만들기(라우터 복습)
+
+[강의 요약]
+영화리뷰 메인 페이지인 main.html 파일의 코드를 views 폴더의 main.ejs 파일로 옮겨옵니다.
+확장자가 .html 에서 .ejs로 바뀌었다고 달라진건 없습니다. 오히려 할수 있는게 더 생긴겁니다.
+"/" 주소 라우터에 index.ejs 그림 파일을 내보내고 있었다면 main.ejs 그림 파일을 내보냅니다.
+서버가 꺼졌다 켜지면서 여러분의 Node.js 서버는 영화 리뷰 페이지를 "/" 라우터, 즉 주소와 연결해놓 게 됩니다. 그럼 localhost에서 확인이 가능합니다.
+이과정이 바로 HTML,CSS로 만든 화면을 Node.js에서 만든 주소와 연결하는 과정!
+main.ejs의 자바스크립트 파일이나, CSS파일을 public 폴더로 옮겨서 관리할 수 있습니다.
+현재는 외부에서 가져오는 코드들로 화면을 구성했지만, 혹시 인터넷이 끊기거나 외부 코드 저장소가 멈췄다면 우리 사이트도 멈출 수 있기 때문에, 중요 코드는 내부 프로젝트에서 관리하는게 안전합니다.
+res.render('그림파일',{키:데이터}) 를 통해 서버로부터 그림 파일이 데이터를 받아서 사용할 수 있습니다.
+페이지마다 head의 title 태그 값이 달라질 수도 있고, meta태그의 정보가 달라질 수 있습니다. 그럴 때마다 화면마다 코드를 달리 작성하는게 아닌, 라우터에서 공통적으로 관리하여 한 곳에서 페이지들의 중요정보들을 관리할 수 있습니다.
+강의 내용 코드 : https://github.com/glenncy/node-study/tree/071e73fc34bc08bc53cf6704501cc6e0834a68c7
+
+3. 리뷰 저장 API 만들기 (+ 고급기술!)
+항상 API를 만들때는 테스트를 위해 포스트맨을 켜놓도록 합니다.
+필요한 API를 정리했다면, 라우터에 어떠한 API가 필요한지 미리 주소부터 결정해놓고 로직을 작성합니다.
+POST 네트워크 방식의 '/review/create' 라우터를 생성합니다.
+외부에서 즉, HTML 화면에서 사용자로부터 리뷰를 작성 받아 서버로 전송할 계획입니다. 전송할 때는 요청 API의 body에 담겨 옵니다. 다시한번 상기시켜보자면, POST 네트워크 방식의 API 요청 방식은 body라는 주머니가 항상 달려있고, 이 주머니에 데이터를 넣어서 서버로 전달해줄 수 있습니다.
+따라서 '/review/create' 에서는 req.body에 데이터가 담겨 있게 됩니다. 우린 review라는 키값으로 리뷰데이터를 보낼 예정입니다.
+또한 영화 정보도 필요합니다. 어떤 영화의 어떤 리뷰인지가 중요정보이니, 영화 idx 정보를 보냅니다.
+이렇게 req.body.review, req.body.moive_id 두 정보를 받아서 데이터베이스에 저장합니다.
+데이터베이스에는 현재 users라는 테이블만 존재하기 때문에, review라는 테이블을 만듭니다.
+model 폴더에 필요한 테이블을 만들고 db.js에 "나 이런 테이블 만들었따!" 라고 외치듯 새로이 생성한 테이블을 임포트 시켜줍니다.
+db.reviews.create(데이터) 형식으로 화면으로부터 받은 데이터를 저장합니다.
+혹시 req.body.review안의 정보가 비어있거나, 이상한 내용이 담겨 있을 수도 있습니다. 그럴땐 저장하기전에 한번 검사를 해줄 수 있습니다.
+if 조건문으로 req.body.review == '' 과 같이 비어있는지 검사를 한 후 , 비어있으면 res.send()로 내보냅니다. API요청에 대한 모든 응답은 req.send로 해야합니다. 그림파일을 보내는게 아니라 데이터를 보내는거니까요! 그럼 ajax에서 데이터를 받아서 확인한 후, success값이 200인지 400인지에 따라 다른 팝업을 띄울 수 있습니다.
+강의 내용 코드 : https://github.com/glenncy/node-study/tree/5f95a064bae2b70e66e9c5c0ec857834995cb79c
+
+
+4. 리뷰 읽기 API 만들기
+특정 영화를 클릭하면, 영화 아이디를 서버로 보내고, 해당 영화 아이디 앞으로 작성된 리뷰들을 데이터베이스에서 가져옵니다. → 가져온 데이터를 API를 요청한 프론트, 즉 HTML 화면에서 받아 사용하는게 큰 시나리오입니다.
+영화 아이디를 보내고 리뷰 데이터를 요청하는 API는 GET 방식으로 생성하려 합니다. GET 방식에서 데이터를 서버로 보내는 방법을 상기시켜보면, 이름표에 꼬리표를 붙이듯이, 주소 뒤에 ?를 두고 키=값의 쌍으로 데이터를 서버로 보낼 수 있었습니다.
+프론트, 즉 HTML에서 리뷰를 조회했던 API는 라우터에서 "/review/read"로 만들 계획입니다.
+받을땐 req.query 객체 안에서 넘겨받은 키값을 꺼내 사용하면 됩니다. 넘길땐 movie_id로 넘기고자 합니다.
+받은 영화 아이디를 가지고 db.reviews.findAll(조건) 형태로 데이터베이스에서 조회를 할 수 있습니다.
+만약 정상적인 요청이 아닌, 비 정상적인 요청 예컨대 영화 아이디가 누락되었거나 문자가 넘어올 수 도 있으므로 이부분에서도 서버적 처리를 해주는게 좋습니다. 모두다 안전을 위함이죠!
+if 조건문, req.query.movie == undefined를 통해 데이터가 비어있는 상황을 가정하여 분기문을 작성해줍니다.
+역시나 API 요청에 대한 응답은 모두 res.send로 응답해줘야 하므로, 프론트단의 Ajax에서 서버로부터 받은 데이터안의 success의 값이 200인지 400인지에 따른 다른 팝업을 사용자에게 보여줄 수 있습니다.
+
+
+강의 내용 코드 : https://github.com/glenncy/node-study/tree/5f95a064bae2b70e66e9c5c0ec857834995cb79c
+
+
+5. 백엔드 총 정리!
+﻿최종적으로 직접 만든 API를 화면과 연결합니다. == 즉, 프론트와 백엔드를 연결합니다. == 즉, 여러분은 풀스택 개발자가 된겁니다.
+fullStack 개발자라고 해서 거창한게 아닌, 화면과 기능을 직접 모두 구현할 수 있다면 풀스택 개발자입니다. 이렇게 한 웹 사이트를 직접 프론트와 백엔드까지 구현할 수 있게 되었습니다.
+전체적인 웹 서비스의 그림을 이랬습니다. 직접 모두다 만들고 나면 웹 개발자, 웹 풀스택, 프론트, 백엔드 개발자란 타이틀이 어렵지 않게 다가옵니다.
+그럼 마지막으로 함께 만든 API을 프론트에 붙여보도록 합시다.
+기존 개발자 사관학교에서 제공했던 API를 이용할 땐, 주소의 full url을 작성했습니다. 해당 API는 외부에서 제공해주는 API이므로 집주소의 모든 정보를 적어야 요청이 가능했죠.
+하지만 지금은 집안에 웹 서버가 존재하게 되었습니다. 마치 옆방에 있는 동생을 불러 불좀 꺼달라는 식의 명령이라 생각해야합니다. 따라서 full url이 아닌 localhost 부분 즉, 방 주소만 적으면 됩니다.
+리뷰 작성 ajax url 부분에 '/review/create'라 넣습니다. 즉 http://localhost:3000 부분이 없어도, 지금 우린 같은 집 == 서버에서 그림파일도 보여주고 데이터도 주고 받고 하고 있기 때문에 모두다 알고 있게 됩니다. 
+/review/create란 주소가 어디에 있는 주소를 뜻하는지 말이죠!
+그렇다면, 3교시때 더 자세히 다루겠지만, 여러분들이 만든 API를 다른 동료가 쓰려면 어떻게 해야할까요? 다른 사람들도 여러분 집주소를 알 수 있게끔 임대 주택, 즉 임대 서버에 여러분 웹서버를 올리고 공인 IP를 받은 뒤 다음과 같이 API를 제공해줘야 합니다. http://52.132.123.23/review/create
+감이 오시나요? 그럼 리뷰 조희 API 또한 ajax 부분읜 url을 "/review/read" 바꿔주고 동일하게 API를 요청해봅니다.
