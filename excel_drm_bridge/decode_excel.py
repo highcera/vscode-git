@@ -10,12 +10,15 @@ encode_excel.py가 뽑아낸 JSON을 읽어서 새 xlsx를 조립한다. 차트 
 
 복원되는 것: 셀 값, 수식(문자열로 그대로 넣으면 Excel이 다시 계산함),
 기본 서식(굵게/기울임/글꼴색/배경색/숫자서식), 열 너비/행 높이, 정의된
-이름(이름관리자). 차트는 기본적으로 "이미지"로만 삽입한다 — 소스 범위를
-자동으로 다시 연결하는 건 신뢰도가 낮아서(원본 수식 문자열 파싱이
-불완전할 수 있음) 일부러 자동화하지 않았다. 데이터와 연동된 실제 차트가
-필요하면, 이 스크립트로 복원된 값들을 기준으로 Excel에서 직접 차트를
-새로 만드는 걸 권장한다 — 삽입된 참고 이미지를 보면서 같은 종류/범위로
-만들면 된다.
+이름(이름관리자).
+
+차트: 종류가 단일(막대/선/원형/영역/분산 중 하나)이고 시리즈 수식(SERIES(...))을
+문제없이 파싱할 수 있으면 **실제 데이터와 연동된 차트 객체**로 재구성한다
+(2026-11-19 추가). 종류가 "콤보"(여러 종류가 섞인 차트, chart_type이 -4111 등으로
+잡힌 경우 — 시리즈별 세부 종류를 인코딩 단계에서 따로 안 뽑아놔서 어떤 시리즈가
+막대고 어떤 게 선인지 구분이 안 됨)이거나 파싱에 실패하면, 캡처해둔 스냅샷
+이미지로 대체한다 — 데이터와 연동된 실제 차트가 필요하면 복원된 값을 기준으로
+Excel에서 직접 새로 만드는 걸 권장한다.
 
 복원되지 않는 것(수작업 필요): 조건부 서식 "규칙"(결과 색만 fill_rgb로
 남아있음), 표(Excel Table) 지정, 테두리/병합 셀 등 세부 서식.
@@ -49,7 +52,9 @@ except Exception:
 
 from openpyxl import Workbook
 from openpyxl.utils import get_column_letter
+from openpyxl.utils.cell import range_boundaries
 from openpyxl.styles import Font, PatternFill
+from openpyxl.chart import ScatterChart, LineChart, BarChart, PieChart, AreaChart, Series, Reference
 from openpyxl.workbook.defined_name import DefinedName
 from openpyxl.drawing.image import Image as XLImage
 
@@ -220,6 +225,213 @@ def apply_defined_names(wb, names):
     log.info(summary)
 
 
+# XlChartType 숫자 코드 -> (scatterStyle) 매핑. encode_excel.py의 CHART_TYPE_NAMES에
+# 이름이 없는 산점도 변형들(72/73/74/75, -4169)도 숫자 코드로 직접 받아서 처리한다.
+SCATTER_STYLE_BY_CODE = {
+    -4169: 'marker',   # xlXYScatter
+    74: 'lineMarker',  # xlXYScatterLines
+    75: 'line',        # xlXYScatterLinesNoMarkers
+    72: 'smoothMarker',  # xlXYScatterSmooth
+    73: 'smooth',        # xlXYScatterSmoothNoMarkers
+}
+SCATTER_STYLE_BY_NAME = {'scatter': 'marker'}
+
+SIMPLE_CHART_CLASS = {
+    'column_clustered': (BarChart, {'type': 'col', 'grouping': 'clustered'}),
+    'column_stacked': (BarChart, {'type': 'col', 'grouping': 'stacked'}),
+    'column_stacked100': (BarChart, {'type': 'col', 'grouping': 'percentStacked'}),
+    'bar_clustered': (BarChart, {'type': 'bar', 'grouping': 'clustered'}),
+    'bar_stacked': (BarChart, {'type': 'bar', 'grouping': 'stacked'}),
+    'bar_stacked100': (BarChart, {'type': 'bar', 'grouping': 'percentStacked'}),
+    'line': (LineChart, {}),
+    'line_markers': (LineChart, {}),
+    'pie': (PieChart, {}),
+    'area': (AreaChart, {}),
+    'area_stacked': (AreaChart, {'grouping': 'stacked'}),
+}
+
+# encode_excel.py의 CHART_TYPE_NAMES와 동일한 숫자코드->이름 매핑(시리즈별
+# ChartType을 콤보 재현에 쓰려면 여기서도 똑같이 이름을 붙일 수 있어야 함).
+CHART_TYPE_NAME_BY_CODE = {
+    51: 'column_clustered', 52: 'column_stacked', 53: 'column_stacked100',
+    57: 'bar_clustered', 58: 'bar_stacked', 59: 'bar_stacked100',
+    4: 'line', 65: 'line_markers',
+    5: 'pie', 1: 'area', 76: 'area_stacked',
+    -4169: 'scatter', 74: 'scatter_lines', 75: 'scatter_lines_no_markers',
+    72: 'scatter_smooth', 73: 'scatter_smooth_no_markers',
+}
+
+
+def _chart_spec_for_code(code):
+    """시리즈별 ChartType 숫자 코드를 ('scatter', scatterStyle) 또는
+    ('simple', SIMPLE_CHART_CLASS의 키)로 변환. 모르는 코드면 (None, None)."""
+    if code in SCATTER_STYLE_BY_CODE:
+        return ('scatter', SCATTER_STYLE_BY_CODE[code])
+    name = CHART_TYPE_NAME_BY_CODE.get(code)
+    if name in SIMPLE_CHART_CLASS:
+        return ('simple', name)
+    return (None, None)
+
+
+def parse_series_formula(formula):
+    """'=SERIES(이름,범주범위,값범위,순서)' 문자열을 네 조각으로 분리.
+    인자 안의 "..." 문자열 리터럴에 들어있는 쉼표는 구분자로 보지 않는다
+    (Excel 시트 이름엔 애초에 쉼표가 올 수 없어서 그 외엔 단순 split으로 충분)."""
+    if not formula or not formula.startswith('=SERIES(') or not formula.endswith(')'):
+        return None
+    inner = formula[len('=SERIES('):-1]
+    parts, cur, in_quote = [], '', False
+    for ch in inner:
+        if ch == '"':
+            in_quote = not in_quote
+            cur += ch
+        elif ch == ',' and not in_quote:
+            parts.append(cur)
+            cur = ''
+        else:
+            cur += ch
+    parts.append(cur)
+    while len(parts) < 4:
+        parts.append('')
+    name, cats, vals, order = (p.strip() for p in parts[:4])
+    return {'name': name, 'categories': cats, 'values': vals, 'order': order}
+
+
+def ref_from_range_str(wb, range_str):
+    """"'시트명'!$B$2:$B$10" 같은 문자열을 openpyxl Reference로 변환. 실패하면 None."""
+    if not range_str or '!' not in range_str:
+        return None
+    sheet_part, cell_part = range_str.split('!', 1)
+    sheet_name = sheet_part.strip().strip("'")
+    if sheet_name not in wb.sheetnames:
+        return None
+    cell_part = cell_part.replace('$', '').strip()
+    try:
+        min_col, min_row, max_col, max_row = range_boundaries(cell_part)
+    except Exception:
+        return None
+    if min_col is None or min_row is None:
+        return None
+    return Reference(wb[sheet_name], min_col=min_col, min_row=min_row, max_col=max_col, max_row=max_row)
+
+
+def series_title(name_field):
+    """SERIES()의 첫 인자 — "문자열 리터럴"이면 그걸 제목으로 쓰고, 셀 참조(동적 제목)면
+    복잡해서 생략한다(제목 없이 둠 — 데이터 자체는 영향 없음)."""
+    name_field = (name_field or '').strip()
+    if name_field.startswith('"') and name_field.endswith('"'):
+        return name_field[1:-1]
+    return None
+
+
+def _make_chart_shell(kind, info):
+    """kind='scatter'면 info=scatterStyle, kind='simple'이면 info=SIMPLE_CHART_CLASS 키.
+    빈 openpyxl 차트 객체(시리즈 없음)를 만들어 돌려준다."""
+    if kind == 'scatter':
+        chart = ScatterChart()
+        chart.scatterStyle = info
+        return chart, True
+    cls, kwargs = SIMPLE_CHART_CLASS[info]
+    chart = cls()
+    for k, v in kwargs.items():
+        setattr(chart, k, v)
+    return chart, False
+
+
+def _add_series_to_chart(wb, chart, is_scatter, series_defs, cats_already_set):
+    """series_defs의 SERIES(...) 수식을 파싱해서 chart에 시리즈로 추가.
+    실제로 추가된 개수를 돌려준다. cats_already_set은 (리스트라 참조로 공유되는)
+    1개짜리 가변 플래그 — 범주축은 차트당 한 번만 설정해야 해서 호출 간에 공유."""
+    added = 0
+    for sdef in series_defs:
+        parsed = parse_series_formula(sdef.get('values_formula'))
+        if not parsed:
+            continue
+        values_ref = ref_from_range_str(wb, parsed['values'])
+        if values_ref is None:
+            continue
+        title = series_title(parsed['name'])
+        cats_ref = ref_from_range_str(wb, parsed['categories'])
+
+        if is_scatter:
+            if cats_ref is None:
+                continue  # 분산형은 x값 없이는 의미가 없어서 이 시리즈만 건너뜀
+            s = Series(values_ref, xvalues=cats_ref, title=title)
+        else:
+            s = Series(values_ref, title=title)
+            if cats_ref is not None and not cats_already_set[0]:
+                chart.set_categories(cats_ref)
+                cats_already_set[0] = True
+        chart.series.append(s)
+        added += 1
+    return added
+
+
+def build_combo_chart(wb, ch, series_defs):
+    """시리즈별 ChartType(series_chart_type)을 보고 같은 타입끼리 묶어 서브차트를
+    만든 뒤, openpyxl의 콤보 결합(+=)으로 겹쳐서 재현한다. 타입을 모르는
+    시리즈는 그냥 빠진다(그 부분만 빠지고 나머지는 재현됨)."""
+    groups = {}  # (kind, info) -> [series_dict, ...]
+    for sdef in series_defs:
+        kind, info = _chart_spec_for_code(sdef.get('series_chart_type'))
+        if kind is None:
+            continue
+        groups.setdefault((kind, info), []).append(sdef)
+
+    if not groups:
+        return None
+
+    sub_charts = []
+    for (kind, info), defs in groups.items():
+        sub, is_scatter = _make_chart_shell(kind, info)
+        added = _add_series_to_chart(wb, sub, is_scatter, defs, [False])
+        if added:
+            sub_charts.append(sub)
+
+    if not sub_charts:
+        return None
+
+    combo = sub_charts[0]
+    for extra in sub_charts[1:]:
+        try:
+            combo += extra
+        except Exception as e:
+            log.debug(f'  콤보 결합 중 일부 실패(나머지는 반영됨): {e}')
+    return combo
+
+
+def build_native_chart(wb, ch):
+    """시리즈 수식을 파싱해서 데이터와 연동된 실제 차트 객체를 재구성한다.
+    차트 전체가 단일 종류면 그대로, "콤보"(여러 종류 혼합)면 시리즈별
+    ChartType을 보고 같은 타입끼리 묶어 서브차트로 나눈 뒤 겹친다. 파싱/타입
+    매핑에 완전히 실패하면 None을 돌려줘서 호출 측이 이미지로 대체하게 한다."""
+    series_defs = ch.get('series') or []
+    if not series_defs:
+        return None
+
+    type_name = ch.get('chart_type_name')
+    type_code = ch.get('chart_type')
+    scatter_style = SCATTER_STYLE_BY_NAME.get(type_name) or SCATTER_STYLE_BY_CODE.get(type_code)
+
+    if scatter_style:
+        chart, is_scatter = _make_chart_shell('scatter', scatter_style)
+    elif type_name in SIMPLE_CHART_CLASS:
+        chart, is_scatter = _make_chart_shell('simple', type_name)
+    else:
+        # 차트 전체 타입을 모르거나 콤보임 — 시리즈별 타입이 있으면 콤보로 재시도
+        chart = build_combo_chart(wb, ch, series_defs)
+        if chart is not None and ch.get('title'):
+            chart.title = ch['title']
+        return chart
+
+    added = _add_series_to_chart(wb, chart, is_scatter, series_defs, [False])
+    if added == 0:
+        return None
+    if ch.get('title'):
+        chart.title = ch['title']
+    return chart
+
+
 def add_charts(wb, charts):
     log.info(f'차트 삽입 시작 — {len(charts)}개')
     for ch in charts:
@@ -229,6 +441,25 @@ def add_charts(wb, charts):
             log.warning(f'  {chart_label} — 대상 시트가 없어서 건너뜀')
             continue
         ws = wb[sheet_name]
+
+        try:
+            native = build_native_chart(wb, ch)
+        except Exception as e:
+            native = None
+            log.debug(f'  {chart_label} — 네이티브 차트 재구성 중 예외(이미지로 대체): {e}')
+        if native is not None:
+            try:
+                anchor_col = get_column_letter(max(1, int(ch.get('left', 0) // 64) + 1))
+                ws.add_chart(native, f'{anchor_col}2')
+                # openpyxl 차트의 _charts는 기본값이 [self]이고, +=로 결합하면 거기에
+                # 덧붙는 식이라 "자기 자신 포함" 리스트다 — 그래서 이거 하나로만 합산.
+                sub_charts_list = getattr(native, '_charts', [native])
+                total_series = sum(len(c.series) for c in sub_charts_list)
+                combo_note = f', 콤보 {len(sub_charts_list)}종류 결합' if len(sub_charts_list) > 1 else ''
+                log.info(f'  {chart_label} — 데이터 연동 차트로 복원됨 (시리즈 {total_series}개{combo_note})')
+                continue
+            except Exception as e:
+                log.warning(f'  {chart_label} — 네이티브 차트 삽입 실패, 이미지로 대체 시도: {e}')
 
         b64 = ch.get('image_b64')
         if b64:

@@ -76,11 +76,23 @@ CHART_TYPE_NAMES = {
     57: 'bar_clustered', 58: 'bar_stacked', 59: 'bar_stacked100',
     4: 'line', 65: 'line_markers',
     5: 'pie', 1: 'area', 76: 'area_stacked',
-    -4169: 'scatter',
+    -4169: 'scatter', 74: 'scatter_lines', 75: 'scatter_lines_no_markers',
+    72: 'scatter_smooth', 73: 'scatter_smooth_no_markers',
 }
 
-MAX_FORMAT_CELLS = 8000  # 서식까지 셀 단위로 읽을 때 너무 느려지지 않게 상한
 XL_NONE_COLOR_INDEX = -4142
+
+# [2026-11-19] 예전엔 셀 수가 MAX_FORMAT_CELLS(8000)를 넘는 시트는 서식(글꼴/색/
+# 번호서식)을 통째로 건너뛰었다. 사용자 지적대로 이런 대형 시트들은 대개 "같은
+# 모양의 시트가 반복"(예: 환산/환산2/환산3, 시트 "1"~"10")되거나 "한 시트 안에서
+# 같은 블록이 반복"되는 구조라, 매 시트마다 39,000개 넘는 셀을 COM으로 하나하나
+# 다시 읽을 필요가 없다 — 모양(행수x열수)이 같고 텍스트 라벨 배치까지 비슷한
+# "같은 템플릿" 시트를 찾으면, 그 템플릿에서 이미 뽑아둔 서식 맵을 그대로
+# 재사용한다(셀 값/수식은 항상 각 시트에서 새로 읽음 — 그건 bulk 배열 읽기라 이미
+# 빠르고, 시트마다 실제로 다른 부분이니까). 템플릿이 없는 "첫 모양"의 시트만
+# 상한 없이 전체 셀을 직접 읽는다 — 그래서 이제 서식이 통째로 빠지는 시트는 없다.
+_SHEET_FORMAT_TEMPLATES = {}  # shape(n_rows,n_cols) -> {'fingerprint': {...}, 'formats': {(i,j): {...}}}
+TEMPLATE_SIMILARITY_THRESHOLD = 0.6
 
 # 로컬라이즈된 Excel에서 Range.NumberFormat이 영어 "General"이 아니라 그 언어의
 # 번역된 이름을 그대로 돌려주는 경우가 실제로 확인됨(한국어 Excel: "표준").
@@ -177,6 +189,65 @@ def normalize_grid(values, formulas, n_rows, n_cols):
     return values, formulas
 
 
+_LABEL_RE = re.compile(r'^[\s\-+\d.,%]+$')
+
+
+def build_fingerprint(values, n_rows, n_cols):
+    """숫자/빈칸이 아닌 "라벨처럼 보이는" 텍스트 셀의 (위치→내용)만 모은다 —
+    실제 데이터값은 시트마다 다르지만, 헤더/라벨 텍스트는 같은 템플릿이면 보통
+    동일하므로 이걸로 "같은 모양의 다른 시트가 진짜 같은 템플릿인지"를 가늠한다."""
+    fp = {}
+    for i in range(n_rows):
+        for j in range(n_cols):
+            v = values[i][j]
+            if isinstance(v, str) and v.strip() and not _LABEL_RE.match(v.strip()):
+                fp[(i, j)] = v.strip()
+    return fp
+
+
+def fingerprint_similarity(fp_a, fp_b):
+    if not fp_a or not fp_b:
+        return 0.0
+    keys = set(fp_a) & set(fp_b)
+    if not keys:
+        return 0.0
+    matches = sum(1 for k in keys if fp_a[k] == fp_b[k])
+    coverage = len(keys) / max(len(fp_a), len(fp_b))
+    return (matches / len(keys)) * coverage
+
+
+def extract_cell_format(ws, row, col):
+    """셀 하나의 서식(번호서식/굵게/기울임/배경색/글꼴색)을 COM으로 직접 읽는다.
+    실패한 속성은 그냥 빠지고(값은 영향 없음), 전체가 실패하면 None을 돌려준다."""
+    fmt = {}
+    try:
+        rng = ws.Cells(row, col)
+        nf = rng.NumberFormat
+        if _looks_like_real_format_code(nf):
+            fmt['number_format'] = nf
+        elif nf and nf.strip().lower() not in GENERAL_FORMAT_ALIASES:
+            log.debug(f'  [{ws.Name}] R{row}C{col} 서식 코드로 보기 애매해서 생략: {nf!r}')
+        if rng.Font.Bold:
+            fmt['bold'] = True
+        if rng.Font.Italic:
+            fmt['italic'] = True
+        try:
+            if rng.Interior.ColorIndex != XL_NONE_COLOR_INDEX:
+                fmt['fill_rgb'] = bgr_long_to_rrggbb(rng.Interior.Color)
+        except Exception as e:
+            log.debug(f'  [{ws.Name}] R{row}C{col} 배경색 읽기 실패: {e}')
+        try:
+            fc = rng.Font.Color
+            if fc is not None:
+                fmt['font_rgb'] = bgr_long_to_rrggbb(fc)
+        except Exception as e:
+            log.debug(f'  [{ws.Name}] R{row}C{col} 글꼴색 읽기 실패: {e}')
+        return fmt
+    except Exception as e:
+        log.debug(f'  [{ws.Name}] R{row}C{col} 서식 전체 읽기 실패: {e}')
+        return None
+
+
 def extract_sheet(ws):
     log.info(f'시트 처리 시작: {ws.Name}')
     used = ws.UsedRange
@@ -188,13 +259,28 @@ def extract_sheet(ws):
               f'col {start_col}~{start_col+n_cols-1} ({n_rows}x{n_cols} = {n_rows*n_cols}셀)')
 
     values, formulas = normalize_grid(used.Value, used.Formula, n_rows, n_cols)
-    do_format = (n_rows * n_cols) <= MAX_FORMAT_CELLS
-    if not do_format:
-        log.warning(f'  [{ws.Name}] 셀 수({n_rows*n_cols})가 MAX_FORMAT_CELLS({MAX_FORMAT_CELLS})를 '
-                    f'넘어서 서식(글꼴/색/번호서식)은 건너뜀 — 값/수식만 추출')
+
+    shape = (n_rows, n_cols)
+    fingerprint = build_fingerprint(values, n_rows, n_cols)
+    candidate = _SHEET_FORMAT_TEMPLATES.get(shape)
+    template = None
+    if candidate is not None:
+        sim = fingerprint_similarity(fingerprint, candidate['fingerprint'])
+        if sim >= TEMPLATE_SIMILARITY_THRESHOLD:
+            template = candidate
+            log.info(f'  [{ws.Name}] 같은 모양({n_rows}x{n_cols})의 템플릿 시트("{candidate["source"]}") '
+                      f'서식을 재사용함(유사도 {sim:.0%}) — 서식 COM 호출 생략, 값/수식은 그대로 새로 읽음')
+        else:
+            log.debug(f'  [{ws.Name}] 모양은 같지만({n_rows}x{n_cols}) 라벨 유사도 {sim:.0%}로 낮아 '
+                      f'별도 템플릿으로 전체 추출')
+
+    if template is None:
+        log.info(f'  [{ws.Name}] 새 템플릿으로 서식 전체 추출 — 셀 {n_rows*n_cols}개 '
+                 f'(모양이 크면 시간이 걸릴 수 있음)')
 
     cells = []
     format_fail_count = 0
+    new_formats = {} if template is None else None
     for i in range(n_rows):
         for j in range(n_cols):
             row = start_row + i
@@ -208,33 +294,23 @@ def extract_sheet(ws):
             if isinstance(formula, str) and formula.startswith('='):
                 cell_info['formula'] = formula
 
-            if do_format:
-                try:
-                    rng = ws.Cells(row, col)
-                    nf = rng.NumberFormat
-                    if _looks_like_real_format_code(nf):
-                        cell_info['number_format'] = nf
-                    elif nf and nf.strip().lower() not in GENERAL_FORMAT_ALIASES:
-                        log.debug(f'  [{ws.Name}] R{row}C{col} 서식 코드로 보기 애매해서 생략: {nf!r}')
-                    if rng.Font.Bold:
-                        cell_info['bold'] = True
-                    if rng.Font.Italic:
-                        cell_info['italic'] = True
-                    try:
-                        if rng.Interior.ColorIndex != XL_NONE_COLOR_INDEX:
-                            cell_info['fill_rgb'] = bgr_long_to_rrggbb(rng.Interior.Color)
-                    except Exception as e:
-                        log.debug(f'  [{ws.Name}] R{row}C{col} 배경색 읽기 실패: {e}')
-                    try:
-                        fc = rng.Font.Color
-                        if fc is not None:
-                            cell_info['font_rgb'] = bgr_long_to_rrggbb(fc)
-                    except Exception as e:
-                        log.debug(f'  [{ws.Name}] R{row}C{col} 글꼴색 읽기 실패: {e}')
-                except Exception as e:
+            if template is not None:
+                fmt = template['formats'].get((i, j))
+                if fmt:
+                    cell_info.update(fmt)
+            else:
+                fmt = extract_cell_format(ws, row, col)
+                if fmt is None:
                     format_fail_count += 1
-                    log.warning(f'  [{ws.Name}] R{row}C{col} 서식 전체 읽기 실패: {e}')
+                elif fmt:
+                    cell_info.update(fmt)
+                    new_formats[(i, j)] = fmt
             cells.append(cell_info)
+
+    if template is None:
+        _SHEET_FORMAT_TEMPLATES[shape] = {
+            'source': ws.Name, 'fingerprint': fingerprint, 'formats': new_formats,
+        }
 
     if format_fail_count:
         log.warning(f'  [{ws.Name}] 서식 읽기 실패 {format_fail_count}건 (값/수식은 정상 추출됨)')
@@ -401,10 +477,20 @@ def extract_charts(wb):
                 sc_coll = chart.SeriesCollection()
                 for s in range(1, sc_coll.Count + 1):
                     sc = sc_coll(s)
-                    series.append({
+                    sdef = {
                         'name': str(sc.Name) if sc.Name else None,
                         'values_formula': sc.Formula,
-                    })
+                    }
+                    # [2026-11-19] 차트 전체가 "콤보"(여러 종류 혼합, chart.ChartType이
+                    # -4111 같은 애매한 값)라도, 시리즈 하나하나는 자기만의 ChartType을
+                    # 갖고 있어서 이렇게 개별로 읽을 수 있다 — decode 쪽에서 같은 타입끼리
+                    # 묶어 서브차트를 만들고 겹쳐서(openpyxl 콤보 결합) 재현하는 데 쓴다.
+                    try:
+                        sdef['series_chart_type'] = int(sc.ChartType)
+                    except Exception as e:
+                        sdef['series_chart_type'] = None
+                        log.debug(f'  [{ws.Name}] 차트 "{co.Name}" 시리즈 {s} ChartType 읽기 실패: {e}')
+                    series.append(sdef)
             except Exception as e:
                 log.warning(f'  [{ws.Name}] 차트 "{co.Name}" 시리즈 읽기 실패: {e}')
             info['series'] = series
